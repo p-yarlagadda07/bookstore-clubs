@@ -1,0 +1,8 @@
+# Files below always need Member 1's review (turn on "Require review from Code Owners" in branch rules).
+/shared/                    @p-yarlagadda07
+/server/src/app.js          @p-yarlagadda07
+/server/src/routes.js       @p-yarlagadda07
+/server/scripts/seed.js     @p-yarlagadda07
+/package.json               @p-yarlagadda07
+/package-lock.json          @p-yarlagadda07
+/.github/                   @p-yarlagadda07

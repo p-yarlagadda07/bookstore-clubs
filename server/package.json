@@ -1,0 +1,29 @@
+{
+  "name": "@bookstore/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "seed": "node scripts/seed.js"
+  },
+  "dependencies": {
+    "@bookstore/shared": "*",
+    "argon2": "^0.41.1",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "mongoose": "^8.9.0",
+    "pino": "^9.5.0",
+    "pino-http": "^10.3.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^10.1.2",
+    "supertest": "^7.0.0",
+    "vitest": "^2.1.8"
+  }
+}

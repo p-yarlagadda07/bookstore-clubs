@@ -1,0 +1,28 @@
+{
+  "name": "bookstore-clubs",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "shared",
+    "server",
+    "client"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,magenta \"npm run dev -w server\" \"npm run dev -w client\"",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "npm test -w server",
+    "seed": "npm run seed -w server --",
+    "build": "npm run build -w client"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "concurrently": "^9.2.4",
+    "eslint": "^9.39.5",
+    "globals": "^15.15.0",
+    "prettier": "^3.9.9"
+  }
+}
