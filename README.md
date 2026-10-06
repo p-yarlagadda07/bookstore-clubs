@@ -22,7 +22,7 @@ The full project docs and the work split are in the `docs` folder. Please read y
 | 4   | Reservations and reading lists          |                     |                |
 | 5   | Clubs, meetings, reading progress       |                     |                |
 | 6   | AI setup and book search                |                     |                |
-| 7   | Book chat (no spoilers)                 |                     |                |
+| 7   | Book chat (no spoilers)                 |  Yasaswi Davuluri   | DavuluriYasaswi|
 | 8   | Reading agent                           |                     |                |
 | 9   | Frontend - reader pages                 |                     |                |
 | 10  | Frontend - clubs, staff and agent pages |                     |                |
