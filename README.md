@@ -154,3 +154,5 @@ npm run format            # format code with prettier
 - Port already in use - you probably have another terminal running `npm run dev`
 
 If you're stuck for more than an hour or so, just ask in the group.
+
+Practice PR by Shravani
