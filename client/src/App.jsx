@@ -1,4 +1,4 @@
-// Temporary start page. Member 9 replaces this with the app shell (router, layout, api client).
+// just a test page for now
 import { useEffect, useState } from 'react';
 
 export default function App() {

@@ -1,5 +1,3 @@
-// Every module router is registered here ONCE, so members never need to edit app.js.
-// Owner: Member 1. Each router defines its own full paths under /api.
 import { Router } from 'express';
 import mongoose from 'mongoose';
 
@@ -25,7 +23,7 @@ api.get('/health', (_req, res) => {
   res.ok({ status: 'ok', db: states[mongoose.connection.readyState] ?? 'unknown' });
 });
 
-// discovery is mounted before books so /books/discover is not caught by /books/:id
+// discovery has to come before books, otherwise /books/discover matches /books/:id
 for (const r of [
   auth,
   users,

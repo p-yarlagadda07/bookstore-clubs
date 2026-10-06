@@ -1,15 +1,13 @@
 ---
 name: Task
-about: One step from Document 02 (one branch, one PR)
-labels: task
+about: A task from the work plan
 ---
 
-**Member:** __ **Step:** __
-**Branch:** `feat/...`
+**Branch:**
 
-**Build**
+**To do:**
 -
 
-**Done when**
+**Done when:**
 
 - [ ]

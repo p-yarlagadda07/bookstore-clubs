@@ -1,4 +1,3 @@
-# Files below always need Member 1's review (turn on "Require review from Code Owners" in branch rules).
 /shared/                    @p-yarlagadda07
 /server/src/app.js          @p-yarlagadda07
 /server/src/routes.js       @p-yarlagadda07

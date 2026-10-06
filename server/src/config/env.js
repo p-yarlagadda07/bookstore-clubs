@@ -1,8 +1,7 @@
-// Loads the .env file from the project root, then reads every variable in one place.
-// Add new variables here AND in .env.example.
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'node:url';
 
+// .env is in the root folder, not in server/
 dotenv.config({ path: fileURLToPath(new URL('../../../.env', import.meta.url)), quiet: true });
 
 export const env = {
