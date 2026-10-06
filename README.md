@@ -24,7 +24,7 @@ The full project docs and the work split are in the `docs` folder. Please read y
 | 6   | AI setup and book search                |                     |                |
 | 7   | Book chat (no spoilers)                 |  Yasaswi Davuluri   | DavuluriYasaswi|
 | 8   | Reading agent                           |                     |                |
-| 9   | Frontend - reader pages                 |                     |                |
+| 9   | Frontend - reader pages                 |  Kusuma Thriveni    | KusumaThriveni |
 | 10  | Frontend - clubs, staff and agent pages |                     |                |
 
 ## Running it locally
