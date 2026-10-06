@@ -1,3 +1,4 @@
-# End-to-end tests (Member 1)
+# e2e
 
-Playwright tests for the demo scenario and acceptance checks A1-A14 go here.
+End-to-end tests with Playwright. Will cover the demo flow and the acceptance checks from the
+project doc.

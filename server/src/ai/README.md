@@ -1,10 +1,9 @@
-# AI layer
+# ai
 
-| Folder                                              | Owner    | What                                                 |
-| --------------------------------------------------- | -------- | ---------------------------------------------------- |
-| `ollama.js`, `embeddings/`, `ingest/`, `discovery/` | Member 6 | Ollama client, embeddings, vector indexes, discovery |
-| `rag/`                                              | Member 7 | Spoiler-aware book chat                              |
-| `agent/`                                            | Member 8 | Reading agent and its three tools                    |
+- `discovery/`, embeddings and the Ollama client - Member 6
+- `rag/` (book chat) - Member 7
+- `agent/` (reading agent) - Member 8
 
-Rules: AI code calls **services**, never models directly, and always passes the current user so the
-same permission checks apply. If Ollama is down, return `AI_UNAVAILABLE` (503), never crash.
+Call the services from the other modules instead of querying the models directly, and pass the
+logged in user along so the same permission checks run. If Ollama isn't running, return an
+`AI_UNAVAILABLE` error instead of letting the server crash.

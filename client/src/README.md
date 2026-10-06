@@ -1,9 +1,8 @@
-# Client folders
+# client
 
-| Folder                                                                        | Owner                                                   |
-| ----------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `app/`, `api/`, `components/`                                                 | Member 9 (shell, router, api client, shared components) |
-| `features/auth, discovery, books, readingLists, reservations, settings, chat` | Member 9                                                |
-| `features/clubs, meetings, moderator, stock, admin, agent`                    | Member 10                                               |
+- `app/`, `api/`, `components/` and the reader pages (auth, discovery, books, reading lists,
+  reservations, settings, chat) - Member 9
+- clubs, meetings, moderator, stock, admin and agent pages - Member 10
 
-`/api` requests are proxied to the server by Vite (see `vite.config.js`).
+Vite forwards anything starting with `/api` to the server on port 4000, so you can call
+`fetch('/api/...')` directly.
