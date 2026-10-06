@@ -1,4 +1,3 @@
-// Owner: Member 1. Builds the Express app (no DB connection here, so tests can import it).
 import express from 'express';
 import helmet from 'helmet';
 import pinoHttp from 'pino-http';
@@ -19,7 +18,7 @@ export function createApp() {
   app.use(express.json({ limit: '1mb' }));
   app.use(responseHelpers);
 
-  applySecurity(app); // Member 2: sessions, CSRF, rate limits
+  applySecurity(app);
 
   app.use('/api', api);
 

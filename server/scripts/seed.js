@@ -1,7 +1,4 @@
-// Seed script v1 - Owner: Member 1.
-//   npm run seed            -> adds missing demo data
-//   npm run seed -- --reset -> wipes the database first (use this before demos)
-// Members 3 and 5 send their data files (server/scripts/data/*.json); Member 6 adds the embed step.
+// usage: npm run seed  (add -- --reset to clear the db first)
 import mongoose from 'mongoose';
 import argon2 from 'argon2';
 import { connectDB, disconnectDB } from '../src/config/db.js';
@@ -58,10 +55,7 @@ async function main() {
   }
   const n = await seedUsers();
   console.log(`Seeded ${n} demo users (password for all: ${DEMO_PASSWORD})`);
-  // TODO Member 3: books, catalogSources, inventory from scripts/data/books.json, inventory.json
-  // TODO Member 5: clubs, memberships, meetings, progress from scripts/data/clubs.json
-  //      (and set moderator@bookstore.test as moderatorOf the demo club)
-  // TODO Member 6: excerpts, storeDocs + embeddings (npm run embed)
+  // TODO: books + inventory, clubs, excerpts
   await disconnectDB();
 }
 

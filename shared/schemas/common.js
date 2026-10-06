@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Reusable building blocks for every module's schemas.
 export const ObjectId = z.string().regex(/^[a-f\d]{24}$/i, 'Invalid id');
 export const IdParams = z.object({ id: ObjectId });
 

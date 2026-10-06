@@ -5,7 +5,6 @@ import { logger } from './lib/logger.js';
 
 async function main() {
   await connectDB();
-  // Member 4: start the hold-expiry job here, e.g. startExpireHoldsJob();
   createApp().listen(env.PORT, () =>
     logger.info(`API running on http://localhost:${env.PORT}/api`),
   );
