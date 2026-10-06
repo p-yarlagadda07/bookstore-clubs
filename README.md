@@ -1,157 +1,156 @@
-# Independent Bookstore Discovery and Clubs
+# bookstore-clubs
 
-Project 19 — AI Powered Full Stack Capstone.
-An online catalog and reading-club portal for an independent bookstore: semantic book discovery,
-real stock and reservations, moderated clubs, spoiler-aware AI chat and a reading agent.
+Capstone project 19: Independent Bookstore Discovery and Clubs.
 
-**Stack:** React (Vite) · Node.js + Express · MongoDB Atlas + Mongoose + Atlas Vector Search · Ollama · LangChain JS · Zod
+It's a web app for a small independent bookstore. Readers can search for books by describing what they
+remember (a theme, a mood, a bit of the plot), check what's actually in stock, reserve a copy for pickup
+and join reading clubs. There's an AI chat that can talk about a book without spoiling anything past the
+chapter you're on, and an agent that helps a club pick its next book.
 
-📘 Read first: [`docs/01_Project_Documentation.pdf`](docs/01_Project_Documentation.pdf) and
-[`docs/02_Work_Division_and_Integration_Plan.pdf`](docs/02_Work_Division_and_Integration_Plan.pdf)
-(find **your own member section** in Document 02).
+Built with React (Vite), Node + Express, MongoDB Atlas (with vector search), Mongoose, Zod, Ollama and LangChain.js.
 
----
+The full project docs and the work split are in the `docs` folder. Please read your own section in
+`02_Work_Division_and_Integration_Plan.pdf` before you start.
 
 ## Team
 
-<!-- Practice PR: add your name and GitHub username to your row -->
+| #   | Working on                              | Name                | GitHub         |
+| --- | --------------------------------------- | ------------------- | -------------- |
+| 1   | Setup, shared code, integration         | Poojitha Yarlagadda | p-yarlagadda07 |
+| 2   | Auth, sessions, roles                   |                     |                |
+| 3   | Books and inventory                     |                     |                |
+| 4   | Reservations and reading lists          |                     |                |
+| 5   | Clubs, meetings, reading progress       |                     |                |
+| 6   | AI setup and book search                |                     |                |
+| 7   | Book chat (no spoilers)                 |                     |                |
+| 8   | Reading agent                           |                     |                |
+| 9   | Frontend - reader pages                 |                     |                |
+| 10  | Frontend - clubs, staff and agent pages |                     |                |
 
-| #   | Role                                        | Name | GitHub |
-| --- | ------------------------------------------- | ---- | ------ |
-| 1   | Architecture, contracts and integration     |      |        |
-| 2   | Authentication, sessions, roles and audit   |      |        |
-| 3   | Catalog and inventory API                   |      |        |
-| 4   | Reservations and reading lists API          |      |        |
-| 5   | Clubs, meetings and reading progress API    |      |        |
-| 6   | AI foundations and semantic discovery       |      |        |
-| 7   | Spoiler-aware RAG (book chat)               |      |        |
-| 8   | Reading agent workflow                      |      |        |
-| 9   | Frontend A — reader experience              |      |        |
-| 10  | Frontend B — clubs, staff and agent screens |      |        |
+## Running it locally
 
----
-
-## 1. Install (once per laptop)
-
-- **Git** — https://git-scm.com
-- **Node.js 20 LTS or newer** — https://nodejs.org (check with `node -v`)
-- **VS Code** with the ESLint and Prettier extensions (VS Code will suggest them)
-- **Ollama** — https://ollama.com (Members 6, 7, 8, and anyone running the AI features)
+You need Git and Node 20 or newer. If you're working on the AI parts you'll also need
+[Ollama](https://ollama.com).
 
 ```bash
-git config --global user.name  "Your Name"
-git config --global user.email "you@example.com"   # same email as your GitHub account
-```
-
-## 2. Get the project running
-
-```bash
-git clone https://github.com/<owner>/bookstore-clubs.git
+git clone https://github.com/p-yarlagadda07/bookstore-clubs.git
 cd bookstore-clubs
 git checkout dev
 npm install
-cp .env.example .env          # Windows PowerShell: copy .env.example .env
+cp .env.example .env
 ```
 
-Open `.env` and paste the `MONGODB_URI` the team lead sent you privately. Then:
+Open `.env` and paste in the `MONGODB_URI` I sent you on WhatsApp. Don't share it anywhere else and
+don't commit the `.env` file (it's already in `.gitignore`).
 
 ```bash
-npm run seed -- --reset       # creates demo users
-npm run dev                   # server on :4000, client on :5173
+npm run seed -- --reset
+npm run dev
 ```
 
-Open http://localhost:5173 — you should see **"API ok, database connected"**. ✅
+The server runs on port 4000 and the frontend on 5173. Open http://localhost:5173 - if it says
+"API ok, database connected" you're good to go.
 
-Demo logins (all use password `Password@123`):
-`admin@bookstore.test`, `bookseller@bookstore.test`, `moderator@bookstore.test`,
-`reader1@bookstore.test`, `reader2@bookstore.test`, `unverified@bookstore.test` (not verified).
+The seed creates a few test accounts. The password for all of them is `Password@123`:
 
-## 3. Your first task: the practice PR
+- admin@bookstore.test
+- bookseller@bookstore.test
+- moderator@bookstore.test
+- reader1@bookstore.test
+- reader2@bookstore.test
+- unverified@bookstore.test (email not verified, useful for testing)
+
+## First thing to do
+
+Add your name and GitHub username to the team table above and open a PR for it. It's just to make sure
+everyone's git setup works before we start on real code.
 
 ```bash
 git checkout dev
 git pull origin dev
-git checkout -b docs/add-<your-name>
-# edit README.md: put your name and GitHub username in your row of the Team table
+git checkout -b docs/add-yourname
+# edit README.md and fill in your row
 git add README.md
-git commit -m "docs: add <your name> to team table"
-git push -u origin docs/add-<your-name>
+git commit -m "docs: add my name to team table"
+git push -u origin docs/add-yourname
 ```
 
-On GitHub click **Compare & pull request** → base: `dev` → request a reviewer → wait for the green ✅ check.
+Then open a pull request into `dev` on GitHub and ask someone to review it.
 
-## 4. Everyday Git (every step = one branch = one PR)
+If you get a merge conflict on the README (because someone else's PR got merged first), just pull dev
+into your branch, keep both rows, commit and push again.
+
+## How we're working
+
+- `main` is for stable versions only. Everything goes into `dev` first.
+- You can't push to `main` or `dev` directly, so always make a branch and open a PR.
+- One task = one branch = one PR. Keep PRs small.
+- Branch names: `feat/books-filters`, `fix/chat-citations`, `docs/...`, `test/...`
+- Commit messages: `feat(books): add filters to GET /books`
+- Before opening a PR, merge the latest dev into your branch and run `npm run lint` and `npm test`.
+- Every PR needs one approval and the CI check has to pass.
+- Try to only change files in your own folders. If you need to change something in `shared/`,
+  `server/src/app.js`, `server/src/routes.js`, `package.json` or the seed script, make a separate
+  small PR and tag me.
+
+Normal flow for a task:
 
 ```bash
-git checkout dev && git pull origin dev           # 1. start from latest dev
-git checkout -b feat/<module>-<short-desc>        # 2. branch for this step
-# ...code...
-git add <your folder> && git commit -m "feat(<module>): what changed"   # 3. commit often
-git fetch origin && git merge origin/dev          # 4. bring in teammates' work
-npm run lint && npm test                           # 5. check
-git push -u origin feat/<module>-<short-desc>     # 6. push, then open a PR into dev
+git checkout dev
+git pull origin dev
+git checkout -b feat/your-task
+# work on it, commit as you go
+git fetch origin
+git merge origin/dev
+npm run lint
+npm test
+git push -u origin feat/your-task
 ```
 
-Full guide, conflict fixing and common mistakes: Document 02, Section 14.
-
-**Never:** push to `main`/`dev` directly · commit `.env`, passwords or `node_modules` · merge your own PR · edit another member's folder without asking.
-
----
-
-## 5. Where things live
+## Project structure
 
 ```
-shared/                 Zod schemas + constants used by server and client (Member 1 reviews changes)
-server/src/
-  app.js, routes.js     app wiring — every module router is already mounted, you don't edit these
-  middleware/           auth.js + security.js (Member 2), validate.js, error.js, response.js
-  modules/<module>/     model.js · service.js · controller.js · routes.js · *.test.js
-  ai/                   discovery (6) · rag (7) · agent (8)
-  jobs/                 background jobs (Member 4)
-server/scripts/seed.js  demo data — send your data files to Member 1
-server/test/            tests (vitest + supertest); helpers/db.js gives an in-memory MongoDB
-client/src/             React app — see client/src/README.md for folder owners
-docs/                   project PDFs, CONTRACT.md (API changes), adr/ (decisions)
+shared/            zod schemas and constants used by both server and client
+server/
+  src/
+    app.js         express setup
+    routes.js      all the module routers are already added here
+    middleware/    auth, validation, error handling
+    modules/       one folder per feature (books, clubs, reservations, ...)
+    ai/            discovery, book chat, reading agent
+    jobs/          background jobs
+  scripts/seed.js  test data
+  test/            tests
+client/            react app
+docs/              project pdfs and notes
 ```
 
-## 6. How to write a route (the standard pattern)
-
-Your router is already mounted at `/api` — define full paths:
+Each module has its own folder. The usual pattern is `model.js`, `service.js`, `controller.js` and
+`routes.js`, with tests next to them. Your router is already connected in `routes.js`, so you don't
+need to touch `app.js`. Just add your routes with the full path, for example:
 
 ```js
-// server/src/modules/books/routes.js
-import { Router } from 'express';
-import { validate } from '../../middleware/validate.js';
-import { requireAuth, requireRole } from '../../middleware/auth.js';
-import { asyncHandler } from '../../lib/asyncHandler.js';
-import { IdParams } from '@bookstore/shared';
-import * as ctrl from './controller.js';
-
-const router = Router();
-router.get('/books', asyncHandler(ctrl.list)); // public
-router.patch(
-  '/books/:id/stock',
-  requireAuth,
-  requireRole('bookseller'),
-  validate({ params: IdParams /*, body: UpdateStockBody */ }),
-  asyncHandler(ctrl.updateStock),
-);
-export default router;
-
-// controller.js — keep it thin, logic lives in service.js
-export const list = async (req, res) => res.ok(await service.list(req.query));
-// errors: throw new AppError('OUT_OF_STOCK', 409, 'No copy available');
+router.get('/books', asyncHandler(ctrl.list));
 ```
 
-Every response is `{ ok: true, data }` or `{ ok: false, error: { code, message, details } }`.
+Send responses with `res.ok(data)`. For errors, throw an `AppError`, e.g.
+`throw new AppError('OUT_OF_STOCK', 409, 'No copy available')`. The error handler takes care of the rest.
 
-## Scripts
+## Useful commands
 
-| Command                   | What it does                                     |
-| ------------------------- | ------------------------------------------------ |
-| `npm run dev`             | Start server (:4000) and client (:5173) together |
-| `npm run seed -- --reset` | Reset the database and load demo data            |
-| `npm test`                | Run server tests                                 |
-| `npm run lint`            | Check code style                                 |
-| `npm run format`          | Auto-format with Prettier                        |
-| `npm run build`           | Build the client                                 |
+```bash
+npm run dev               # start server and client
+npm run seed -- --reset   # reset the database with test data
+npm test                  # run tests
+npm run lint              # check code style
+npm run format            # format code with prettier
+```
+
+## If something breaks
+
+- `MONGODB_URI is missing` - the `.env` file should be in the main folder, not inside `server/`
+- `bad auth : Authentication failed` - check the username and password in your `MONGODB_URI`, there
+  shouldn't be any `< >` left in it
+- Port already in use - you probably have another terminal running `npm run dev`
+
+If you're stuck for more than an hour or so, just ask in the group.

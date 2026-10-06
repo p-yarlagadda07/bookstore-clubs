@@ -1,1 +1,3 @@
-Atlas Vector Search index definitions (JSON) - Member 6.
+# indexes
+
+Atlas vector search index definitions (JSON) go here so we can recreate them if needed.

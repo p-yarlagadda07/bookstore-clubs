@@ -1,23 +1,14 @@
-# Shared Zod schemas
+# schemas
 
-One file per module. Each owner adds the request/response schemas for their routes here
-(contract first - before writing the route), in a small PR that Member 1 reviews.
+Zod schemas for request and response bodies. Both the server and the client import from here, so
+the frontend and backend always agree on what the data looks like.
 
-| File                                 | Owner    |
-| ------------------------------------ | -------- |
-| `common.js`                          | Member 1 |
-| `auth.js`, `users.js`                | Member 2 |
-| `books.js`, `inventory.js`           | Member 3 |
-| `reservations.js`, `readingLists.js` | Member 4 |
-| `clubs.js`, `progress.js`            | Member 5 |
-| `discovery.js`                       | Member 6 |
-| `bookChat.js`                        | Member 7 |
-| `readingAgent.js`                    | Member 8 |
-
-Import on the server or client with:
+Add a file for your module (`books.js`, `clubs.js`, etc.) and put your schemas in it before you
+write the route. Changes to this folder need a review from me since everyone depends on it.
 
 ```js
 import { CreateReservationBody } from '@bookstore/shared/schemas/reservations';
 ```
 
-Record every breaking change in `docs/CONTRACT.md`.
+If you change an existing schema in a way that could break someone else's code, add a line to
+`docs/CONTRACT.md` and mention it in the group.

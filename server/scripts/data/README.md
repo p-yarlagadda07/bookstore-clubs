@@ -1,7 +1,9 @@
-Seed data files go here (JSON). Owners:
+# seed data
 
-- `books.json`, `inventory.json`, `catalogSources.json` - Member 3
-- `clubs.json` (clubs, memberships, meetings, progress) - Member 5
-- `excerpts.json`, `storeDocs.json` - Member 6
+JSON files used by the seed script.
 
-Only use permitted text: synopses, publisher-approved excerpts and store documents. No full copyrighted text.
+- books, inventory, catalog sources - Member 3
+- clubs, memberships, meetings, progress - Member 5
+- excerpts and store documents - Member 6
+
+Only use synopses, short approved excerpts and our own store documents. No full book text.
