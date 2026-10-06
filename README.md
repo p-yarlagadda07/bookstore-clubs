@@ -17,7 +17,7 @@ The full project docs and the work split are in the `docs` folder. Please read y
 | #   | Working on                              | Name                | GitHub         |
 | --- | --------------------------------------- | ------------------- | -------------- |
 | 1   | Setup, shared code, integration         | Poojitha Yarlagadda | p-yarlagadda07 |
-| 2   | Auth, sessions, roles                   |                     |                |
+| 2   | Auth, sessions, roles                   |  shravani           | ShravaniCodes25|
 | 3   | Books and inventory                     |                     |                |
 | 4   | Reservations and reading lists          |                     |                |
 | 5   | Clubs, meetings, reading progress       | Pranathi Vidiyala   |    pr-an-a     |
