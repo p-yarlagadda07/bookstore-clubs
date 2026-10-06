@@ -21,7 +21,7 @@ The full project docs and the work split are in the `docs` folder. Please read y
 | 3   | Books and inventory                     |                     |                |
 | 4   | Reservations and reading lists          |                     |                |
 | 5   | Clubs, meetings, reading progress       | Pranathi Vidiyala   |    pr-an-a     |
-| 6   | AI setup and book search                |                     |                |
+| 6   | AI setup and book search                |   Lahari              lahari040113               |
 | 7   | Book chat (no spoilers)                 |  Yasaswi Davuluri   | DavuluriYasaswi|
 | 8   | Reading agent                           |   Srilekha          |  srilekha1311  |
 | 9   | Frontend - reader pages                 |  Kusuma Thriveni    | KusumaThriveni |
