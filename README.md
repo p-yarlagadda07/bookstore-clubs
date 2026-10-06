@@ -20,7 +20,7 @@ The full project docs and the work split are in the `docs` folder. Please read y
 | 2   | Auth, sessions, roles                   |                     |                |
 | 3   | Books and inventory                     |                     |                |
 | 4   | Reservations and reading lists          |                     |                |
-| 5   | Clubs, meetings, reading progress       |                     |                |
+| 5   | Clubs, meetings, reading progress       | Pranathi Vidiyala   |    pr-an-a     |
 | 6   | AI setup and book search                |                     |                |
 | 7   | Book chat (no spoilers)                 |  Yasaswi Davuluri   | DavuluriYasaswi|
 | 8   | Reading agent                           |                     |                |
