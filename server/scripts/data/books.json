@@ -1,0 +1,872 @@
+[
+  {
+    "key": "b1",
+    "title": "The Lantern Keeper's Secret",
+    "authors": [
+      "Meera Iyer"
+    ],
+    "themes": [
+      "mystery",
+      "small town",
+      "family secrets"
+    ],
+    "moods": [
+      "suspenseful",
+      "atmospheric"
+    ],
+    "synopsis": "When the old lighthouse keeper of Port Ellis is found dead at the foot of his tower, his granddaughter Asha comes home for the funeral and stays for the questions. Every neighbour seems to be hiding something, and the logbook he kept for forty years has pages missing.",
+    "pageCount": 380,
+    "chapterCount": 24,
+    "readingHours": 9.5,
+    "source": "pub1",
+    "contentLevel": "excerpts"
+  },
+  {
+    "key": "b2",
+    "title": "The Ember Crown",
+    "authors": [
+      "Tomas Reyes"
+    ],
+    "themes": [
+      "fantasy",
+      "quest",
+      "found family"
+    ],
+    "moods": [
+      "adventurous",
+      "hopeful"
+    ],
+    "synopsis": "A runaway stable girl, a disgraced knight and a talking crow set out to return a cursed crown before the winter solstice. The further they travel, the more the crown seems to want to stay.",
+    "pageCount": 412,
+    "chapterCount": 28,
+    "readingHours": 10.3,
+    "source": "pub1",
+    "contentLevel": "excerpts"
+  },
+  {
+    "key": "b3",
+    "title": "Pride and Prejudice",
+    "authors": [
+      "Jane Austen"
+    ],
+    "themes": [
+      "classics",
+      "romance",
+      "society"
+    ],
+    "moods": [
+      "witty",
+      "light"
+    ],
+    "synopsis": "Elizabeth Bennet is clever, quick to judge and in no hurry to marry. When the proud Mr Darcy arrives in the neighbourhood, first impressions turn out to be very hard to undo.",
+    "pageCount": 432,
+    "chapterCount": 61,
+    "readingHours": 10.8,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b4",
+    "title": "Murder at Platform Nine",
+    "authors": [
+      "Kabir Sethi"
+    ],
+    "themes": [
+      "mystery",
+      "detective",
+      "trains"
+    ],
+    "moods": [
+      "suspenseful",
+      "light"
+    ],
+    "synopsis": "Inspector Rao has one night train, eleven passengers and a body in the luggage car. A quick, clever whodunit that can be read in a weekend.",
+    "pageCount": 220,
+    "chapterCount": 14,
+    "readingHours": 5.5,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b5",
+    "title": "The Quiet Orchard",
+    "authors": [
+      "Leela Nair"
+    ],
+    "themes": [
+      "literary",
+      "family",
+      "grief"
+    ],
+    "moods": [
+      "reflective",
+      "tender"
+    ],
+    "synopsis": "After their mother's death, three sisters return to the family orchard to decide whether to sell it. Over one harvest season, old arguments resurface and some finally get settled.",
+    "pageCount": 296,
+    "chapterCount": 18,
+    "readingHours": 7.4,
+    "source": "pub1",
+    "contentLevel": "excerpts"
+  },
+  {
+    "key": "b6",
+    "title": "The Glass Detective",
+    "authors": [
+      "Arjun Mehta"
+    ],
+    "themes": [
+      "mystery",
+      "detective",
+      "city"
+    ],
+    "moods": [
+      "dark",
+      "suspenseful"
+    ],
+    "synopsis": "A retired forensic photographer is pulled back into a case she never solved when a new crime scene looks exactly like one from twenty years ago.",
+    "pageCount": 340,
+    "chapterCount": 22,
+    "readingHours": 8.5,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b7",
+    "title": "Tea and Alibis",
+    "authors": [
+      "Priya Desai"
+    ],
+    "themes": [
+      "mystery",
+      "cozy",
+      "small town"
+    ],
+    "moods": [
+      "light",
+      "cozy"
+    ],
+    "synopsis": "Nandita runs the busiest tea shop in the hill town of Kasauli and hears every rumour first. When a guest at the heritage hotel disappears, her regulars expect her to find out what happened.",
+    "pageCount": 248,
+    "chapterCount": 16,
+    "readingHours": 6.2,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b8",
+    "title": "The Last Stop on Willow Road",
+    "authors": [
+      "Daniel Brooks"
+    ],
+    "themes": [
+      "mystery",
+      "thriller"
+    ],
+    "moods": [
+      "tense",
+      "dark"
+    ],
+    "synopsis": "A bus driver notices the same passenger getting off at the last stop every night, though nobody lives there. Curiosity turns into something much more dangerous.",
+    "pageCount": 298,
+    "chapterCount": 20,
+    "readingHours": 7.5,
+    "source": "pub1",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b9",
+    "title": "Snow on the Bay Bridge",
+    "authors": [
+      "Hannah Cole"
+    ],
+    "themes": [
+      "mystery",
+      "police procedural"
+    ],
+    "moods": [
+      "tense",
+      "atmospheric"
+    ],
+    "synopsis": "A rare snowstorm shuts down the city just as Detective Lena Park is handed a case that someone very powerful wants closed quickly.",
+    "pageCount": 356,
+    "chapterCount": 26,
+    "readingHours": 8.9,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b10",
+    "title": "The Paper Garden",
+    "authors": [
+      "Ishaan Kapoor"
+    ],
+    "themes": [
+      "mystery",
+      "art"
+    ],
+    "moods": [
+      "thoughtful",
+      "suspenseful"
+    ],
+    "synopsis": "An art restorer finds a hidden message under the paint of a minor painting and starts to suspect it was meant for her family.",
+    "pageCount": 264,
+    "chapterCount": 17,
+    "readingHours": 6.6,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b11",
+    "title": "Starfall Academy",
+    "authors": [
+      "Rina Takahashi"
+    ],
+    "themes": [
+      "fantasy",
+      "school",
+      "magic"
+    ],
+    "moods": [
+      "fun",
+      "adventurous"
+    ],
+    "synopsis": "Mira can't do the simplest spell but somehow gets into the most famous magic school in the realm. She soon learns why they really wanted her.",
+    "pageCount": 318,
+    "chapterCount": 24,
+    "readingHours": 8.0,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b12",
+    "title": "The Salt Road",
+    "authors": [
+      "Yusuf Ali"
+    ],
+    "themes": [
+      "fantasy",
+      "adventure",
+      "trade"
+    ],
+    "moods": [
+      "adventurous",
+      "epic"
+    ],
+    "synopsis": "Caravans cross the great salt desert once a year. This year one of them is carrying something the desert itself seems to be hunting.",
+    "pageCount": 488,
+    "chapterCount": 34,
+    "readingHours": 12.2,
+    "source": "pub1",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b13",
+    "title": "Moonlit Tides",
+    "authors": [
+      "Clara Hughes"
+    ],
+    "themes": [
+      "fantasy",
+      "sea",
+      "romance"
+    ],
+    "moods": [
+      "dreamy",
+      "romantic"
+    ],
+    "synopsis": "A lighthouse witch and a shipwrecked sailor make a deal: she will hide him until spring if he helps her break the curse on the coast.",
+    "pageCount": 302,
+    "chapterCount": 21,
+    "readingHours": 7.5,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b14",
+    "title": "The Clockwork Fox",
+    "authors": [
+      "Owen Price"
+    ],
+    "themes": [
+      "fantasy",
+      "steampunk",
+      "heist"
+    ],
+    "moods": [
+      "fun",
+      "fast-paced"
+    ],
+    "synopsis": "A clever mechanical fox and a pickpocket team up to steal back an invention from the most guarded tower in the city.",
+    "pageCount": 276,
+    "chapterCount": 19,
+    "readingHours": 6.9,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b15",
+    "title": "Jane Eyre",
+    "authors": [
+      "Charlotte Bronte"
+    ],
+    "themes": [
+      "classics",
+      "romance",
+      "gothic"
+    ],
+    "moods": [
+      "dark",
+      "emotional"
+    ],
+    "synopsis": "An orphan who has learned to expect little from the world becomes a governess at Thornfield Hall, where strange noises at night are only the first of its secrets.",
+    "pageCount": 512,
+    "chapterCount": 38,
+    "readingHours": 12.8,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b16",
+    "title": "Little Women",
+    "authors": [
+      "Louisa May Alcott"
+    ],
+    "themes": [
+      "classics",
+      "family",
+      "coming of age"
+    ],
+    "moods": [
+      "warm",
+      "tender"
+    ],
+    "synopsis": "Four sisters grow up in a small New England town during and after the Civil War, each trying to work out what kind of life she wants.",
+    "pageCount": 459,
+    "chapterCount": 47,
+    "readingHours": 11.5,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b17",
+    "title": "The Adventures of Sherlock Holmes",
+    "authors": [
+      "Arthur Conan Doyle"
+    ],
+    "themes": [
+      "classics",
+      "mystery",
+      "detective"
+    ],
+    "moods": [
+      "clever",
+      "light"
+    ],
+    "synopsis": "Twelve short cases for the famous detective and Dr Watson, from a missing bride to a strange league of red-headed men. Good for readers who like a puzzle per sitting.",
+    "pageCount": 307,
+    "chapterCount": 12,
+    "readingHours": 7.7,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b18",
+    "title": "Frankenstein",
+    "authors": [
+      "Mary Shelley"
+    ],
+    "themes": [
+      "classics",
+      "science fiction",
+      "gothic"
+    ],
+    "moods": [
+      "dark",
+      "thoughtful"
+    ],
+    "synopsis": "A young scientist succeeds in creating life and immediately regrets it. The story asks who the real monster is.",
+    "pageCount": 280,
+    "chapterCount": 24,
+    "readingHours": 7.0,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b19",
+    "title": "Great Expectations",
+    "authors": [
+      "Charles Dickens"
+    ],
+    "themes": [
+      "classics",
+      "coming of age"
+    ],
+    "moods": [
+      "thoughtful",
+      "emotional"
+    ],
+    "synopsis": "Pip, a poor village boy, suddenly receives money from a secret benefactor and is sent to London to become a gentleman, with mixed results.",
+    "pageCount": 505,
+    "chapterCount": 59,
+    "readingHours": 12.6,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b20",
+    "title": "Signals from Kepler",
+    "authors": [
+      "Ananya Rao"
+    ],
+    "themes": [
+      "science fiction",
+      "space",
+      "first contact"
+    ],
+    "moods": [
+      "thoughtful",
+      "tense"
+    ],
+    "synopsis": "A small team at a radio observatory picks up a signal that repeats every 17 minutes. Deciding whether to answer becomes the hardest question of their lives.",
+    "pageCount": 364,
+    "chapterCount": 27,
+    "readingHours": 9.1,
+    "source": "pub1",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b21",
+    "title": "The Last Algorithm",
+    "authors": [
+      "Marcus Webb"
+    ],
+    "themes": [
+      "science fiction",
+      "technology",
+      "thriller"
+    ],
+    "moods": [
+      "fast-paced",
+      "tense"
+    ],
+    "synopsis": "A junior programmer discovers that the city's traffic system has started making decisions nobody programmed. Her bosses would rather she forgot about it.",
+    "pageCount": 328,
+    "chapterCount": 25,
+    "readingHours": 8.2,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b22",
+    "title": "Red Dust Colony",
+    "authors": [
+      "Sofia Lindqvist"
+    ],
+    "themes": [
+      "science fiction",
+      "survival",
+      "space"
+    ],
+    "moods": [
+      "tense",
+      "hopeful"
+    ],
+    "synopsis": "When supply ships stop arriving, the 300 residents of the first Mars colony have to decide how to survive on their own.",
+    "pageCount": 392,
+    "chapterCount": 30,
+    "readingHours": 9.8,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b23",
+    "title": "Sleepers of Orion",
+    "authors": [
+      "Kenji Mori"
+    ],
+    "themes": [
+      "science fiction",
+      "mystery",
+      "space"
+    ],
+    "moods": [
+      "atmospheric",
+      "suspenseful"
+    ],
+    "synopsis": "One crew member wakes early from cryosleep on a generation ship and finds that the ship's log has been edited.",
+    "pageCount": 310,
+    "chapterCount": 22,
+    "readingHours": 7.8,
+    "source": "pub2",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b24",
+    "title": "Monsoon Letters",
+    "authors": [
+      "Divya Menon"
+    ],
+    "themes": [
+      "romance",
+      "letters",
+      "India"
+    ],
+    "moods": [
+      "romantic",
+      "warm"
+    ],
+    "synopsis": "Two strangers start writing to each other after a mixed-up delivery during a Mumbai monsoon. Neither is quite who the other imagines.",
+    "pageCount": 254,
+    "chapterCount": 20,
+    "readingHours": 6.3,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b25",
+    "title": "The Bookshop on Elm Street",
+    "authors": [
+      "Grace Turner"
+    ],
+    "themes": [
+      "romance",
+      "small town",
+      "books"
+    ],
+    "moods": [
+      "cozy",
+      "warm"
+    ],
+    "synopsis": "A burnt-out lawyer inherits a failing bookshop and plans to sell it fast. The regulars, and the grumpy man who runs the café next door, have other plans.",
+    "pageCount": 268,
+    "chapterCount": 22,
+    "readingHours": 6.7,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b26",
+    "title": "Second Chances in Shimla",
+    "authors": [
+      "Rohan Malhotra"
+    ],
+    "themes": [
+      "romance",
+      "travel"
+    ],
+    "moods": [
+      "light",
+      "romantic"
+    ],
+    "synopsis": "Ten years after a bad breakup, two old college friends end up as the only guests at a snowed-in guesthouse.",
+    "pageCount": 236,
+    "chapterCount": 18,
+    "readingHours": 5.9,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b27",
+    "title": "Every Summer After the Rain",
+    "authors": [
+      "Lucy Grant"
+    ],
+    "themes": [
+      "romance",
+      "friendship"
+    ],
+    "moods": [
+      "emotional",
+      "warm"
+    ],
+    "synopsis": "Two friends meet at the same lake house every summer for twelve years. This summer one of them finally says what they've both been avoiding.",
+    "pageCount": 322,
+    "chapterCount": 26,
+    "readingHours": 8.1,
+    "source": "pub1",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b28",
+    "title": "The River Between Us",
+    "authors": [
+      "Aditya Bose"
+    ],
+    "themes": [
+      "literary",
+      "family",
+      "India"
+    ],
+    "moods": [
+      "reflective",
+      "emotional"
+    ],
+    "synopsis": "Two brothers inherit their father's boat business on the Hooghly and disagree about almost everything, including what their father really wanted.",
+    "pageCount": 348,
+    "chapterCount": 24,
+    "readingHours": 8.7,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b29",
+    "title": "A House of Small Lights",
+    "authors": [
+      "Marta Kowalski"
+    ],
+    "themes": [
+      "literary",
+      "history",
+      "family"
+    ],
+    "moods": [
+      "tender",
+      "thoughtful"
+    ],
+    "synopsis": "Told through the families who lived in one Warsaw apartment over a hundred years, each chapter is a different decade and a different kind of hope.",
+    "pageCount": 376,
+    "chapterCount": 28,
+    "readingHours": 9.4,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b30",
+    "title": "Before the Tea Gets Cold",
+    "authors": [
+      "Sana Qureshi"
+    ],
+    "themes": [
+      "literary",
+      "short stories"
+    ],
+    "moods": [
+      "warm",
+      "reflective"
+    ],
+    "synopsis": "Twelve short stories set in a small Hyderabad café, each about a conversation that changes something for the people at the table.",
+    "pageCount": 198,
+    "chapterCount": 12,
+    "readingHours": 5.0,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b31",
+    "title": "The Weight of Feathers",
+    "authors": [
+      "Elena Ruiz"
+    ],
+    "themes": [
+      "literary",
+      "coming of age"
+    ],
+    "moods": [
+      "emotional",
+      "tender"
+    ],
+    "synopsis": "A teenage girl spends a summer helping her grandfather at his bird rescue and learns more about her family than she expected.",
+    "pageCount": 288,
+    "chapterCount": 21,
+    "readingHours": 7.2,
+    "source": "pub2",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b32",
+    "title": "Tiny Habits, Big Days",
+    "authors": [
+      "Neha Arora"
+    ],
+    "themes": [
+      "non-fiction",
+      "self-help",
+      "habits"
+    ],
+    "moods": [
+      "practical",
+      "hopeful"
+    ],
+    "synopsis": "A friendly, practical guide to building small daily habits that add up, with simple exercises at the end of each chapter.",
+    "pageCount": 224,
+    "chapterCount": 15,
+    "readingHours": 5.6,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b33",
+    "title": "The History of Chai",
+    "authors": [
+      "Vikram Shah"
+    ],
+    "themes": [
+      "non-fiction",
+      "history",
+      "food"
+    ],
+    "moods": [
+      "curious",
+      "light"
+    ],
+    "synopsis": "How a drink became part of everyday life across India, told through traders, railway stations, roadside stalls and family kitchens.",
+    "pageCount": 256,
+    "chapterCount": 14,
+    "readingHours": 6.4,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b34",
+    "title": "Under the Same Stars",
+    "authors": [
+      "Laura Kim"
+    ],
+    "themes": [
+      "non-fiction",
+      "science",
+      "space"
+    ],
+    "moods": [
+      "curious",
+      "hopeful"
+    ],
+    "synopsis": "An easy-to-read tour of the night sky and what astronomers have learned about it, written for people with no science background.",
+    "pageCount": 300,
+    "chapterCount": 18,
+    "readingHours": 7.5,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b35",
+    "title": "The Quiet Mind",
+    "authors": [
+      "Samuel Okafor"
+    ],
+    "themes": [
+      "non-fiction",
+      "psychology"
+    ],
+    "moods": [
+      "calm",
+      "practical"
+    ],
+    "synopsis": "Short, clear chapters on attention, rest and focus, with ideas you can try the same day.",
+    "pageCount": 212,
+    "chapterCount": 13,
+    "readingHours": 5.3,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b36",
+    "title": "Feeding a Crowd",
+    "authors": [
+      "Anjali Pillai"
+    ],
+    "themes": [
+      "non-fiction",
+      "food",
+      "cooking"
+    ],
+    "moods": [
+      "warm",
+      "practical"
+    ],
+    "synopsis": "Simple recipes and planning tips for cooking for big family gatherings without spending the whole day in the kitchen.",
+    "pageCount": 190,
+    "chapterCount": 10,
+    "readingHours": 4.8,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b37",
+    "title": "The Mapmaker's Daughter",
+    "authors": [
+      "Nora Fitzgerald"
+    ],
+    "themes": [
+      "historical",
+      "adventure"
+    ],
+    "moods": [
+      "adventurous",
+      "emotional"
+    ],
+    "synopsis": "In 1700s Lisbon, a mapmaker's daughter secretly finishes her father's maps and has to decide whether to sail with the expedition that will use them.",
+    "pageCount": 420,
+    "chapterCount": 32,
+    "readingHours": 10.5,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b38",
+    "title": "Ghosts of the Haveli",
+    "authors": [
+      "Karan Joshi"
+    ],
+    "themes": [
+      "horror",
+      "India",
+      "family secrets"
+    ],
+    "moods": [
+      "dark",
+      "atmospheric"
+    ],
+    "synopsis": "A family moves into an old haveli in Rajasthan for a fresh start. The house has its own idea of who belongs there.",
+    "pageCount": 284,
+    "chapterCount": 19,
+    "readingHours": 7.1,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b39",
+    "title": "The Night Library",
+    "authors": [
+      "Iris Bell"
+    ],
+    "themes": [
+      "fantasy",
+      "books",
+      "mystery"
+    ],
+    "moods": [
+      "dreamy",
+      "suspenseful"
+    ],
+    "synopsis": "A library that only opens after midnight lends books that change depending on who reads them. One night, a reader doesn't come back.",
+    "pageCount": 296,
+    "chapterCount": 23,
+    "readingHours": 7.4,
+    "source": "store",
+    "contentLevel": "synopsis"
+  },
+  {
+    "key": "b40",
+    "title": "Cricket in the Lanes",
+    "authors": [
+      "Farhan Sheikh"
+    ],
+    "themes": [
+      "middle grade",
+      "sports",
+      "friendship"
+    ],
+    "moods": [
+      "fun",
+      "hopeful"
+    ],
+    "synopsis": "A group of kids from the same lane enter a city cricket tournament with one borrowed bat and a lot of confidence.",
+    "pageCount": 176,
+    "chapterCount": 14,
+    "readingHours": 4.4,
+    "source": "store",
+    "contentLevel": "synopsis"
+  }
+]
