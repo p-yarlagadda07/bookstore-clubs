@@ -14,9 +14,9 @@ router.post(
   async (req, res, next) => {
     let closed = false;
 
-    req.on('close', () => {
-      closed = true;
-    });
+    res.on('close', () => {
+  if (!res.writableEnded) closed = true;
+});
 
     try {
       const { clubId, request } = req.body;
