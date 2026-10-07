@@ -9,8 +9,6 @@ chapter you're on, and an agent that helps a club pick its next book.
 
 Built with React (Vite), Node + Express, MongoDB Atlas (with vector search), Mongoose, Zod, Ollama and LangChain.js.
 
-The full project docs and the work split are in the `docs` folder. Please read your own section in
-`02_Work_Division_and_Integration_Plan.pdf` before you start.
 
 ## Team
 
@@ -155,4 +153,4 @@ npm run format            # format code with prettier
   shouldn't be any `< >` left in it
 - Port already in use - you probably have another terminal running `npm run dev`
 
-If you're stuck for more than an hour or so, just ask in the group.
+
