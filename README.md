@@ -19,7 +19,7 @@ The full project docs and the work split are in the `docs` folder. Please read y
 | 1   | Setup, shared code, integration         | Poojitha Yarlagadda | p-yarlagadda07 |
 | 2   | Auth, sessions, roles                   |  shravani           | ShravaniCodes25|
 | 3   | Books and inventory                     |                     |                |
-| 4   | Reservations and reading lists          |                     |                |
+| 4   | Reservations and reading lists          |chinni Sri           |Chinnisri1134   |
 | 5   | Clubs, meetings, reading progress       | Pranathi Vidiyala   |    pr-an-a     |
 | 6   | AI setup and book search                |  Lahari             | lahari040113   |
 | 7   | Book chat (no spoilers)                 |  Yasaswi Davuluri   | DavuluriYasaswi|
