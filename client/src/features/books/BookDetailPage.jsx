@@ -61,7 +61,7 @@ export default function BookDetailPage() {
       item.available > 0
   );
 
-  const canReserve =
+  
     hasAvailableCopy &&
     isLoggedIn &&
     isVerified &&
