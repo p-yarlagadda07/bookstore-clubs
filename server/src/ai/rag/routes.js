@@ -13,7 +13,7 @@ router.post(
   validate({ body: BookChatBody }),
   asyncHandler(async (req, res) => {
     const result = await bookChat(req.user, req.body);
-    res.json(result);
+    res.ok(result);
   }),
 );
 
