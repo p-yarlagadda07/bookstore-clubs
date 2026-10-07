@@ -1,11 +1,14 @@
 import { beforeAll, afterAll, beforeEach, describe, expect, it } from 'vitest';
 import mongoose from 'mongoose';
 import { startTestDB, stopTestDB } from '../../../test/helpers/db.js';
-import { Club, Membership } from './model.js';
+import { Club, Membership, Meeting } from './model.js';
 import {
   getPublishedClubs,
   getPublishedClubById,
   joinClub,
+  getClub,
+  isMember,
+  getConstraints,
 } from './service.js';
 
 beforeAll(async () => {
@@ -70,4 +73,80 @@ describe('clubs service', () => {
 
     expect(result.error).toBe('ALREADY_MEMBER');
   });
+
+  it('gets a club by id', async () => {
+    const club = await Club.create({
+      name: 'Test Club',
+      published: true,
+    });
+
+    const result = await getClub(club._id);
+
+    expect(String(result._id)).toBe(String(club._id));
+    expect(result.name).toBe('Test Club');
+  });
+
+  it('checks whether a user is an active member', async () => {
+    const club = await Club.create({
+      name: 'Test Club',
+      published: true,
+    });
+
+    const userId = new mongoose.Types.ObjectId();
+
+    expect(await isMember(club._id, userId)).toBe(false);
+
+    await Membership.create({
+      clubId: club._id,
+      userId,
+      status: 'active',
+    });
+
+    expect(await isMember(club._id, userId)).toBe(true);
+  });
+
+  it('returns club reading constraints', async () => {
+    const club = await Club.create({
+      name: 'Test Club',
+      published: true,
+      rules: ['Be respectful', 'Read before meetings'],
+      readingPace: { pagesPerWeek: 140 },
+    });
+
+    await Membership.create([
+      {
+        clubId: club._id,
+        userId: new mongoose.Types.ObjectId(),
+        status: 'active',
+      },
+      {
+        clubId: club._id,
+        userId: new mongoose.Types.ObjectId(),
+        status: 'active',
+      },
+      {
+        clubId: club._id,
+        userId: new mongoose.Types.ObjectId(),
+        status: 'removed',
+      },
+    ]);
+
+    await Meeting.create({
+      clubId: club._id,
+      date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+      createdBy: new mongoose.Types.ObjectId(),
+    });
+
+    const result = await getConstraints(club._id, {
+      _id: new mongoose.Types.ObjectId(),
+    });
+
+    expect(result.memberCount).toBe(2);
+    expect(result.nextMeetingDate).toBeDefined();
+    expect(result.daysUntilMeeting).toBe(14);
+    expect(result.pagesPerWeek).toBe(140);
+    expect(result.pagesBeforeMeeting).toBe(280);
+    expect(result.rules).toEqual(['Be respectful', 'Read before meetings']);
+  });
+
 });

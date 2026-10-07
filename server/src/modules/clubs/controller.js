@@ -1,5 +1,5 @@
 import { AppError } from '../../lib/AppError.js';
-import { getPublishedClubs, getPublishedClubById, joinClub } from './service.js';
+import { getPublishedClubs, getPublishedClubById, joinClub, getClubProgress } from './service.js';
 
 export const listClubs = async (_req, res) => {
   res.ok(await getPublishedClubs());
@@ -22,4 +22,9 @@ export const joinClubController = async (req, res) => {
     throw new AppError('FORBIDDEN', 403, 'You cannot rejoin this club');
 
   res.ok(result.membership, 201);
+};
+
+
+export const getClubProgressController = async (req, res) => {
+  res.ok(await getClubProgress(req.params.id));
 };

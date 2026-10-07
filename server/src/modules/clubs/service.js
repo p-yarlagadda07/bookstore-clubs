@@ -83,3 +83,71 @@ export const joinClub = async (clubId, user) => {
     throw err;
   }
 };
+
+export async function getClub(id) {
+  return Club.findById(id).lean();
+}
+
+export async function isMember(clubId, userId) {
+  const membership = await Membership.findOne({
+    clubId,
+    userId,
+    status: 'active',
+  }).lean();
+
+  return !!membership;
+}
+
+export async function getConstraints(clubId, _user) {
+  const club = await getClub(clubId);
+  if (!club) return null;
+
+  const [memberCount, nextMeeting] = await Promise.all([
+    Membership.countDocuments({ clubId, status: 'active' }),
+    Meeting.findOne({ clubId, date: { $gte: new Date() } })
+      .sort({ date: 1 })
+      .lean(),
+  ]);
+
+  const pagesPerWeek = club.readingPace?.pagesPerWeek ?? 100;
+
+  let daysUntilMeeting = null;
+  let pagesBeforeMeeting = 0;
+
+  if (nextMeeting) {
+    daysUntilMeeting = Math.max(
+      0,
+      Math.ceil((nextMeeting.date.getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
+    );
+    pagesBeforeMeeting = Math.floor((pagesPerWeek * daysUntilMeeting) / 7);
+  }
+
+  return {
+    memberCount,
+    nextMeetingDate: nextMeeting?.date ?? null,
+    daysUntilMeeting,
+    pagesPerWeek,
+    pagesBeforeMeeting,
+    rules: club.rules ?? [],
+  };
+}
+
+
+export async function getClubProgress(clubId) {
+  const memberIds = await Membership.find({
+    clubId,
+    status: 'active',
+  }).distinct('userId');
+
+  if (!memberIds.length) return [];
+
+  return mongoose.connection
+    .collection('progresses')
+    .find({
+      clubId: new mongoose.Types.ObjectId(String(clubId)),
+      userId: { $in: memberIds },
+      visibility: { $in: ['club', 'public'] },
+    })
+    .sort({ updatedAt: -1 })
+    .toArray();
+}
