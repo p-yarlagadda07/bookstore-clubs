@@ -28,6 +28,8 @@ The full project docs and the work split are in the `docs` folder. Please read y
 | 10  | Frontend - clubs, staff and agent pages | Pagadavarapu Nandini | nandu23008      |
 
 ## Running it locally
+**Running the AI parts**
+Install Ollama from ollama.com and open it. Then run `ollama pull nomic-embed-text` and `ollama pull llama3.1:8b`. On a slow laptop, use `llama3.2:3b` and set `OLLAMA_CHAT_MODEL` in `.env`. If an AI route returns `AI_UNAVAILABLE`, Ollama isn't running. Open the Ollama app or run `ollama serve`.
 
 You need Git and Node 20 or newer. If you're working on the AI parts you'll also need
 [Ollama](https://ollama.com).
