@@ -1,11 +1,13 @@
 import * as service from './service.js';
 
 export async function set(req, res) {
-  const progress = await service.setProgress(req.user, req.body);
-  res.ok(progress);
+  res.ok(await service.setProgress(req.user, req.body));
+}
+
+export async function listMine(req, res) {
+  res.ok({ items: await service.listMyProgress(req.user) });
 }
 
 export async function getOne(req, res) {
-  const progress = await service.getMyProgress(req.user, req.params.bookId);
-  res.ok(progress);
+  res.ok(await service.getMyProgress(req.user, req.params.bookId));
 }

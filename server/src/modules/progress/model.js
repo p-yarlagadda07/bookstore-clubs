@@ -7,11 +7,12 @@ const progressSchema = new mongoose.Schema(
     clubId: { type: mongoose.Schema.Types.ObjectId, ref: 'Club' },
     chapter: { type: Number, required: true, min: 0 },
     page: { type: Number, min: 0 },
-    visibility: { type: String, enum: ['private', 'club'], default: 'private' },
+    visibility: { type: String, enum: ['private', 'club', 'public'], default: 'private' },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
+// one progress record per reader per book
 progressSchema.index({ userId: 1, bookId: 1 }, { unique: true });
 
 export default mongoose.model('Progress', progressSchema);

@@ -6,7 +6,7 @@ export const SetProgressBody = z.object({
   clubId: ObjectId.optional(),
   chapter: z.number().int().min(0),
   page: z.number().int().min(0).optional(),
-  visibility: z.enum(['private', 'club']).optional(),
+  visibility: z.enum(['private', 'club', 'public']).optional(),
 });
 
 export const BookIdParams = z.object({
