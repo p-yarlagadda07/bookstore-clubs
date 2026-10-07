@@ -1,0 +1,228 @@
+.stock-page {
+  padding: 24px;
+}
+
+.stock-page h1 {
+  margin-bottom: 20px;
+}
+
+.stock-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.stock-tab {
+  padding: 10px 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.stock-tab.active {
+  background: #222;
+  color: #fff;
+}
+
+.stock-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.stock-search {
+  width: 100%;
+  max-width: 360px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.stock-table-wrapper {
+  overflow-x: auto;
+}
+
+.stock-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.stock-table th,
+.stock-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.stock-table th {
+  background: #f5f5f5;
+  font-weight: 600;
+}
+
+.stock-table td strong {
+  display: block;
+}
+
+.stock-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.stock-button {
+  padding: 8px 12px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.stock-button:hover {
+  background: #f2f2f2;
+}
+
+.stock-button.primary {
+  background: #222;
+  color: #fff;
+  border-color: #222;
+}
+
+.stock-button.danger {
+  border-color: #c33;
+  color: #c33;
+}
+
+.stock-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.stock-status.available {
+  background: #e8f5e9;
+  color: #256029;
+}
+
+.stock-status.unavailable {
+  background: #ffebee;
+  color: #b71c1c;
+}
+
+.stock-pickups {
+  display: grid;
+  gap: 12px;
+}
+
+.stock-pickup-card {
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.stock-pickup-card h3 {
+  margin: 0 0 8px;
+}
+
+.stock-pickup-card p {
+  margin: 4px 0;
+}
+
+.stock-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+}
+
+.stock-dialog {
+  width: 100%;
+  max-width: 480px;
+  padding: 24px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.stock-dialog h2 {
+  margin-top: 0;
+}
+
+.stock-form {
+  display: grid;
+  gap: 14px;
+}
+
+.stock-form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.stock-form input,
+.stock-form select,
+.stock-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.stock-form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.stock-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.stock-error {
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #ffebee;
+  color: #b71c1c;
+  font-size: 14px;
+}
+
+.stock-empty {
+  padding: 24px;
+  text-align: center;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .stock-page {
+    padding: 16px;
+  }
+
+  .stock-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stock-search {
+    max-width: none;
+  }
+
+  .stock-table {
+    min-width: 900px;
+  }
+}
