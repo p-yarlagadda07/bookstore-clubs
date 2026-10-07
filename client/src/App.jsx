@@ -6,8 +6,7 @@ import useMe from './app/useMe.js';
 import ProtectedRoute from './app/ProtectedRoute.jsx';
 import ClubsPage from './features/clubs/ClubsPage.jsx';
 import ClubDetailPage from './features/clubs/ClubDetailPage.jsx';
-import CatalogPage from './features/books/CatalogPage.jsx';
-import BookDetailPage from './features/books/BookDetailPage.jsx';
+
 import LoginPage from './features/auth/LoginPage.jsx';
 import SignupPage from './features/auth/SignupPage.jsx';
 import VerifyPage from './features/auth/VerifyPage.jsx';
@@ -109,14 +108,14 @@ export default function App() {
             element={<Placeholder name="Discovery" />}
           />
 
-          <Route
+         <Route
   path="/books"
-  element={<CatalogPage />}
+  element={<Placeholder name="Catalog" />}
 />
 
 <Route
   path="/books/:id"
-  element={<BookDetailPage />}
+  element={<Placeholder name="Book detail" />}
 />
 
           <Route
