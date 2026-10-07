@@ -1,0 +1,530 @@
+[
+  {
+    "book": "b1",
+    "condition": "new",
+    "total": 2,
+    "available": 2,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b1",
+    "condition": "used",
+    "total": 1,
+    "available": 1,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b2",
+    "condition": "new",
+    "total": 4,
+    "available": 4,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b2",
+    "condition": "used",
+    "total": 1,
+    "available": 1,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b3",
+    "condition": "new",
+    "total": 5,
+    "available": 5,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b4",
+    "condition": "new",
+    "total": 6,
+    "available": 6,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b4",
+    "condition": "used",
+    "total": 4,
+    "available": 4,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b5",
+    "condition": "new",
+    "total": 2,
+    "available": 2,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b6",
+    "condition": "new",
+    "total": 4,
+    "available": 4,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b7",
+    "condition": "new",
+    "total": 6,
+    "available": 6,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b7",
+    "condition": "used",
+    "total": 1,
+    "available": 1,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b8",
+    "condition": "new",
+    "total": 2,
+    "available": 2,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b9",
+    "condition": "new",
+    "total": 5,
+    "available": 5,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b9",
+    "condition": "used",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b10",
+    "condition": "new",
+    "total": 2,
+    "available": 0,
+    "held": 2,
+    "status": "active"
+  },
+  {
+    "book": "b11",
+    "condition": "new",
+    "total": 2,
+    "available": 2,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b11",
+    "condition": "used",
+    "total": 1,
+    "available": 1,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b12",
+    "condition": "new",
+    "total": 2,
+    "available": 2,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b12",
+    "condition": "used",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b13",
+    "condition": "new",
+    "total": 2,
+    "available": 2,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b14",
+    "condition": "new",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b15",
+    "condition": "new",
+    "total": 6,
+    "available": 6,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b15",
+    "condition": "used",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b16",
+    "condition": "new",
+    "total": 2,
+    "available": 2,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b16",
+    "condition": "used",
+    "total": 1,
+    "available": 1,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b17",
+    "condition": "new",
+    "total": 2,
+    "available": 2,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b17",
+    "condition": "used",
+    "total": 1,
+    "available": 1,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b18",
+    "condition": "new",
+    "total": 4,
+    "available": 4,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b18",
+    "condition": "used",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b19",
+    "condition": "new",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b20",
+    "condition": "new",
+    "total": 6,
+    "available": 6,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b20",
+    "condition": "used",
+    "total": 2,
+    "available": 2,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b21",
+    "condition": "new",
+    "total": 6,
+    "available": 6,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b21",
+    "condition": "used",
+    "total": 1,
+    "available": 1,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b22",
+    "condition": "new",
+    "total": 2,
+    "available": 2,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b22",
+    "condition": "used",
+    "total": 1,
+    "available": 1,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b23",
+    "condition": "new",
+    "total": 4,
+    "available": 4,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b24",
+    "condition": "new",
+    "total": 6,
+    "available": 6,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b25",
+    "condition": "new",
+    "total": 6,
+    "available": 6,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b26",
+    "condition": "new",
+    "total": 6,
+    "available": 6,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b26",
+    "condition": "used",
+    "total": 1,
+    "available": 1,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b27",
+    "condition": "new",
+    "total": 5,
+    "available": 5,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b27",
+    "condition": "used",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b28",
+    "condition": "new",
+    "total": 4,
+    "available": 4,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b28",
+    "condition": "used",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b29",
+    "condition": "new",
+    "total": 2,
+    "available": 0,
+    "held": 0,
+    "status": "unavailable"
+  },
+  {
+    "book": "b29",
+    "condition": "used",
+    "total": 1,
+    "available": 0,
+    "held": 0,
+    "status": "unavailable"
+  },
+  {
+    "book": "b30",
+    "condition": "new",
+    "total": 6,
+    "available": 6,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b30",
+    "condition": "used",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b31",
+    "condition": "new",
+    "total": 4,
+    "available": 4,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b31",
+    "condition": "used",
+    "total": 2,
+    "available": 2,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b32",
+    "condition": "new",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b32",
+    "condition": "used",
+    "total": 1,
+    "available": 1,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b33",
+    "condition": "new",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b34",
+    "condition": "new",
+    "total": 6,
+    "available": 6,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b34",
+    "condition": "used",
+    "total": 2,
+    "available": 2,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b35",
+    "condition": "new",
+    "total": 6,
+    "available": 6,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b35",
+    "condition": "used",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b36",
+    "condition": "new",
+    "total": 4,
+    "available": 4,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b36",
+    "condition": "used",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b37",
+    "condition": "new",
+    "total": 4,
+    "available": 4,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b38",
+    "condition": "new",
+    "total": 1,
+    "available": 0,
+    "held": 0,
+    "status": "unavailable"
+  },
+  {
+    "book": "b39",
+    "condition": "new",
+    "total": 2,
+    "available": 2,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b39",
+    "condition": "used",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b40",
+    "condition": "new",
+    "total": 3,
+    "available": 3,
+    "held": 0,
+    "status": "active"
+  },
+  {
+    "book": "b40",
+    "condition": "used",
+    "total": 2,
+    "available": 2,
+    "held": 0,
+    "status": "active"
+  }
+]
