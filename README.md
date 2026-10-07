@@ -25,7 +25,7 @@ The full project docs and the work split are in the `docs` folder. Please read y
 | 7   | Book chat (no spoilers)                 |  Yasaswi Davuluri   | DavuluriYasaswi|
 | 8   | Reading agent                           |   Srilekha          |  srilekha1311  |
 | 9   | Frontend - reader pages                 |  Kusuma Thriveni    | KusumaThriveni |
-| 10  | Frontend - clubs, staff and agent pages |                     |                |
+| 10  | Frontend - clubs, staff and agent pages |Pagadavarapu Nandini                     |   nandu23008             |
 ## Running it locally
 
 You need Git and Node 20 or newer. If you're working on the AI parts you'll also need
