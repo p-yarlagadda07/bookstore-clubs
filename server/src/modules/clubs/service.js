@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import { Club, Membership, Meeting } from './model.js';
+import Progress from '../progress/model.js';
+import { AppError } from '../../lib/AppError.js';
 
 // Sowmya's Book model isn't merged yet, so read the books collection directly for now
 async function getBooksById(ids) {
@@ -83,3 +85,70 @@ export const joinClub = async (clubId, user) => {
     throw err;
   }
 };
+
+export async function getClub(id) {
+  return Club.findById(id).lean();
+}
+
+export async function isMember(clubId, userId) {
+  const membership = await Membership.findOne({
+    clubId,
+    userId,
+    status: 'active',
+  }).lean();
+
+  return !!membership;
+}
+
+// used by the reading agent (Srilekha) - only members can ask about a club
+export async function getConstraints(clubId, user) {
+  const club = await getClub(clubId);
+  if (!club) throw new AppError('NOT_FOUND', 404, 'Club not found');
+  if (!user || !(await isMember(clubId, user._id))) {
+    throw new AppError('FORBIDDEN', 403, 'Only club members can do this');
+  }
+
+  const [memberCount, nextMeeting] = await Promise.all([
+    Membership.countDocuments({ clubId, status: 'active' }),
+    Meeting.findOne({ clubId, date: { $gte: new Date() } })
+      .sort({ date: 1 })
+      .lean(),
+  ]);
+
+  const pagesPerWeek = club.readingPace?.pagesPerWeek ?? 100;
+  let daysUntilMeeting = null;
+  let pagesPossible = 0;
+
+  if (nextMeeting) {
+    const msPerDay = 24 * 60 * 60 * 1000;
+    daysUntilMeeting = Math.max(0, Math.ceil((nextMeeting.date - Date.now()) / msPerDay));
+    pagesPossible = Math.floor((pagesPerWeek * daysUntilMeeting) / 7);
+  }
+
+  return {
+    clubId: String(club._id),
+    memberCount,
+    nextMeeting: nextMeeting?.date ?? null,
+    daysUntilMeeting,
+    pagesPerWeek,
+    pagesPossible,
+    rules: club.rules ?? [],
+  };
+}
+
+// club/public progress of active members, only for members
+export async function getClubProgress(clubId, user) {
+  if (!(await isMember(clubId, user._id))) {
+    throw new AppError('FORBIDDEN', 403, 'Only club members can see club progress');
+  }
+
+  const memberIds = await Membership.find({ clubId, status: 'active' }).distinct('userId');
+
+  return Progress.find({
+    clubId,
+    userId: { $in: memberIds },
+    visibility: { $in: ['club', 'public'] },
+  })
+    .sort({ updatedAt: -1 })
+    .lean();
+}
