@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const readingListItemSchema = new mongoose.Schema(
   {
     bookId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Book",
+      ref: 'Book',
       required: true,
     },
 
@@ -18,14 +18,14 @@ const readingListItemSchema = new mongoose.Schema(
       maxlength: 300,
     },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const readingListSchema = new mongoose.Schema(
   {
     ownerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
 
@@ -38,8 +38,8 @@ const readingListSchema = new mongoose.Schema(
 
     visibility: {
       type: String,
-      enum: ["private", "public"],
-      default: "private",
+      enum: ['private', 'public'],
+      default: 'private',
     },
 
     items: {
@@ -49,12 +49,9 @@ const readingListSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 readingListSchema.index({ ownerId: 1 });
 
-export const ReadingList = mongoose.model(
-  "ReadingList",
-  readingListSchema
-);
+export const ReadingList = mongoose.model('ReadingList', readingListSchema);

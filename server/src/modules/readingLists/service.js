@@ -1,5 +1,5 @@
-import { ReadingList } from "./model.js";
-import { AppError } from "../../lib/AppError.js";
+import { ReadingList } from './model.js';
+import { AppError } from '../../lib/AppError.js';
 
 export async function createList(user, data) {
   return ReadingList.create({
@@ -11,21 +11,19 @@ export async function createList(user, data) {
 export async function listMine(user) {
   return ReadingList.find({
     ownerId: user._id,
-  }).sort({ createdAt: -1 });
+  })
+    .sort({ createdAt: -1 })
+    .lean();
 }
 
 export async function getList(user, id) {
   const list = await ReadingList.findOne({
     _id: id,
     ownerId: user._id,
-  }).populate("items.bookId", "title");
+  }).lean();
 
   if (!list) {
-    throw new AppError(
-      "NOT_FOUND",
-      404,
-      "Reading list not found"
-    );
+    throw new AppError('NOT_FOUND', 404, 'Reading list not found');
   }
 
   return list;
@@ -43,15 +41,11 @@ export async function updateList(user, id, data) {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   if (!list) {
-    throw new AppError(
-      "NOT_FOUND",
-      404,
-      "Reading list not found"
-    );
+    throw new AppError('NOT_FOUND', 404, 'Reading list not found');
   }
 
   return list;
@@ -64,23 +58,13 @@ export async function addItem(user, id, data) {
   });
 
   if (!list) {
-    throw new AppError(
-      "NOT_FOUND",
-      404,
-      "Reading list not found"
-    );
+    throw new AppError('NOT_FOUND', 404, 'Reading list not found');
   }
 
-  const alreadyExists = list.items.some(
-    (item) => item.bookId.toString() === data.bookId
-  );
+  const alreadyExists = list.items.some((item) => item.bookId.toString() === data.bookId);
 
   if (alreadyExists) {
-    throw new AppError(
-      "CONFLICT",
-      409,
-      "Book is already in this reading list"
-    );
+    throw new AppError('CONFLICT', 409, 'Book is already in this reading list');
   }
 
   list.items.push({
@@ -100,16 +84,10 @@ export async function removeItem(user, id, bookId) {
   });
 
   if (!list) {
-    throw new AppError(
-      "NOT_FOUND",
-      404,
-      "Reading list not found"
-    );
+    throw new AppError('NOT_FOUND', 404, 'Reading list not found');
   }
 
-  list.items = list.items.filter(
-    (item) => item.bookId.toString() !== bookId
-  );
+  list.items = list.items.filter((item) => item.bookId.toString() !== bookId);
 
   await list.save();
 
@@ -123,11 +101,7 @@ export async function deleteList(user, id) {
   });
 
   if (!list) {
-    throw new AppError(
-      "NOT_FOUND",
-      404,
-      "Reading list not found"
-    );
+    throw new AppError('NOT_FOUND', 404, 'Reading list not found');
   }
 
   return list;
