@@ -1,8 +1,20 @@
-import { Routes, Route, NavLink } from 'react-router-dom';
+import VerifyBanner from './app/VerifyBanner.jsx';
+
+import { Routes, Route, NavLink, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import useMe from './app/useMe.js';
 import ProtectedRoute from './app/ProtectedRoute.jsx';
 import ClubsPage from './features/clubs/ClubsPage.jsx';
 import ClubDetailPage from './features/clubs/ClubDetailPage.jsx';
+import CatalogPage from './features/books/CatalogPage.jsx';
+import BookDetailPage from './features/books/BookDetailPage.jsx';
+import LoginPage from './features/auth/LoginPage.jsx';
+import SignupPage from './features/auth/SignupPage.jsx';
+import VerifyPage from './features/auth/VerifyPage.jsx';
+import ForgotPage from './features/auth/ForgotPage.jsx';
+import ResetPage from './features/auth/ResetPage.jsx';
+
+import api from './api/client.js';
 import './app/layout.css';
 
 function Placeholder({ name }) {
@@ -24,11 +36,23 @@ function NotFound() {
 }
 
 function Header({ user }) {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const roles = user?.roles ?? [];
   const isAdmin = roles.includes('admin');
   const isBookseller = roles.includes('bookseller') || isAdmin;
   const isModerator =
     (user?.moderatorOf?.length ?? 0) > 0 || isAdmin;
+
+  async function handleLogout() {
+    try {
+      await api.post('/auth/logout');
+    } finally {
+      await queryClient.invalidateQueries({ queryKey: ['me'] });
+      navigate('/');
+    }
+  }
 
   return (
     <header className="header">
@@ -45,6 +69,16 @@ function Header({ user }) {
           <NavLink to="/lists">Lists</NavLink>
           <NavLink to="/settings">Settings</NavLink>
           <NavLink to="/chat">Chat</NavLink>
+
+          <span>{user.name}</span>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            data-testid="logout-btn"
+          >
+            Logout
+          </button>
         </>
       )}
 
@@ -66,7 +100,9 @@ export default function App() {
     <>
       <Header user={user} />
 
-      <main className="main">
+<VerifyBanner user={user} />
+
+<main className="main">
         <Routes>
           <Route
             path="/"
@@ -74,38 +110,38 @@ export default function App() {
           />
 
           <Route
-            path="/books"
-            element={<Placeholder name="Catalog" />}
-          />
+  path="/books"
+  element={<CatalogPage />}
+/>
 
-          <Route
-            path="/books/:id"
-            element={<Placeholder name="Book detail" />}
-          />
+<Route
+  path="/books/:id"
+  element={<BookDetailPage />}
+/>
 
           <Route
             path="/login"
-            element={<Placeholder name="Login" />}
+            element={<LoginPage />}
           />
 
           <Route
             path="/signup"
-            element={<Placeholder name="Signup" />}
+            element={<SignupPage />}
           />
 
           <Route
             path="/verify"
-            element={<Placeholder name="Verify email" />}
+            element={<VerifyPage />}
           />
 
           <Route
             path="/forgot"
-            element={<Placeholder name="Forgot password" />}
+            element={<ForgotPage />}
           />
 
           <Route
             path="/reset"
-            element={<Placeholder name="Reset password" />}
+            element={<ResetPage />}
           />
 
           <Route
