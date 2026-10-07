@@ -1,13 +1,23 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import useMe from './useMe.js';
-import { Spinner } from '../components';
 
 export default function ProtectedRoute({ children }) {
   const { user, isLoading } = useMe();
+  const location = useLocation();
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) {
+    return (
+      <Navigate
+        to="/login"
+        state={{ from: location.pathname }}
+        replace
+      />
+    );
+  }
 
-  return children;
+  return children ?? <Outlet />;
 }
