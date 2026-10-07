@@ -1,24 +1,21 @@
-import { useMemo, useState } from "react";
-import {
-  pickupMockResponse,
-  stockMockResponse,
-} from "./stock.mock";
-import "./stock.css";
+import { useMemo, useState } from 'react';
+import { pickupMockResponse, stockMockResponse } from './stock.mock';
+import './stock.css';
 
 const EMPTY_ADJUSTMENT = {
-  condition: "new",
-  delta: "",
-  reason: "",
+  condition: 'new',
+  delta: '',
+  reason: '',
 };
 
 function StockPage() {
-  const [activeTab, setActiveTab] = useState("stock");
+  const [activeTab, setActiveTab] = useState('stock');
   const [stockItems, setStockItems] = useState(stockMockResponse.items);
   const [pickups, setPickups] = useState(pickupMockResponse.items);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [adjustingBook, setAdjustingBook] = useState(null);
   const [adjustment, setAdjustment] = useState(EMPTY_ADJUSTMENT);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const filteredStock = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -29,21 +26,20 @@ function StockPage() {
 
     return stockItems.filter(
       (book) =>
-        book.title.toLowerCase().includes(query) ||
-        book.author.toLowerCase().includes(query)
+        book.title.toLowerCase().includes(query) || book.author.toLowerCase().includes(query),
     );
   }, [search, stockItems]);
 
   const openAdjustDialog = (book) => {
     setAdjustingBook(book);
     setAdjustment(EMPTY_ADJUSTMENT);
-    setError("");
+    setError('');
   };
 
   const closeAdjustDialog = () => {
     setAdjustingBook(null);
     setAdjustment(EMPTY_ADJUSTMENT);
-    setError("");
+    setError('');
   };
 
   const handleAdjustment = (event) => {
@@ -52,47 +48,36 @@ function StockPage() {
     const delta = Number(adjustment.delta);
 
     if (!adjustment.reason.trim()) {
-      setError("Reason is required.");
-      return;
+      return setError('Reason is required.');
     }
 
     if (!Number.isInteger(delta) || delta === 0) {
-      setError("Amount must be a non-zero whole number.");
-      return;
+      return setError('Amount must be a non-zero whole number.');
     }
 
-    setStockItems((currentItems) =>
-      currentItems.map((book) => {
-        if (book.id !== adjustingBook.id) {
-          return book;
-        }
+    const current = adjustingBook[adjustment.condition];
+    const newTotal = current.total + delta;
 
-        const condition = adjustment.condition;
-        const currentStock = book[condition];
+    if (newTotal < current.held) {
+      return setError('Total stock cannot be lower than held stock.');
+    }
 
-        const newTotal = currentStock.total + delta;
-
-        if (newTotal < currentStock.held) {
-          setError("Total stock cannot be lower than held stock.");
-          return book;
-        }
-
-        const newAvailable = newTotal - currentStock.held;
-
-        return {
-          ...book,
-          [condition]: {
-            ...currentStock,
-            total: newTotal,
-            available: newAvailable,
-          },
-        };
-      })
+    setStockItems((items) =>
+      items.map((book) =>
+        book.id === adjustingBook.id
+          ? {
+              ...book,
+              [adjustment.condition]: {
+                ...current,
+                total: newTotal,
+                available: newTotal - current.held,
+              },
+            }
+          : book,
+      ),
     );
 
-    if (!error) {
-      closeAdjustDialog();
-    }
+    closeAdjustDialog();
   };
 
   const toggleAvailability = (bookId) => {
@@ -101,22 +86,48 @@ function StockPage() {
         book.id === bookId
           ? {
               ...book,
-              status:
-                book.status === "available"
-                  ? "unavailable"
-                  : "available",
+              status: book.status === 'active' ? 'unavailable' : 'active',
             }
-          : book
-      )
+          : book,
+      ),
     );
   };
 
   const confirmCollection = (reservationId) => {
-    setPickups((currentPickups) =>
-      currentPickups.filter(
-        (pickup) => pickup.id !== reservationId
-      )
+    const pickup = pickups.find((item) => item.id === reservationId);
+
+    if (!pickup) {
+      return;
+    }
+
+    setStockItems((currentItems) =>
+      currentItems.map((book) => {
+        if (book.id !== pickup.bookId) {
+          return book;
+        }
+
+        const currentStock = book[pickup.condition];
+
+        if (!currentStock || currentStock.held <= 0) {
+          return book;
+        }
+
+        const newHeld = currentStock.held - 1;
+        const newTotal = Math.max(0, currentStock.total - 1);
+
+        return {
+          ...book,
+          [pickup.condition]: {
+            ...currentStock,
+            total: newTotal,
+            held: newHeld,
+            available: newTotal - newHeld,
+          },
+        };
+      }),
     );
+
+    setPickups((currentPickups) => currentPickups.filter((item) => item.id !== reservationId));
   };
 
   return (
@@ -125,38 +136,36 @@ function StockPage() {
         <div>
           <p className="stock-page__eyebrow">Staff</p>
           <h1>Stock Management</h1>
-          <p className="stock-page__description">
-            Manage book inventory and reader pickups.
-          </p>
+          <p className="stock-page__description">Manage book inventory and reader pickups.</p>
         </div>
       </header>
 
       <div className="stock-tabs" role="tablist">
         <button
           type="button"
-          className={activeTab === "stock" ? "active" : ""}
-          onClick={() => setActiveTab("stock")}
+          className={activeTab === 'stock' ? 'active' : ''}
+          onClick={() => setActiveTab('stock')}
         >
           Stock
         </button>
 
         <button
           type="button"
-          className={activeTab === "pickups" ? "active" : ""}
-          onClick={() => setActiveTab("pickups")}
+          className={activeTab === 'pickups' ? 'active' : ''}
+          onClick={() => setActiveTab('pickups')}
         >
           Pickups
         </button>
       </div>
 
-      {activeTab === "stock" && (
+      {activeTab === 'stock' && (
         <section className="stock-section">
           <div className="stock-toolbar">
             <div>
               <h2>Book inventory</h2>
               <p>
                 {filteredStock.length} book
-                {filteredStock.length === 1 ? "" : "s"} shown
+                {filteredStock.length === 1 ? '' : 's'} shown
               </p>
             </div>
 
@@ -219,9 +228,7 @@ function StockPage() {
                       <td>{book.used.held}</td>
 
                       <td>
-                        <span
-                          className={`stock-status stock-status--${book.status}`}
-                        >
+                        <span className={`stock-status stock-status--${book.status}`}>
                           {book.status}
                         </span>
                       </td>
@@ -239,13 +246,9 @@ function StockPage() {
                           <button
                             type="button"
                             className="stock-button stock-button--text"
-                            onClick={() =>
-                              toggleAvailability(book.id)
-                            }
+                            onClick={() => toggleAvailability(book.id)}
                           >
-                            {book.status === "available"
-                              ? "Mark unavailable"
-                              : "Mark available"}
+                            {book.status === 'active' ? 'Mark unavailable' : 'Mark available'}
                           </button>
                         </div>
                       </td>
@@ -258,14 +261,12 @@ function StockPage() {
         </section>
       )}
 
-      {activeTab === "pickups" && (
+      {activeTab === 'pickups' && (
         <section className="stock-section">
           <div className="stock-toolbar">
             <div>
               <h2>Held reservations</h2>
-              <p>
-                Confirm collection when a reader picks up their book.
-              </p>
+              <p>Confirm collection when a reader picks up their book.</p>
             </div>
           </div>
 
@@ -297,9 +298,7 @@ function StockPage() {
                         <button
                           type="button"
                           className="stock-button stock-button--primary"
-                          onClick={() =>
-                            confirmCollection(pickup.id)
-                          }
+                          onClick={() => confirmCollection(pickup.id)}
                         >
                           Confirm collection
                         </button>
@@ -314,11 +313,7 @@ function StockPage() {
       )}
 
       {adjustingBook && (
-        <div
-          className="stock-dialog-backdrop"
-          role="presentation"
-          onMouseDown={closeAdjustDialog}
-        >
+        <div className="stock-dialog-backdrop" role="presentation" onMouseDown={closeAdjustDialog}>
           <div
             className="stock-dialog"
             role="dialog"
@@ -329,9 +324,7 @@ function StockPage() {
             <div className="stock-dialog__header">
               <div>
                 <p className="stock-page__eyebrow">Adjust stock</p>
-                <h2 id="adjust-stock-title">
-                  {adjustingBook.title}
-                </h2>
+                <h2 id="adjust-stock-title">{adjustingBook.title}</h2>
               </div>
 
               <button
@@ -403,10 +396,7 @@ function StockPage() {
                   Cancel
                 </button>
 
-                <button
-                  type="submit"
-                  className="stock-button stock-button--primary"
-                >
+                <button type="submit" className="stock-button stock-button--primary">
                   Save adjustment
                 </button>
               </div>
