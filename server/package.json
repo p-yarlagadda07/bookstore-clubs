@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@bookstore/shared": "*",
+    "@langchain/core": "^1.2.17",
     "argon2": "^0.41.1",
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
