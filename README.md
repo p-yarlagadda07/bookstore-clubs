@@ -14,18 +14,18 @@ The full project docs and the work split are in the `docs` folder. Please read y
 
 ## Team
 
-| #   | Working on                              | Name                | GitHub         |
-| --- | --------------------------------------- | ------------------- | -------------- |
-| 1   | Setup, shared code, integration         | Poojitha Yarlagadda | p-yarlagadda07 |
-| 2   | Auth, sessions, roles                   |                     |                |
-| 3   | Books and inventory                     |                     |                |
-| 4   | Reservations and reading lists          |                     |                |
-| 5   | Clubs, meetings, reading progress       | Pranathi Vidiyala   |    pr-an-a     |
-| 6   | AI setup and book search                |                     |                |
-| 7   | Book chat (no spoilers)                 |  Yasaswi Davuluri   | DavuluriYasaswi|
-| 8   | Reading agent                           |   Srilekha          |  srilekha1311  |
-| 9   | Frontend - reader pages                 |                     |                |
-| 10  | Frontend - clubs, staff and agent pages |                     |                |
+| #   | Working on                              | Name                 | GitHub          |
+| --- | --------------------------------------- | -------------------- | --------------- |
+| 1   | Setup, shared code, integration         | Poojitha Yarlagadda  | p-yarlagadda07  |
+| 2   | Auth, sessions, roles                   | Yasaswi Davuluri     | DavuluriYasaswi |
+| 3   | Books and inventory                     | Sowmya Sri           | S-0311-hub      |
+| 4   | Reservations and reading lists          | Chinni Sri           | Chinnisri1134   |
+| 5   | Clubs, meetings, reading progress       | Pranathi Vidiyala    | pr-an-a         |
+| 6   | AI setup and book search                | Lahari               | lahari040113    |
+| 7   | Book chat (no spoilers)                 | Shravani             | ShravaniCodes25 |
+| 8   | Reading agent                           | Srilekha             | srilekha1311    |
+| 9   | Frontend - reader pages                 | Kusuma Thriveni      | KusumaThriveni  |
+| 10  | Frontend - clubs, staff and agent pages | Pagadavarapu Nandini | nandu23008      |
 
 ## Running it locally
 
