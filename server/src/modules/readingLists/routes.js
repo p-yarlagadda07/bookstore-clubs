@@ -1,8 +1,9 @@
- import {z } from "zod";
- import { Router } from "express";
+ import { z } from "zod";
+import { Router } from "express";
+
 import { requireAuth } from "../../middleware/auth.js";
 import { validate } from "../../middleware/validate.js";
-import asyncHandler from "../../lib/asyncHandler.js";
+import { asyncHandler } from "../../lib/asyncHandler.js";
 
 import {
   CreateListBody,
@@ -11,10 +12,13 @@ import {
 } from "@bookstore/shared/schemas/readingLists";
 
 import { IdParams } from "@bookstore/shared/schemas/common";
-
 import * as controller from "./controller.js";
 
 const router = Router();
+
+const ItemParams = IdParams.extend({
+  bookId: z.string(),
+});
 
 router.post(
   "/reading-lists",
@@ -59,19 +63,15 @@ router.post(
 router.delete(
   "/reading-lists/:id/items/:bookId",
   requireAuth,
-  validate({ params: IdParams }),
+  validate({ params: ItemParams }),
   asyncHandler(controller.remove)
 );
 
 router.delete(
-  "/reading-lists/:id/items/:bookId",
-
+  "/reading-lists/:id",
   requireAuth,
-  validate({ params: ItemParams }),
+  validate({ params: IdParams }),
   asyncHandler(controller.removeList)
 );
 
 export default router;
-const ItemParams = IdParams.extend({
-  bookId: z.string(),
-});
