@@ -15,7 +15,7 @@ import conversations from './modules/conversations/routes.js';
 import discovery from './ai/discovery/routes.js';
 import rag from './ai/rag/routes.js';
 import agent from './ai/agent/routes.js';
-
+import billing from './modules/billing/billing.routes.js';
 const api = Router();
 
 api.get('/health', (_req, res) => {
@@ -27,6 +27,7 @@ api.get('/health', (_req, res) => {
 for (const r of [
   auth,
   users,
+  billing,
   audit,
   discovery,
   books,
