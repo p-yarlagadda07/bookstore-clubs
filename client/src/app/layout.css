@@ -1,0 +1,32 @@
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header .brand {
+  font-weight: bold;
+  color: var(--color-primary);
+  text-decoration: none;
+  margin-right: auto;
+}
+
+.header a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.header a.active {
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+.main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-3);
+}
