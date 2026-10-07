@@ -1,14 +1,14 @@
-import { tool } from "@langchain/core/tools";
+import { tool } from '@langchain/core/tools';
 
-import { CompareClubConstraintsInput } from "../../../../shared/schemas/readingAgent.js";
-import { fakeClubs } from "./fakeData.js";
+import { CompareClubConstraintsInput } from '@bookstore/shared/schemas/readingAgent';
+import { fakeClubs } from './fakeData.js';
 
 const emitToolEvent = (config, status, summary) => {
   const context = config?.context ?? config;
 
-  if (typeof context?.emit === "function") {
+  if (typeof context?.emit === 'function') {
     context.emit({
-      name: "compareClubConstraints",
+      name: 'compareClubConstraints',
       status,
       summary,
     });
@@ -17,11 +17,7 @@ const emitToolEvent = (config, status, summary) => {
 
 export const compareClubConstraints = tool(
   async (input, config) => {
-    emitToolEvent(
-      config,
-      "started",
-      "Comparing books with club reading constraints",
-    );
+    emitToolEvent(config, 'started', 'Comparing books with club reading constraints');
 
     try {
       const club = fakeClubs.find((item) => item.clubId === input.clubId);
@@ -31,12 +27,12 @@ export const compareClubConstraints = tool(
       }
 
       const results = input.books.map((book) => {
-        let timeFit = "too_long";
+        let timeFit = 'too_long';
 
         if (book.pages <= club.pagesPossible) {
-          timeFit = "fits";
+          timeFit = 'fits';
         } else if (book.pages <= club.pagesPossible * 1.2) {
-          timeFit = "tight";
+          timeFit = 'tight';
         }
 
         return {
@@ -45,35 +41,29 @@ export const compareClubConstraints = tool(
           pagesPossible: club.pagesPossible,
           timeFit,
           note:
-            timeFit === "fits"
+            timeFit === 'fits'
               ? "Book fits comfortably within the club's available reading time."
-              : timeFit === "tight"
-                ? "Book is slightly longer than the ideal reading capacity."
+              : timeFit === 'tight'
+                ? 'Book is slightly longer than the ideal reading capacity.'
                 : "Book is too long for the club's available reading time.",
         };
       });
 
-      emitToolEvent(
-        config,
-        "succeeded",
-        `Compared ${results.length} books with club constraints`,
-      );
+      emitToolEvent(config, 'succeeded', `Compared ${results.length} books with club constraints`);
 
       return results;
     } catch (error) {
       emitToolEvent(
         config,
-        "failed",
-        error instanceof Error
-          ? error.message
-          : "Club constraint comparison failed",
+        'failed',
+        error instanceof Error ? error.message : 'Club constraint comparison failed',
       );
 
       throw error;
     }
   },
   {
-    name: "compareClubConstraints",
+    name: 'compareClubConstraints',
     description:
       "Compare candidate books with the club's available reading time and page capacity.",
     schema: CompareClubConstraintsInput,

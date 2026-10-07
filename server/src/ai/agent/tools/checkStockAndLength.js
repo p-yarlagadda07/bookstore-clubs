@@ -1,14 +1,14 @@
-import { tool } from "@langchain/core/tools";
+import { tool } from '@langchain/core/tools';
 
-import { CheckStockAndLengthInput } from "../../../../shared/schemas/readingAgent.js";
-import { fakeBooks } from "./fakeData.js";
+import { CheckStockAndLengthInput } from '@bookstore/shared/schemas/readingAgent';
+import { fakeBooks } from './fakeData.js';
 
 const emitToolEvent = (config, status, summary) => {
   const context = config?.context ?? config;
 
-  if (typeof context?.emit === "function") {
+  if (typeof context?.emit === 'function') {
     context.emit({
-      name: "checkStockAndLength",
+      name: 'checkStockAndLength',
       status,
       summary,
     });
@@ -17,7 +17,7 @@ const emitToolEvent = (config, status, summary) => {
 
 export const checkStockAndLength = tool(
   async (input, config) => {
-    emitToolEvent(config, "started", "Checking stock and reading length");
+    emitToolEvent(config, 'started', 'Checking stock and reading length');
 
     try {
       const results = input.bookIds.map((bookId) => {
@@ -37,29 +37,22 @@ export const checkStockAndLength = tool(
         };
       });
 
-      emitToolEvent(
-        config,
-        "succeeded",
-        `Checked stock for ${results.length} books`,
-      );
+      emitToolEvent(config, 'succeeded', `Checked stock for ${results.length} books`);
 
       return results;
     } catch (error) {
       emitToolEvent(
         config,
-        "failed",
-        error instanceof Error
-          ? error.message
-          : "Stock and length check failed",
+        'failed',
+        error instanceof Error ? error.message : 'Stock and length check failed',
       );
 
       throw error;
     }
   },
   {
-    name: "checkStockAndLength",
-    description:
-      "Check book availability and estimate reading hours for the club group size.",
+    name: 'checkStockAndLength',
+    description: 'Check book availability and estimate reading hours for the club group size.',
     schema: CheckStockAndLengthInput,
   },
 );
