@@ -24,7 +24,7 @@ export const joinClubController = async (req, res) => {
   res.ok(result.membership, 201);
 };
 
-
 export const getClubProgressController = async (req, res) => {
-  res.ok(await getClubProgress(req.params.id));
+  if (!req.user) throw new AppError('UNAUTHENTICATED', 401, 'Please log in');
+  res.ok(await getClubProgress(req.params.id, req.user));
 };

@@ -11,6 +11,7 @@ router.get('/clubs', asyncHandler(listClubs));
 router.get('/clubs/:id', validate({ params: IdParams }), asyncHandler(getClub));
 router.get(
   '/clubs/:id/progress',
+  requireAuth,
   validate({ params: IdParams }),
   asyncHandler(getClubProgressController),
 );

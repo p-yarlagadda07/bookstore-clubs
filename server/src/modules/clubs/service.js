@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import { Club, Membership, Meeting } from './model.js';
+import Progress from '../progress/model.js';
+import { AppError } from '../../lib/AppError.js';
 
 // Sowmya's Book model isn't merged yet, so read the books collection directly for now
 async function getBooksById(ids) {
@@ -98,9 +100,13 @@ export async function isMember(clubId, userId) {
   return !!membership;
 }
 
-export async function getConstraints(clubId, _user) {
+// used by the reading agent (Srilekha) - only members can ask about a club
+export async function getConstraints(clubId, user) {
   const club = await getClub(clubId);
-  if (!club) return null;
+  if (!club) throw new AppError('NOT_FOUND', 404, 'Club not found');
+  if (!user || !(await isMember(clubId, user._id))) {
+    throw new AppError('FORBIDDEN', 403, 'Only club members can do this');
+  }
 
   const [memberCount, nextMeeting] = await Promise.all([
     Membership.countDocuments({ clubId, status: 'active' }),
@@ -110,44 +116,39 @@ export async function getConstraints(clubId, _user) {
   ]);
 
   const pagesPerWeek = club.readingPace?.pagesPerWeek ?? 100;
-
   let daysUntilMeeting = null;
-  let pagesBeforeMeeting = 0;
+  let pagesPossible = 0;
 
   if (nextMeeting) {
-    daysUntilMeeting = Math.max(
-      0,
-      Math.ceil((nextMeeting.date.getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
-    );
-    pagesBeforeMeeting = Math.floor((pagesPerWeek * daysUntilMeeting) / 7);
+    const msPerDay = 24 * 60 * 60 * 1000;
+    daysUntilMeeting = Math.max(0, Math.ceil((nextMeeting.date - Date.now()) / msPerDay));
+    pagesPossible = Math.floor((pagesPerWeek * daysUntilMeeting) / 7);
   }
 
   return {
+    clubId: String(club._id),
     memberCount,
-    nextMeetingDate: nextMeeting?.date ?? null,
+    nextMeeting: nextMeeting?.date ?? null,
     daysUntilMeeting,
     pagesPerWeek,
-    pagesBeforeMeeting,
+    pagesPossible,
     rules: club.rules ?? [],
   };
 }
 
+// club/public progress of active members, only for members
+export async function getClubProgress(clubId, user) {
+  if (!(await isMember(clubId, user._id))) {
+    throw new AppError('FORBIDDEN', 403, 'Only club members can see club progress');
+  }
 
-export async function getClubProgress(clubId) {
-  const memberIds = await Membership.find({
+  const memberIds = await Membership.find({ clubId, status: 'active' }).distinct('userId');
+
+  return Progress.find({
     clubId,
-    status: 'active',
-  }).distinct('userId');
-
-  if (!memberIds.length) return [];
-
-  return mongoose.connection
-    .collection('progresses')
-    .find({
-      clubId: new mongoose.Types.ObjectId(String(clubId)),
-      userId: { $in: memberIds },
-      visibility: { $in: ['club', 'public'] },
-    })
+    userId: { $in: memberIds },
+    visibility: { $in: ['club', 'public'] },
+  })
     .sort({ updatedAt: -1 })
-    .toArray();
+    .lean();
 }
