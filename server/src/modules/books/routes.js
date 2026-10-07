@@ -1,27 +1,13 @@
-import express from "express";
+import { Router } from 'express';
+import { IdParams } from '@bookstore/shared';
+import { ListBooksQuery } from '@bookstore/shared/schemas/books';
+import { validate } from '../../middleware/validate.js';
+import { asyncHandler } from '../../lib/asyncHandler.js';
+import * as controller from './controller.js';
 
-import asyncHandler from "../../lib/asyncHandler.js";
+const router = Router();
 
-import { validate } from "../../middleware/validate.js";
-
-import * as controller from "./controller.js";
-
-import { ListBooksQuery } from "../../../../shared/schemas/books.js";
-
-import { IdParams } from "../../../../shared/schemas/common.js";
-
-const router = express.Router();
-
-router.get(
-  "/books",
-  validate({ query: ListBooksQuery }),
-  asyncHandler(controller.list)
-);
-
-router.get(
-  "/books/:id",
-  validate({ params: IdParams }),
-  asyncHandler(controller.get)
-);
+router.get('/books', validate({ query: ListBooksQuery }), asyncHandler(controller.list));
+router.get('/books/:id', validate({ params: IdParams }), asyncHandler(controller.get));
 
 export default router;
