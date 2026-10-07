@@ -1,0 +1,94 @@
+{
+  "clubs": [
+    {
+      "key": "tmc",
+      "name": "Tuesday Mystery Circle",
+      "description": "A friendly group that meets every other Tuesday evening to talk through a mystery together.",
+      "published": true,
+      "rules": [
+        "Be kind and respectful",
+        "No spoilers past the agreed chapter",
+        "Everyone gets a chance to speak"
+      ],
+      "pagesPerWeek": 120,
+      "currentBook": "b1",
+      "moderator": "moderator@bookstore.test"
+    },
+    {
+      "key": "ffc",
+      "name": "Fantasy Friday Club",
+      "description": "Dragons, quests and big worlds. We read one fantasy novel a month.",
+      "published": true,
+      "rules": [
+        "Be kind and respectful",
+        "Mark spoilers clearly"
+      ],
+      "pagesPerWeek": 100,
+      "currentBook": "b2",
+      "moderator": "moderator@bookstore.test"
+    },
+    {
+      "key": "ccc",
+      "name": "Classics Corner",
+      "description": "Slow reading of well-loved classics. This club is not open yet.",
+      "published": false,
+      "rules": [
+        "Be kind and respectful"
+      ],
+      "pagesPerWeek": 80,
+      "currentBook": "b3",
+      "moderator": "moderator@bookstore.test"
+    }
+  ],
+  "members": [
+    { "club": "tmc", "email": "reader1@bookstore.test" },
+    { "club": "tmc", "email": "reader2@bookstore.test" },
+    { "club": "tmc", "email": "reader3@bookstore.test" },
+    { "club": "tmc", "email": "reader4@bookstore.test" },
+    { "club": "tmc", "email": "reader5@bookstore.test" },
+    { "club": "tmc", "email": "reader6@bookstore.test" },
+    { "club": "tmc", "email": "reader7@bookstore.test" },
+    { "club": "tmc", "email": "reader8@bookstore.test" },
+    { "club": "ffc", "email": "reader1@bookstore.test" },
+    { "club": "ffc", "email": "reader2@bookstore.test" },
+    { "club": "ffc", "email": "reader3@bookstore.test" },
+    { "club": "ccc", "email": "reader4@bookstore.test" },
+    { "club": "ccc", "email": "reader5@bookstore.test" }
+  ],
+  "meetings": [
+    {
+      "club": "tmc",
+      "inDays": 14,
+      "time": "18:00",
+      "location": "Main store",
+      "agenda": "Discuss the first ten chapters and pick questions for next time.",
+      "from": 1,
+      "to": 10
+    },
+    {
+      "club": "ffc",
+      "inDays": 7,
+      "time": "19:00",
+      "location": "Main store",
+      "agenda": "Opening chapters and first impressions of the world.",
+      "from": 1,
+      "to": 6
+    },
+    {
+      "club": "ccc",
+      "inDays": 21,
+      "time": "17:30",
+      "location": "Reading room",
+      "agenda": "Introduction and first chapters.",
+      "from": 1,
+      "to": 4
+    }
+  ],
+  "progress": [
+    { "email": "reader1@bookstore.test", "book": "b1", "club": "tmc", "chapter": 4, "page": 60, "visibility": "club" },
+    { "email": "reader2@bookstore.test", "book": "b1", "club": "tmc", "chapter": 6, "page": 95, "visibility": "club" },
+    { "email": "reader3@bookstore.test", "book": "b1", "club": "tmc", "chapter": 2, "page": 30, "visibility": "club" },
+    { "email": "reader4@bookstore.test", "book": "b1", "club": "tmc", "chapter": 8, "page": 125, "visibility": "club" },
+    { "email": "reader1@bookstore.test", "book": "b2", "club": "ffc", "chapter": 3, "page": 48, "visibility": "club" }
+  ]
+}
