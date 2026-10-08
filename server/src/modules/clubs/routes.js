@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { CreateMeetingBody } from '@bookstore/shared/schemas/clubs';
+import { CreateMeetingBody, UpdateClubBody } from '@bookstore/shared/schemas/clubs';
 import { IdParams } from '@bookstore/shared';
 import { requireAuth, requireVerified, requireClubModerator } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
@@ -11,6 +11,8 @@ import {
   getClubProgressController,
   createMeetingController,
   getClubMembersController,
+  updateClubController,
+  removeClubMemberController,
 } from './controller.js';
 
 const router = Router();
@@ -48,6 +50,26 @@ router.get(
   requireClubModerator('id'),
   validate({ params: IdParams }),
   asyncHandler(getClubMembersController),
+);
+
+router.patch(
+  '/clubs/:id',
+  requireAuth,
+  requireClubModerator('id'),
+  validate({ params: IdParams, body: UpdateClubBody }),
+  asyncHandler(updateClubController),
+);
+
+router.delete(
+  '/clubs/:id/members/:userId',
+  requireAuth,
+  requireClubModerator('id'),
+  validate({
+    params: IdParams.extend({
+      userId: IdParams.shape.id,
+    }),
+  }),
+  asyncHandler(removeClubMemberController),
 );
 
 export default router;

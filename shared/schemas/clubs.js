@@ -20,15 +20,13 @@ export const CreateMeetingBody = z.object({
     .optional(),
 });
 
-export const UpdateClubBody = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  published: z.boolean().optional(),
-  rules: z.array(z.string()).optional(),
-  currentBookId: z.string().optional(),
-  readingPace: z
-    .object({
-      pagesPerWeek: z.number().optional(),
-    })
-    .optional(),
-});
+export const UpdateClubBody = z
+  .object({
+    description: z.string().max(1000).optional(),
+    rules: z.array(z.string().min(1).max(200)).max(10).optional(),
+    currentBookId: z.string().optional(),
+    pagesPerWeek: z.number().int().min(10).max(1000).optional(),
+  })
+  .refine((data) => Object.keys(data).length > 0, {
+    message: 'At least one field is required',
+  });

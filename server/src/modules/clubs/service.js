@@ -204,3 +204,52 @@ export async function getClubMembers(clubId) {
     }),
   };
 }
+export async function updateClub(clubId, data) {
+  const club = await Club.findById(clubId);
+  if (!club) throw new AppError('NOT_FOUND', 404, 'Club not found');
+
+  if (data.currentBookId !== undefined) {
+    const book = await mongoose.connection
+      .collection('books')
+      .findOne({ _id: new mongoose.Types.ObjectId(data.currentBookId) });
+
+    if (!book) {
+      throw new AppError('VALIDATION_ERROR', 400, 'Book not found');
+    }
+
+    club.currentBookId = data.currentBookId;
+  }
+
+  if (data.description !== undefined) club.description = data.description;
+  if (data.rules !== undefined) club.rules = data.rules;
+
+  if (data.pagesPerWeek !== undefined) {
+    club.readingPace = club.readingPace || {};
+    club.readingPace.pagesPerWeek = data.pagesPerWeek;
+  }
+
+  await club.save();
+
+  return getPublishedClubById(clubId);
+}
+
+export async function removeClubMember(clubId, userId, moderatorId) {
+  if (String(userId) === String(moderatorId)) {
+    throw new AppError('VALIDATION_ERROR', 400, 'Moderator cannot remove themselves');
+  }
+
+  const membership = await Membership.findOne({
+    clubId,
+    userId,
+    status: 'active',
+  });
+
+  if (!membership) {
+    throw new AppError('NOT_FOUND', 404, 'Active membership not found');
+  }
+
+  membership.status = 'removed';
+  await membership.save();
+
+  return {};
+}
