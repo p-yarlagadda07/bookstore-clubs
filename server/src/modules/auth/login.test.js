@@ -50,6 +50,7 @@ describe('login, me, logout', () => {
     expect(wrongPass.status).toBe(401);
     expect(noUser.status).toBe(401);
     expect(wrongPass.body.error.message).toBe(noUser.body.error.message);
+        expect(wrongPass.body.error.code).toBe('INVALID_CREDENTIALS');
   });
 
   it('rejects a bad body with 400', async () => {
