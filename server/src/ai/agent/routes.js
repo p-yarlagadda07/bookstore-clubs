@@ -4,6 +4,7 @@ import { ReadingAgentBody } from '@bookstore/shared/schemas/readingAgent';
 import { validate } from '../../middleware/validate.js';
 import { runAgent } from './chain.js';
 import { startStream, send } from './events.js';
+import { getConstraints } from '../../modules/clubs/service.js';
 
 const router = Router();
 
@@ -15,11 +16,16 @@ router.post(
     let closed = false;
 
     res.on('close', () => {
-  if (!res.writableEnded) closed = true;
-});
+      if (!res.writableEnded) closed = true;
+    });
 
     try {
       const { clubId, request } = req.body;
+
+      // Get real club constraints BEFORE starting the SSE stream.
+      // Errors such as 403 (non-member) and 404 (club not found)
+      // are handled by the normal error middleware.
+      const constraints = await getConstraints(clubId, req.user);
 
       if (closed) return;
 
@@ -32,7 +38,7 @@ router.post(
       };
 
       const result = await runAgent({
-        clubId,
+        constraints,
         request,
         emit,
       });

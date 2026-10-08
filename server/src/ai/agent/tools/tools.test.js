@@ -5,13 +5,18 @@ import { compareClubConstraints } from './compareClubConstraints.js';
 
 describe('agent tools (fake data)', () => {
   it('searchCatalog finds mysteries from a normal sentence', async () => {
-    const res = await searchCatalog.invoke({ query: 'a short mystery for our club' });
+    const res = await searchCatalog.invoke({
+      query: 'a short mystery for our club',
+    });
     expect(res.length).toBeGreaterThan(0);
     expect(res[0].why).toContain('mystery');
   });
 
   it('searchCatalog respects maxPages', async () => {
-    const res = await searchCatalog.invoke({ query: 'mystery', maxPages: 250 });
+    const res = await searchCatalog.invoke({
+      query: 'mystery',
+      maxPages: 250,
+    });
     expect(res.every((b) => b.pages <= 250)).toBe(true);
   });
 
@@ -26,7 +31,7 @@ describe('agent tools (fake data)', () => {
 
   it('compareClubConstraints marks 380 pages too long and 220 fits', async () => {
     const res = await compareClubConstraints.invoke({
-      clubId: 'club-demo',
+      pagesPossible: 240,
       books: [
         { bookId: 'book-popular-mystery', pages: 380 },
         { bookId: 'book-short-mystery', pages: 220 },
@@ -38,11 +43,16 @@ describe('agent tools (fake data)', () => {
 
   it('sends started and succeeded events', async () => {
     const events = [];
-    await searchCatalog.invoke({ query: 'mystery' }, { context: { emit: (e) => events.push(e) } });
+    await searchCatalog.invoke(
+      { query: 'mystery' },
+      { context: { emit: (e) => events.push(e) } },
+    );
     expect(events.map((e) => e.status)).toEqual(['started', 'succeeded']);
   });
 
   it('rejects bad input', async () => {
-    await expect(checkStockAndLength.invoke({ bookIds: [], groupSize: 8 })).rejects.toThrow();
+    await expect(
+      checkStockAndLength.invoke({ bookIds: [], groupSize: 8 }),
+    ).rejects.toThrow();
   });
 });

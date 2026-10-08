@@ -1,15 +1,8 @@
 import { searchCatalog } from './tools/searchCatalog.js';
 import { checkStockAndLength } from './tools/checkStockAndLength.js';
 import { compareClubConstraints } from './tools/compareClubConstraints.js';
-import { fakeClubs } from './tools/fakeData.js';
 
-export const runAgent = async ({ clubId, request, emit }) => {
-  const club = fakeClubs.find((item) => item.clubId === clubId);
-
-  if (!club) {
-    throw new Error(`Club not found: ${clubId}`);
-  }
-
+export const runAgent = async ({ constraints, request, emit }) => {
   const searchResult = await searchCatalog.invoke(
     { query: request },
     { context: { emit } },
@@ -18,14 +11,14 @@ export const runAgent = async ({ clubId, request, emit }) => {
   const stockResult = await checkStockAndLength.invoke(
     {
       bookIds: searchResult.map((book) => book.bookId),
-      groupSize: club.memberCount,
+      groupSize: constraints.memberCount,
     },
     { context: { emit } },
   );
 
   const constraintResult = await compareClubConstraints.invoke(
     {
-      clubId,
+      pagesPossible: constraints.pagesPossible,
       books: stockResult.map((book) => ({
         bookId: book.bookId,
         pages: book.pages,
@@ -37,17 +30,17 @@ export const runAgent = async ({ clubId, request, emit }) => {
   const shortlist = searchResult
     .map((book) => {
       const stock = stockResult.find((item) => item.bookId === book.bookId);
-      const constraints = constraintResult.find(
+      const bookConstraints = constraintResult.find(
         (item) => item.bookId === book.bookId,
       );
 
-      if (!stock || !constraints) {
+      if (!stock || !bookConstraints) {
         return null;
       }
 
       if (
         !stock.enoughCopies ||
-        !['fits', 'tight'].includes(constraints.timeFit)
+        !['fits', 'tight'].includes(bookConstraints.timeFit)
       ) {
         return null;
       }
@@ -59,10 +52,10 @@ export const runAgent = async ({ clubId, request, emit }) => {
         pages: book.pages,
         copies: stock.copies,
         enoughCopies: stock.enoughCopies,
-        timeFit: constraints.timeFit,
+        timeFit: bookConstraints.timeFit,
         evidence: [
-          `${stock.copies} copies for ${club.memberCount} members`,
-          constraints.note,
+          `${stock.copies} copies for ${constraints.memberCount} members`,
+          bookConstraints.note,
         ],
       };
     })
