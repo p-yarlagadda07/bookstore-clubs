@@ -152,3 +152,55 @@ export async function getClubProgress(clubId, user) {
     .sort({ updatedAt: -1 })
     .lean();
 }
+export async function createMeeting(clubId, data, user) {
+  if (data.date < new Date()) {
+    throw new AppError('VALIDATION_ERROR', 400, 'Meeting date cannot be in the past');
+  }
+
+  const meeting = await Meeting.create({
+    clubId,
+    date: data.date,
+    time: data.time,
+    location: data.location,
+    agenda: data.agenda ?? '',
+    bookId: data.bookId ?? null,
+    chapterRange: data.chapterRange ?? undefined,
+    createdBy: user._id,
+  });
+
+  return toMeeting(meeting);
+}
+
+export async function getClubMembers(clubId) {
+  const memberships = await Membership.find({
+    clubId,
+    status: 'active',
+  })
+    .sort({ joinedAt: 1 })
+    .lean();
+
+  const userIds = memberships.map((membership) => membership.userId);
+
+  const users = await mongoose.connection
+    .collection('users')
+    .find(
+      { _id: { $in: userIds } },
+      { projection: { name: 1, email: 1 } },
+    )
+    .toArray();
+
+  const userMap = new Map(users.map((user) => [String(user._id), user]));
+
+  return {
+    items: memberships.map((membership) => {
+      const user = userMap.get(String(membership.userId));
+
+      return {
+        id: membership.userId,
+        name: user?.name,
+        email: user?.email,
+        joinedAt: membership.joinedAt,
+      };
+    }),
+  };
+}
