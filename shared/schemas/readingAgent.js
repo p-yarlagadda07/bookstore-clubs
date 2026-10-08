@@ -1,7 +1,8 @@
-import { z } from "zod";
+import { z } from 'zod';
+import { ObjectId } from './common.js';
 
 export const ReadingAgentBody = z.object({
-  clubId: z.string().min(1),
+  clubId: ObjectId,
   request: z.string().min(3).max(300),
 });
 
@@ -18,7 +19,7 @@ export const CheckStockAndLengthInput = z.object({
 });
 
 export const CompareClubConstraintsInput = z.object({
-  clubId: z.string().min(1),
+  pagesPossible: z.number().int().min(0),
   books: z
     .array(
       z.object({

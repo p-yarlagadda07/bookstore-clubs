@@ -1,7 +1,6 @@
 import { tool } from '@langchain/core/tools';
 
 import { CompareClubConstraintsInput } from '@bookstore/shared/schemas/readingAgent';
-import { fakeClubs } from './fakeData.js';
 
 const emitToolEvent = (config, status, summary) => {
   const context = config?.context ?? config;
@@ -17,28 +16,26 @@ const emitToolEvent = (config, status, summary) => {
 
 export const compareClubConstraints = tool(
   async (input, config) => {
-    emitToolEvent(config, 'started', 'Comparing books with club reading constraints');
+    emitToolEvent(
+      config,
+      'started',
+      'Comparing books with club reading constraints',
+    );
 
     try {
-      const club = fakeClubs.find((item) => item.clubId === input.clubId);
-
-      if (!club) {
-        throw new Error(`Club not found: ${input.clubId}`);
-      }
-
       const results = input.books.map((book) => {
         let timeFit = 'too_long';
 
-        if (book.pages <= club.pagesPossible) {
+        if (book.pages <= input.pagesPossible) {
           timeFit = 'fits';
-        } else if (book.pages <= club.pagesPossible * 1.2) {
+        } else if (book.pages <= input.pagesPossible * 1.2) {
           timeFit = 'tight';
         }
 
         return {
           bookId: book.bookId,
           pagesNeeded: book.pages,
-          pagesPossible: club.pagesPossible,
+          pagesPossible: input.pagesPossible,
           timeFit,
           note:
             timeFit === 'fits'
@@ -49,14 +46,20 @@ export const compareClubConstraints = tool(
         };
       });
 
-      emitToolEvent(config, 'succeeded', `Compared ${results.length} books with club constraints`);
+      emitToolEvent(
+        config,
+        'succeeded',
+        `Compared ${results.length} books with club constraints`,
+      );
 
       return results;
     } catch (error) {
       emitToolEvent(
         config,
         'failed',
-        error instanceof Error ? error.message : 'Club constraint comparison failed',
+        error instanceof Error
+          ? error.message
+          : 'Club constraint comparison failed',
       );
 
       throw error;
