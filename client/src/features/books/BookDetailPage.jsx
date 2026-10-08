@@ -55,8 +55,6 @@ export default function BookDetailPage() {
     (item) => item.status === 'active' && item.available > 0,
   );
 
-  hasAvailableCopy && isLoggedIn && isVerified && book.availability?.reservable;
-
   return (
     <main className="books-page">
       <Link className="back-link" to="/books">
@@ -129,7 +127,7 @@ export default function BookDetailPage() {
                     className={
                       item.available > 0 ? 'inventory-row' : 'inventory-row unavailable-row'
                     }
-                    key={item.id}
+                    key={item._id ?? item.id}
                   >
                     <div>
                       <strong>{item.condition === 'new' ? 'New' : 'Used'}</strong>

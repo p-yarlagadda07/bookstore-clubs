@@ -1,8 +1,5 @@
 import { useMemo } from 'react';
-import {
-  Link,
-  useSearchParams,
-} from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Badge, Card, Input } from '../../components/index.js';
 import { listBooks } from './booksApi.js';
@@ -59,15 +56,10 @@ export default function CatalogPage() {
       page: Number(searchParams.get('page') || 1),
       limit: 6,
     }),
-    [searchParams]
+    [searchParams],
   );
 
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ['books', params],
     queryFn: () => listBooks(params),
   });
@@ -101,9 +93,7 @@ export default function CatalogPage() {
       <section className="books-header">
         <div>
           <h1>Book Catalog</h1>
-          <p>
-            Browse books and reserve an available copy.
-          </p>
+          <p>Browse books and reserve an available copy.</p>
         </div>
       </section>
 
@@ -112,9 +102,7 @@ export default function CatalogPage() {
           label="Search"
           type="search"
           value={params.q}
-          onChange={(event) =>
-            updateParam('q', event.target.value)
-          }
+          onChange={(event) => updateParam('q', event.target.value)}
           placeholder="Search by title or author"
         />
 
@@ -122,9 +110,7 @@ export default function CatalogPage() {
           <span>Theme</span>
           <select
             value={params.theme}
-            onChange={(event) =>
-              updateParam('theme', event.target.value)
-            }
+            onChange={(event) => updateParam('theme', event.target.value)}
           >
             <option value="">All themes</option>
             {THEMES.map((theme) => (
@@ -137,12 +123,7 @@ export default function CatalogPage() {
 
         <label className="filter-field">
           <span>Mood</span>
-          <select
-            value={params.mood}
-            onChange={(event) =>
-              updateParam('mood', event.target.value)
-            }
-          >
+          <select value={params.mood} onChange={(event) => updateParam('mood', event.target.value)}>
             <option value="">All moods</option>
             {MOODS.map((mood) => (
               <option key={mood} value={mood}>
@@ -156,9 +137,7 @@ export default function CatalogPage() {
           <span>Maximum pages</span>
           <select
             value={params.maxPages}
-            onChange={(event) =>
-              updateParam('maxPages', event.target.value)
-            }
+            onChange={(event) => updateParam('maxPages', event.target.value)}
           >
             <option value="">Any length</option>
             <option value="200">200 pages</option>
@@ -173,21 +152,12 @@ export default function CatalogPage() {
           <input
             type="checkbox"
             checked={params.available}
-            onChange={(event) =>
-              updateParam(
-                'available',
-                event.target.checked
-              )
-            }
+            onChange={(event) => updateParam('available', event.target.checked)}
           />
           <span>Available only</span>
         </label>
 
-        <button
-          type="button"
-          className="clear-filters"
-          onClick={clearFilters}
-        >
+        <button type="button" className="clear-filters" onClick={clearFilters}>
           Clear filters
         </button>
       </section>
@@ -200,19 +170,14 @@ export default function CatalogPage() {
 
       {isError && (
         <div className="books-state" role="alert">
-          <p>
-            {error?.message ||
-              'Unable to load books. Please try again.'}
-          </p>
+          <p>{error?.message || 'Unable to load books. Please try again.'}</p>
         </div>
       )}
 
       {!isLoading && !isError && books.length === 0 && (
         <div className="books-state">
           <h2>No books found</h2>
-          <p>
-            Try changing your search or filters.
-          </p>
+          <p>Try changing your search or filters.</p>
         </div>
       )}
 
@@ -221,45 +186,33 @@ export default function CatalogPage() {
           <section className="book-grid">
             {books.map((book) => (
               <Card
-             key={book._id ?? book.id}
+                key={book._id ?? book.id}
                 className={
-                  book.availability.label === 'Unavailable'
+                  book.availability?.label === 'Unavailable'
                     ? 'book-card book-card-unavailable'
                     : 'book-card'
                 }
               >
                 <div className="book-card-content">
                   <div className="book-card-top">
-                    <Badge>
-                      {book.availability.label}
-                    </Badge>
+                    <Badge>{book.availability?.label}</Badge>
                   </div>
 
                   <h2>{book.title}</h2>
 
-                  <p className="book-authors">
-                    By {book.authors.join(', ')}
-                  </p>
+                  <p className="book-authors">By {book.authors.join(', ')}</p>
 
-                  <p className="book-pages">
-                    {book.pageCount} pages
-                  </p>
+                  <p className="book-pages">{book.pageCount} pages</p>
 
                   <div className="book-chips">
                     {book.themes.map((theme) => (
-                      <span
-                        className="book-chip"
-                        key={theme}
-                      >
+                      <span className="book-chip" key={theme}>
                         {theme}
                       </span>
                     ))}
                   </div>
 
-                  <Link
-                    className="book-view-link"
-                    to={`/books/${book._id ?? book.id}`}
-                  >
+                  <Link className="book-view-link" to={`/books/${book._id ?? book.id}`}>
                     View book
                   </Link>
                 </div>
@@ -271,12 +224,7 @@ export default function CatalogPage() {
             <button
               type="button"
               disabled={currentPage <= 1}
-              onClick={() =>
-                updateParam(
-                  'page',
-                  currentPage - 1
-                )
-              }
+              onClick={() => updateParam('page', currentPage - 1)}
             >
               Previous
             </button>
@@ -288,12 +236,7 @@ export default function CatalogPage() {
             <button
               type="button"
               disabled={currentPage >= totalPages}
-              onClick={() =>
-                updateParam(
-                  'page',
-                  currentPage + 1
-                )
-              }
+              onClick={() => updateParam('page', currentPage + 1)}
             >
               Next
             </button>
