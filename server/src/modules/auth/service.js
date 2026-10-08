@@ -6,6 +6,6 @@ import { AppError } from '../../lib/AppError.js';
 export async function checkLogin(email, password) {
   const user = await User.findOne({ email });
   const ok = user && (await argon2.verify(user.passwordHash, password).catch(() => false));
-  if (!ok) throw new AppError('UNAUTHENTICATED', 401, 'Invalid email or password');
+    if (!ok) throw new AppError('INVALID_CREDENTIALS', 401, 'Invalid email or password');
   return user;
 }
