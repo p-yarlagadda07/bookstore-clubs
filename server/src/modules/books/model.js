@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const bookSchema = new mongoose.Schema(
   {
@@ -25,7 +25,7 @@ const bookSchema = new mongoose.Schema(
 
     sourceId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "CatalogSource",
+      ref: 'CatalogSource',
     },
 
     approvedSource: {
@@ -35,8 +35,8 @@ const bookSchema = new mongoose.Schema(
 
     contentLevel: {
       type: String,
-      enum: ["synopsis", "excerpts"],
-      default: "synopsis",
+      enum: ['synopsis', 'excerpts'],
+      default: 'synopsis',
     },
 
     embedding: {
@@ -46,12 +46,12 @@ const bookSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 bookSchema.index({
-  title: "text",
-  authors: "text",
+  title: 'text',
+  authors: 'text',
 });
 
-export default mongoose.model("Book", bookSchema);
+export default mongoose.model('Book', bookSchema);

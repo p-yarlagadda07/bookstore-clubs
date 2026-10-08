@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const catalogSourceSchema = new mongoose.Schema(
   {
@@ -8,7 +8,7 @@ const catalogSourceSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["publisher", "store", "synopsis"],
+      enum: ['publisher', 'store', 'synopsis'],
       required: true,
     },
     license: {
@@ -16,13 +16,13 @@ const catalogSourceSchema = new mongoose.Schema(
     },
     permission: {
       type: String,
-      enum: ["approved", "pending", "revoked"],
-      default: "pending",
+      enum: ['approved', 'pending', 'revoked'],
+      default: 'pending',
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-export default mongoose.model("CatalogSource", catalogSourceSchema);
+export default mongoose.model('CatalogSource', catalogSourceSchema);

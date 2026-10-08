@@ -7,5 +7,9 @@ export const ListBooksQuery = z.object({
   theme: z.string().trim().optional(),
   mood: z.string().trim().optional(),
   maxPages: z.coerce.number().int().min(1).optional(),
-  available: z.coerce.boolean().optional()
+  // z.coerce.boolean() turns the string 'false' into true, so map it by hand
+  available: z
+    .enum(['true', 'false'])
+    .transform((v) => v === 'true')
+    .optional(),
 });

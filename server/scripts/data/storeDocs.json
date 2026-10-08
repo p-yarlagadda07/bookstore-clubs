@@ -1,0 +1,50 @@
+[
+  {
+    "key": "hold-time",
+    "title": "How long we hold a reserved book",
+    "type": "policy",
+    "text": "When you reserve a book, we keep it aside for you until the end of the pickup window you chose. If you don't collect it by then, the hold ends on its own and the copy goes back on the shelf for other readers. You can cancel a reservation any time before your window ends from the My Reservations page. You can have up to 5 active reservations at a time."
+  },
+  {
+    "key": "pickup-hours",
+    "title": "Pickup hours",
+    "type": "policy",
+    "text": "Reserved books can be collected from the front counter between 10:00 and 19:00, Monday to Saturday, and between 11:00 and 17:00 on Sundays. Pickup windows are offered for the next 7 days. Please bring your name or reservation number. Someone else can collect for you if they show the reservation on their phone."
+  },
+  {
+    "key": "used-condition",
+    "title": "Used book condition guide",
+    "type": "policy",
+    "text": "Every used book is checked by our staff before it goes on sale. Good means some wear on the cover and maybe a name written inside, but all pages are clean and complete. Fair means visible wear, a creased spine or light pencil marks, still easy to read. We don't sell books with missing pages, water damage or heavy highlighting. If you're not happy with a used book, bring it back within 7 days for a refund or exchange."
+  },
+  {
+    "key": "returns",
+    "title": "Returns and exchanges",
+    "type": "policy",
+    "text": "New books can be returned within 14 days in the same condition with the receipt. Used books can be returned within 7 days. Gift cards and event tickets can't be refunded. If a book has a printing fault, we will replace it at any time."
+  },
+  {
+    "key": "club-rules",
+    "title": "Book club rules",
+    "type": "policy",
+    "text": "Anyone with a verified account can join a published book club. Please be kind and let everyone speak. Don't share spoilers past the chapter the club has agreed on, and mark spoilers clearly in any chat. Moderators choose the next book and the meeting dates, and can remove members who don't follow the rules. Club members get 10 percent off the club's current book in store."
+  },
+  {
+    "key": "spoiler-help",
+    "title": "How spoiler protection works",
+    "type": "faq",
+    "text": "Our book chat only answers from the approved excerpts and synopses we have, and only up to the chapter you've told us you're on. Set your current chapter on the Settings page or your club page. If you turn on strict mode, the chat will also never go past the maximum chapter you choose, even if you've read further."
+  },
+  {
+    "key": "events-faq",
+    "title": "Events FAQ",
+    "type": "event",
+    "text": "We host author talks, reading nights and a children's story hour every Saturday at 11:00. Most events are free, but some author talks need a ticket because space is limited. Events are listed on the noticeboard by the till and announced in each club's page. Book club meetings take place in the reading room upstairs unless the club says otherwise."
+  },
+  {
+    "key": "contact",
+    "title": "Contacting the store",
+    "type": "faq",
+    "text": "You can reach us at the front counter during opening hours or by phone. For questions about a reservation, have your reservation number ready. We usually reply to messages within one working day. We can't hold a book over the phone; please reserve it through the website so it shows up for our staff."
+  }
+]
