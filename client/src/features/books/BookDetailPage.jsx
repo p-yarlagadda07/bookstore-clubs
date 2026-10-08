@@ -1,4 +1,3 @@
-
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Badge, Card } from '../../components/index.js';
@@ -37,10 +36,7 @@ export default function BookDetailPage() {
       <main className="books-page">
         <div className="books-state" role="alert">
           <h1>Book not found</h1>
-          <p>
-            {error?.message ||
-              'Unable to load this book.'}
-          </p>
+          <p>{error?.message || 'Unable to load this book.'}</p>
           <Link to="/books">Back to catalog</Link>
         </div>
       </main>
@@ -56,16 +52,8 @@ export default function BookDetailPage() {
   const isVerified = Boolean(user?.emailVerifiedAt);
 
   const hasAvailableCopy = book.inventory?.some(
-    (item) =>
-      item.status === 'active' &&
-      item.available > 0
+    (item) => item.status === 'active' && item.available > 0,
   );
-
-  
-    hasAvailableCopy &&
-    isLoggedIn &&
-    isVerified &&
-    book.availability.reservable;
 
   return (
     <main className="books-page">
@@ -80,25 +68,19 @@ export default function BookDetailPage() {
               <div>
                 <h1>{book.title}</h1>
 
-                <p className="book-authors">
-                  By {book.authors.join(', ')}
-                </p>
+                <p className="book-authors">By {book.authors.join(', ')}</p>
               </div>
 
-              <Badge>
-                {book.availability.label}
-              </Badge>
+              <Badge>{book.availability?.label}</Badge>
             </div>
 
             <div className="book-detail-info">
               <p>
-                <strong>Pages:</strong>{' '}
-                {book.pageCount}
+                <strong>Pages:</strong> {book.pageCount}
               </p>
 
               <p>
-                <strong>Chapters:</strong>{' '}
-                {book.chapterCount}
+                <strong>Chapters:</strong> {book.chapterCount}
               </p>
             </div>
 
@@ -111,10 +93,7 @@ export default function BookDetailPage() {
               <h2>Themes</h2>
               <div className="book-chips">
                 {book.themes.map((theme) => (
-                  <span
-                    className="book-chip"
-                    key={theme}
-                  >
+                  <span className="book-chip" key={theme}>
                     {theme}
                   </span>
                 ))}
@@ -125,10 +104,7 @@ export default function BookDetailPage() {
               <h2>Moods</h2>
               <div className="book-chips">
                 {book.moods.map((mood) => (
-                  <span
-                    className="book-chip"
-                    key={mood}
-                  >
+                  <span className="book-chip" key={mood}>
                     {mood}
                   </span>
                 ))}
@@ -149,32 +125,20 @@ export default function BookDetailPage() {
                 {book.inventory.map((item) => (
                   <div
                     className={
-                      item.available > 0
-                        ? 'inventory-row'
-                        : 'inventory-row unavailable-row'
+                      item.available > 0 ? 'inventory-row' : 'inventory-row unavailable-row'
                     }
-                    key={item.id}
+                    key={item._id ?? item.id}
                   >
                     <div>
-                      <strong>
-                        {item.condition === 'new'
-                          ? 'New'
-                          : 'Used'}
-                      </strong>
+                      <strong>{item.condition === 'new' ? 'New' : 'Used'}</strong>
 
                       <span className="inventory-count">
-                        {item.available > 0
-                          ? `${item.available} available`
-                          : 'Unavailable'}
+                        {item.available > 0 ? `${item.available} available` : 'Unavailable'}
                       </span>
                     </div>
 
                     {item.available > 0 ? (
-                      <Badge>
-                        {item.available === 1
-                          ? 'Few left'
-                          : 'Available'}
-                      </Badge>
+                      <Badge>{item.available === 1 ? 'Few left' : 'Available'}</Badge>
                     ) : (
                       <Badge>Unavailable</Badge>
                     )}
@@ -184,21 +148,14 @@ export default function BookDetailPage() {
             </div>
 
             <div className="reserve-area">
-              {!hasAvailableCopy ||
-              !book.availability.reservable ? (
+              {!hasAvailableCopy || !book.availability?.reservable ? (
                 <Badge>Unavailable</Badge>
               ) : !isLoggedIn ? (
-                <Link
-                  className="reserve-link"
-                  to="/login"
-                  state={{ from: `/books/${id}` }}
-                >
+                <Link className="reserve-link" to="/login" state={{ from: `/books/${id}` }}>
                   Log in to reserve
                 </Link>
               ) : !isVerified ? (
-                <p className="verify-message">
-                  Verify your email to reserve
-                </p>
+                <p className="verify-message">Verify your email to reserve</p>
               ) : (
                 <ReserveDialog book={book} />
               )}

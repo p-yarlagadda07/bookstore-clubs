@@ -1,7 +1,7 @@
 import api from '../../api/client.js';
 import { mockBooks } from './books.mock.js';
 
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -21,17 +21,15 @@ export async function listBooks({
   limit = 6,
 } = {}) {
   if (!USE_MOCK) {
-    const response = await api.get('/books', {
-      params: {
-        q,
-        theme,
-        mood,
-        maxPages,
-        available,
-        page,
-        limit,
-      },
-    });
+    const params = { page, limit };
+
+if (q.trim()) params.q = q.trim();
+if (theme) params.theme = theme;
+if (mood) params.mood = mood;
+if (maxPages) params.maxPages = maxPages;
+if (available) params.available = true;
+
+const response = await api.get('/books', { params });
 
     return response;
   }
@@ -113,10 +111,7 @@ export async function reserveBook(
   { condition, pickupWindowId }
 ) {
   if (!USE_MOCK) {
-    return api.post(`/books/${id}/reserve`, {
-      condition,
-      pickupWindowId,
-    });
+    return api.post(`/books/${id}/reservations`, { condition, pickupWindowId });
   }
 
   await delay(300);

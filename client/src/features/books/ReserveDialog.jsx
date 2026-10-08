@@ -29,6 +29,7 @@ function formatPickupWindow(window) {
 
 export default function ReserveDialog({ book }) {
   const queryClient = useQueryClient();
+  const bookId = book._id ?? book.id;
 
   const [open, setOpen] = useState(false);
   const [condition, setCondition] = useState('');
@@ -38,17 +39,12 @@ export default function ReserveDialog({ book }) {
   const [success, setSuccess] = useState(false);
 
   const availableInventory = book.inventory.filter(
-    (item) =>
-      item.status === 'active' &&
-      item.available > 0
+    (item) => item.status === 'active' && item.available > 0,
   );
 
-  const selectedInventory = availableInventory.find(
-    (item) => item.condition === condition
-  );
+  const selectedInventory = availableInventory.find((item) => item.condition === condition);
 
-  const pickupWindows =
-    selectedInventory?.pickupWindows || [];
+  const pickupWindows = selectedInventory?.pickupWindows || [];
 
   function handleOpen() {
     setOpen(true);
@@ -79,7 +75,7 @@ export default function ReserveDialog({ book }) {
     setError('');
 
     try {
-      await reserveBook(book.id, {
+      await reserveBook(bookId, {
         condition,
         pickupWindowId,
       });
@@ -87,27 +83,19 @@ export default function ReserveDialog({ book }) {
       setSuccess(true);
 
       await queryClient.invalidateQueries({
-        queryKey: ['book', book.id],
+        queryKey: ['book', bookId],
       });
     } catch (err) {
-      if (
-        err?.code === 'OUT_OF_STOCK' ||
-        err?.status === 409
-      ) {
+      if (err?.code === 'OUT_OF_STOCK' || err?.status === 409) {
         setError('Sorry, this copy was just taken.');
 
         await queryClient.invalidateQueries({
-          queryKey: ['book', book.id],
+          queryKey: ['book', bookId],
         });
       } else if (err?.code === 'EMAIL_NOT_VERIFIED') {
-        setError(
-          'Please verify your email to reserve books.'
-        );
+        setError('Please verify your email to reserve books.');
       } else {
-        setError(
-          err?.message ||
-            'Unable to reserve this copy. Please try again.'
-        );
+        setError(err?.message || 'Unable to reserve this copy. Please try again.');
       }
     } finally {
       setSending(false);
@@ -116,33 +104,18 @@ export default function ReserveDialog({ book }) {
 
   return (
     <>
-      <Button
-        type="button"
-        data-testid="reserve-btn"
-        onClick={handleOpen}
-      >
+      <Button type="button" data-testid="reserve-btn" onClick={handleOpen}>
         Reserve a copy
       </Button>
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        title={`Reserve "${book.title}"`}
-      >
+      <Dialog open={open} onClose={handleClose} title={`Reserve "${book.title}"`}>
         {success ? (
           <div className="reserve-success">
-            <p>
-              Reserved! Pick it up in your window.
-            </p>
+            <p>Reserved! Pick it up in your window.</p>
 
-            <Link to="/reservations">
-              Go to reservations
-            </Link>
+            <Link to="/reservations">Go to reservations</Link>
 
-            <Button
-              type="button"
-              onClick={() => setOpen(false)}
-            >
+            <Button type="button" onClick={() => setOpen(false)}>
               Close
             </Button>
           </div>
@@ -153,29 +126,17 @@ export default function ReserveDialog({ book }) {
 
               <div className="radio-list">
                 {availableInventory.map((item) => (
-                  <label
-                    className="radio-option"
-                    key={item.id}
-                  >
+                  <label className="radio-option" key={item._id ?? item.id}>
                     <input
                       type="radio"
                       name="condition"
                       value={item.condition}
-                      checked={
-                        condition === item.condition
-                      }
-                      onChange={(event) =>
-                        handleConditionChange(
-                          event.target.value
-                        )
-                      }
+                      checked={condition === item.condition}
+                      onChange={(event) => handleConditionChange(event.target.value)}
                     />
 
                     <span>
-                      {item.condition === 'new'
-                        ? 'New'
-                        : 'Used'}{' '}
-                      — {item.available} available
+                      {item.condition === 'new' ? 'New' : 'Used'} - {item.available} available
                     </span>
                   </label>
                 ))}
@@ -186,37 +147,22 @@ export default function ReserveDialog({ book }) {
               <h3>2. Choose pickup window</h3>
 
               {!condition ? (
-                <p className="reserve-hint">
-                  Choose a condition first.
-                </p>
+                <p className="reserve-hint">Choose a condition first.</p>
               ) : pickupWindows.length === 0 ? (
-                <p className="reserve-hint">
-                  No pickup windows available.
-                </p>
+                <p className="reserve-hint">No pickup windows available.</p>
               ) : (
                 <div className="radio-list">
                   {pickupWindows.map((window) => (
-                    <label
-                      className="radio-option"
-                      key={window._id}
-                    >
+                    <label className="radio-option" key={window._id}>
                       <input
                         type="radio"
                         name="pickupWindow"
                         value={window._id}
-                        checked={
-                          pickupWindowId === window._id
-                        }
-                        onChange={(event) =>
-                          setPickupWindowId(
-                            event.target.value
-                          )
-                        }
+                        checked={pickupWindowId === window._id}
+                        onChange={(event) => setPickupWindowId(event.target.value)}
                       />
 
-                      <span>
-                        {formatPickupWindow(window)}
-                      </span>
+                      <span>{formatPickupWindow(window)}</span>
                     </label>
                   ))}
                 </div>
@@ -224,35 +170,22 @@ export default function ReserveDialog({ book }) {
             </div>
 
             {error && (
-              <p
-                className="auth-error"
-                role="alert"
-              >
+              <p className="auth-error" role="alert">
                 {error}
               </p>
             )}
 
             <div className="reserve-actions">
-              <Button
-                type="button"
-                onClick={handleClose}
-                disabled={sending}
-              >
+              <Button type="button" onClick={handleClose} disabled={sending}>
                 Cancel
               </Button>
 
               <Button
                 type="button"
                 onClick={handleConfirm}
-                disabled={
-                  !condition ||
-                  !pickupWindowId ||
-                  sending
-                }
+                disabled={!condition || !pickupWindowId || sending}
               >
-                {sending
-                  ? 'Reserving...'
-                  : 'Confirm reservation'}
+                {sending ? 'Reserving...' : 'Confirm reservation'}
               </Button>
             </div>
           </div>

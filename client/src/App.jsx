@@ -12,7 +12,7 @@ import SignupPage from './features/auth/SignupPage.jsx';
 import VerifyPage from './features/auth/VerifyPage.jsx';
 import ForgotPage from './features/auth/ForgotPage.jsx';
 import ResetPage from './features/auth/ResetPage.jsx';
-
+import StockPage from './features/stock/StockPage.jsx';
 import api from './api/client.js';
 import './app/layout.css';
 
@@ -204,9 +204,9 @@ export default function App() {
           />
 
           <Route
-            path="/staff/stock"
-            element={<Placeholder name="Stock management" />}
-          />
+  path="/staff/stock"
+  element={<StockPage />}
+/>
 
           <Route
             path="/staff/admin"
