@@ -37,7 +37,7 @@ const reservationSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 reservationSchema.index({ userId: 1, status: 1 });

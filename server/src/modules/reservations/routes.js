@@ -19,14 +19,10 @@ router.post(
     body: ReserveBody,
   }),
   asyncHandler(async (req, res) => {
-    const reservation = await reserve(
-      req.user,
-      req.params.id,
-      req.body
-    );
+    const reservation = await reserve(req.user, req.params.id, req.body);
 
     return res.ok(reservation, 201);
-  })
+  }),
 );
 
 export default router;

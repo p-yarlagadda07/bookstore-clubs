@@ -1,6 +1,6 @@
 import Inventory from '../inventory/model.js';
 import Reservation from './model.js';
-import AppError from '../../lib/AppError.js';
+import { AppError } from '../../lib/AppError.js';
 
 export async function reserve(user, bookId, { condition, pickupWindowId }) {
   const activeReservations = await Reservation.countDocuments({
@@ -9,11 +9,7 @@ export async function reserve(user, bookId, { condition, pickupWindowId }) {
   });
 
   if (activeReservations >= 5) {
-    throw new AppError(
-      'LIMIT_REACHED',
-      409,
-      'You can have at most 5 active reservations'
-    );
+    throw new AppError('LIMIT_REACHED', 409, 'You can have at most 5 active reservations');
   }
 
   const inventory = await Inventory.findOneAndUpdate(
@@ -30,25 +26,17 @@ export async function reserve(user, bookId, { condition, pickupWindowId }) {
         held: 1,
       },
     },
-    { new: true }
+    { new: true },
   );
 
   if (!inventory) {
-    throw new AppError(
-      'OUT_OF_STOCK',
-      409,
-      'Sorry, this copy was just taken'
-    );
+    throw new AppError('OUT_OF_STOCK', 409, 'Sorry, this copy was just taken');
   }
 
   const pickupWindow = inventory.pickupWindows.id(pickupWindowId);
 
   if (!pickupWindow) {
-    throw new AppError(
-      'OUT_OF_STOCK',
-      409,
-      'Pickup window is not available'
-    );
+    throw new AppError('OUT_OF_STOCK', 409, 'Pickup window is not available');
   }
 
   return Reservation.create({
