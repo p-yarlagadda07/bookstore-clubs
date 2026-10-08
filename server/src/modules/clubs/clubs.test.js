@@ -213,6 +213,52 @@ describe('clubs moderator API', () => {
     expect(membersResponse.body.data.items[0].email).toBe(user.email);
   });
 
+  it('rejects a meeting with a past date', async () => {
+    const club = await Club.create({
+      name: 'Past Date Club',
+      published: true,
+    });
+
+    const { agent, csrf } = await loginAs(app, {
+      moderatorOf: [club._id],
+    });
+
+    const response = await agent
+      .post(`/api/clubs/${club._id}/meetings`)
+      .set('x-csrf-token', csrf)
+      .send({
+        date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        time: '18:30',
+        location: 'Library',
+        agenda: 'Past meeting',
+      });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('rejects a meeting with an invalid time', async () => {
+    const club = await Club.create({
+      name: 'Invalid Time Club',
+      published: true,
+    });
+
+    const { agent, csrf } = await loginAs(app, {
+      moderatorOf: [club._id],
+    });
+
+    const response = await agent
+      .post(`/api/clubs/${club._id}/meetings`)
+      .set('x-csrf-token', csrf)
+      .send({
+        date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        time: '6pm',
+        location: 'Library',
+        agenda: 'Invalid time',
+      });
+
+    expect(response.status).toBe(400);
+  });
+
   it('blocks a normal reader from creating a meeting', async () => {
     const club = await Club.create({
       name: 'Reader Blocked Club',

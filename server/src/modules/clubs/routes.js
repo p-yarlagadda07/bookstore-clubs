@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { IdParams, CreateMeetingBody } from '@bookstore/shared';
+import { CreateMeetingBody } from '@bookstore/shared/schemas/clubs';
+import { IdParams } from '@bookstore/shared';
 import { requireAuth, requireVerified, requireClubModerator } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
 import { asyncHandler } from '../../lib/asyncHandler.js';
