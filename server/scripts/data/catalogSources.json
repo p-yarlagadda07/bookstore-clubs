@@ -1,0 +1,23 @@
+[
+  {
+    "key": "store",
+    "name": "Store synopses",
+    "type": "store",
+    "license": "Written by our staff",
+    "permission": "approved"
+  },
+  {
+    "key": "pub1",
+    "name": "Harbour Lane Press",
+    "type": "publisher",
+    "license": "Synopses and short excerpts for in-store use",
+    "permission": "approved"
+  },
+  {
+    "key": "pub2",
+    "name": "Northfield Books",
+    "type": "publisher",
+    "license": "Waiting for signed agreement",
+    "permission": "pending"
+  }
+]
