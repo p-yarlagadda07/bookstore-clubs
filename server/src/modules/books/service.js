@@ -1,5 +1,6 @@
 import Book from "./model.js";
 import Inventory from "../inventory/model.js";
+import { getAvailability } from "../inventory/service.js";
 
 async function list({
   page = 1,
@@ -42,9 +43,15 @@ async function list({
     Book.countDocuments(filter),
   ]);
 
-  if (available !== undefined) {
-    const bookIds = items.map((book) => book._id);
+  const bookIds = items.map((book) => book._id);
+  const availability = await getAvailability(bookIds);
 
+  const itemsWithAvailability = items.map((book) => ({
+    ...book,
+    availability: availability.get(book._id.toString()),
+  }));
+
+  if (available !== undefined) {
     const inventory = await Inventory.find({
       bookId: { $in: bookIds },
       available: { $gt: 0 },
@@ -56,7 +63,7 @@ async function list({
     );
 
     return {
-      items: items.filter((book) =>
+      items: itemsWithAvailability.filter((book) =>
         availableIds.has(book._id.toString())
       ),
       page,
@@ -66,7 +73,7 @@ async function list({
   }
 
   return {
-    items,
+    items: itemsWithAvailability,
     page,
     limit,
     total,
@@ -86,9 +93,12 @@ async function get(id) {
     bookId: id,
   }).lean();
 
+  const availability = await getAvailability([id]);
+
   return {
     ...book,
     inventory,
+    availability: availability.get(id.toString()),
   };
 }
 
