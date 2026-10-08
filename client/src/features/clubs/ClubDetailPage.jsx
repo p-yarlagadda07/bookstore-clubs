@@ -20,11 +20,11 @@ export default function ClubDetailPage() {
         setLoading(true);
         setError("");
 
-        const response = await api.get(`/clubs/${id}`);
+        const clubData = await api.get(`/clubs/${id}`);
 
-        if (!cancelled) {
-          setClub(response.data);
-        }
+if (!cancelled) {
+  setClub(clubData);
+}
       } catch (err) {
         if (!cancelled) {
           setError(err?.message ?? "Unable to load club.");
@@ -144,7 +144,7 @@ export default function ClubDetailPage() {
           <div className="meetings-list">
             {club.meetings?.map((meeting) => (
               <article className="meeting-card" key={meeting.id}>
-                <strong>{meeting.date}</strong>
+              <strong>{new Date(meeting.date).toLocaleDateString()}</strong>
                 <span>{meeting.time}</span>
                 <span>{meeting.location}</span>
                 <p>{meeting.agenda}</p>

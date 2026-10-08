@@ -1,24 +1,21 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../../api/client.js";
-import ClubDetailPage from "./ClubDetailPage";
 import "./clubs.css";
 
 export default function ClubsPage() {
   const [clubs, setClubs] = useState([]);
-  const [selectedClub, setSelectedClub] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     let cancelled = false;
-
-    async function loadClubs() {
+async function loadClubs() {
       try {
         setLoading(true);
         setError("");
 
-        const response = await api.get("/clubs");
-        const items = response.data?.items ?? [];
+        const { items } = await api.get("/clubs");
 
         if (!cancelled) {
           setClubs(items);
@@ -41,14 +38,7 @@ export default function ClubsPage() {
     };
   }, []);
 
-  if (selectedClub) {
-    return (
-      <ClubDetailPage
-        club={selectedClub}
-        onBack={() => setSelectedClub(null)}
-      />
-    );
-  }
+
 
   return (
     <section className="clubs-page">
@@ -86,13 +76,12 @@ export default function ClubsPage() {
                   </div>
                 )}
               </div>
-
-              <button
+              <Link
                 className="club-button"
-                onClick={() => setSelectedClub(club)}
+                to={`/clubs/${club.id}`}
               >
                 View Club
-              </button>
+              </Link>
             </article>
           ))}
         </div>
