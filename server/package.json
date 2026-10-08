@@ -8,7 +8,8 @@
     "start": "node src/server.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "seed": "node scripts/seed.js"
+    "seed": "node scripts/seed.js",
+    "embed": "node scripts/embed.js"
   },
   "dependencies": {
     "@bookstore/shared": "*",

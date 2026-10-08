@@ -16,7 +16,8 @@
     "format": "prettier --write .",
     "test": "npm test -w server",
     "seed": "npm run seed -w server --",
-    "build": "npm run build -w client"
+    "build": "npm run build -w client",
+    "embed": "npm run embed -w server"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
