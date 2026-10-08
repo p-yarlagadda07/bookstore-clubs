@@ -13,3 +13,7 @@ Every claim must have a citation using [1], [2], [3], etc.
 Rule 4:
 If only a synopsis is available, say so clearly.
 `;
+
+export function buildSystemPrompt(chapter) {
+  return BOOK_CHAT_SYSTEM_PROMPT.replace('{boundary}', chapter);
+}
