@@ -79,4 +79,31 @@ describe('Books API', () => {
     const all = await request(app).get('/api/books?available=false');
     expect(all.body.data.items.map((b) => b.title)).toContain('Sold Out Book');
   });
+
+  it('adds an availability label to each book', async () => {
+    const plenty = await Book.create({ title: 'Plenty Copies', approvedSource: true });
+    const few = await Book.create({ title: 'Two Copies', approvedSource: true });
+    const off = await Book.create({ title: 'Marked Off', approvedSource: true });
+
+    await Inventory.create([
+      { bookId: plenty._id, condition: 'new', total: 5, available: 5 },
+      { bookId: few._id, condition: 'used', total: 2, available: 2 },
+      { bookId: off._id, condition: 'new', total: 4, available: 4, status: 'unavailable' },
+    ]);
+
+    const res = await request(app).get('/api/books?limit=50');
+    const byTitle = Object.fromEntries(res.body.data.items.map((b) => [b.title, b.availability]));
+
+    expect(byTitle['Plenty Copies']).toMatchObject({
+      new: 5,
+      used: 0,
+      label: 'Available',
+      reservable: true,
+    });
+    expect(byTitle['Two Copies']).toMatchObject({ used: 2, label: 'Few left' });
+    expect(byTitle['Marked Off']).toMatchObject({ label: 'Unavailable', reservable: false });
+
+    const detail = await request(app).get(`/api/books/${few._id}`);
+    expect(detail.body.data.availability.label).toBe('Few left');
+  });
 });
