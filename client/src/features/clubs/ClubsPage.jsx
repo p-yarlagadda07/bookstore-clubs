@@ -1,28 +1,50 @@
-import { useState } from "react";
-import { mockClubs } from "./clubs.mock";
+import { useEffect, useState } from "react";
+import api from "../../api/client.js";
 import ClubDetailPage from "./ClubDetailPage";
 import "./clubs.css";
 
 export default function ClubsPage() {
+  const [clubs, setClubs] = useState([]);
   const [selectedClub, setSelectedClub] = useState(null);
-  const [joinedClubs, setJoinedClubs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  function handleJoin(clubId) {
-    setJoinedClubs((current) => {
-      if (current.includes(clubId)) {
-        return current.filter((id) => id !== clubId);
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadClubs() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await api.get("/clubs");
+        const items = response.data?.items ?? [];
+
+        if (!cancelled) {
+          setClubs(items);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err?.message ?? "Unable to load clubs.");
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
+    }
 
-      return [...current, clubId];
-    });
-  }
+    loadClubs();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   if (selectedClub) {
     return (
       <ClubDetailPage
         club={selectedClub}
-        isJoined={joinedClubs.includes(selectedClub.id)}
-        onJoin={() => handleJoin(selectedClub.id)}
         onBack={() => setSelectedClub(null)}
       />
     );
@@ -39,31 +61,42 @@ export default function ClubsPage() {
         </p>
       </div>
 
-      <div className="clubs-grid">
-        {mockClubs.map((club) => (
-          <article className="club-card" key={club.id}>
-            <div>
-              <p className="club-label">BOOK CLUB</p>
+      {loading && <p>Loading clubs...</p>}
 
-              <h2>{club.name}</h2>
+      {error && <p role="alert">{error}</p>}
 
-              <p>{club.description}</p>
+      {!loading && !error && clubs.length === 0 && (
+        <p>No clubs are available right now.</p>
+      )}
 
-              <div className="current-book">
-                <strong>{club.currentBook.title}</strong>
-                <span>by {club.currentBook.author}</span>
+      {!loading && !error && clubs.length > 0 && (
+        <div className="clubs-grid">
+          {clubs.map((club) => (
+            <article className="club-card" key={club.id}>
+              <div>
+                <p className="club-label">BOOK CLUB</p>
+                <h2>{club.name}</h2>
+
+                <p>{club.description}</p>
+
+                {club.currentBook && (
+                  <div className="current-book">
+                    <strong>{club.currentBook.title}</strong>
+                    <span>by {club.currentBook.author}</span>
+                  </div>
+                )}
               </div>
-            </div>
 
-            <button
-              className="club-button"
-              onClick={() => setSelectedClub(club)}
-            >
-              View Club
-            </button>
-          </article>
-        ))}
-      </div>
+              <button
+                className="club-button"
+                onClick={() => setSelectedClub(club)}
+              >
+                View Club
+              </button>
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   );
-}   
+}
