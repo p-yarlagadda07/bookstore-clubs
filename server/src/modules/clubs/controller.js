@@ -1,5 +1,12 @@
 import { AppError } from '../../lib/AppError.js';
-import { getPublishedClubs, getPublishedClubById, joinClub, getClubProgress } from './service.js';
+import {
+  getPublishedClubs,
+  getPublishedClubById,
+  joinClub,
+  getClubProgress,
+  createMeeting,
+  getClubMembers,
+} from './service.js';
 
 export const listClubs = async (_req, res) => {
   res.ok(await getPublishedClubs());
@@ -18,8 +25,9 @@ export const joinClubController = async (req, res) => {
   if (result.error === 'ALREADY_MEMBER') {
     throw new AppError('CONFLICT', 409, 'Already a member of this club');
   }
-  if (result.error === 'REMOVED')
+  if (result.error === 'REMOVED') {
     throw new AppError('FORBIDDEN', 403, 'You cannot rejoin this club');
+  }
 
   res.ok(result.membership, 201);
 };
@@ -27,4 +35,14 @@ export const joinClubController = async (req, res) => {
 export const getClubProgressController = async (req, res) => {
   if (!req.user) throw new AppError('UNAUTHENTICATED', 401, 'Please log in');
   res.ok(await getClubProgress(req.params.id, req.user));
+};
+
+export const createMeetingController = async (req, res) => {
+  const meeting = await createMeeting(req.params.id, req.body, req.user);
+  res.ok(meeting, 201);
+};
+
+export const getClubMembersController = async (req, res) => {
+  const members = await getClubMembers(req.params.id);
+  res.ok(members);
 };

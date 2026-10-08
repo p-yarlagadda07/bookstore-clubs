@@ -1,3 +1,5 @@
+import { createApp } from '../../app.js';
+import { loginAs } from '../../../test/helpers/auth.js';
 import { beforeAll, afterAll, beforeEach, describe, expect, it } from 'vitest';
 import mongoose from 'mongoose';
 import { startTestDB, stopTestDB } from '../../../test/helpers/db.js';
@@ -12,6 +14,8 @@ import {
   getConstraints,
   getClubProgress,
 } from './service.js';
+
+const app = createApp();
 
 beforeAll(async () => {
   await startTestDB();
@@ -121,6 +125,7 @@ describe('clubs service', () => {
       { clubId: club._id, userId: new mongoose.Types.ObjectId(), status: 'active' },
       { clubId: club._id, userId: new mongoose.Types.ObjectId(), status: 'removed' },
     ]);
+
     await Meeting.create({
       clubId: club._id,
       date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
@@ -154,16 +159,106 @@ describe('clubs service', () => {
       { clubId: club._id, userId: a._id },
       { clubId: club._id, userId: b._id },
     ]);
+
     await Progress.create([
       { userId: a._id, bookId, clubId: club._id, chapter: 3, visibility: 'club' },
       { userId: b._id, bookId, clubId: club._id, chapter: 5, visibility: 'private' },
     ]);
 
     const list = await getClubProgress(club._id, a);
+
     expect(list).toHaveLength(1);
     expect(list[0].chapter).toBe(3);
 
     const stranger = { _id: new mongoose.Types.ObjectId() };
+
     await expect(getClubProgress(club._id, stranger)).rejects.toMatchObject({ status: 403 });
+  });
+});
+
+describe('clubs moderator API', () => {
+  it('allows a club moderator to create a meeting and see members', async () => {
+    const club = await Club.create({
+      name: 'Moderator Club',
+      published: true,
+    });
+
+    const { agent, csrf, user } = await loginAs(app, {
+      moderatorOf: [club._id],
+    });
+
+    await Membership.create({
+      clubId: club._id,
+      userId: user._id,
+      status: 'active',
+    });
+
+    const meetingResponse = await agent
+      .post(`/api/clubs/${club._id}/meetings`)
+      .set('x-csrf-token', csrf)
+      .send({
+        date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        time: '18:30',
+        location: 'Library',
+        agenda: 'Discuss the next chapters',
+      });
+
+    expect(meetingResponse.status).toBe(201);
+    expect(meetingResponse.body.data.location).toBe('Library');
+
+    const membersResponse = await agent.get(`/api/clubs/${club._id}/members`);
+
+    expect(membersResponse.status).toBe(200);
+    expect(membersResponse.body.data.items).toHaveLength(1);
+    expect(membersResponse.body.data.items[0].email).toBe(user.email);
+  });
+
+  it('blocks a normal reader from creating a meeting', async () => {
+    const club = await Club.create({
+      name: 'Reader Blocked Club',
+      published: true,
+    });
+
+    const { agent, csrf } = await loginAs(app);
+
+    const response = await agent
+      .post(`/api/clubs/${club._id}/meetings`)
+      .set('x-csrf-token', csrf)
+      .send({
+        date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        time: '18:30',
+        location: 'Library',
+        agenda: 'Test meeting',
+      });
+
+    expect(response.status).toBe(403);
+  });
+
+  it('blocks a moderator of another club', async () => {
+    const club = await Club.create({
+      name: 'Target Club',
+      published: true,
+    });
+
+    const otherClub = await Club.create({
+      name: 'Other Club',
+      published: true,
+    });
+
+    const { agent, csrf } = await loginAs(app, {
+      moderatorOf: [otherClub._id],
+    });
+
+    const response = await agent
+      .post(`/api/clubs/${club._id}/meetings`)
+      .set('x-csrf-token', csrf)
+      .send({
+        date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        time: '18:30',
+        location: 'Library',
+        agenda: 'Test meeting',
+      });
+
+    expect(response.status).toBe(403);
   });
 });
