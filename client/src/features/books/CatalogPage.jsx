@@ -221,7 +221,7 @@ export default function CatalogPage() {
           <section className="book-grid">
             {books.map((book) => (
               <Card
-                key={book.id}
+             key={book._id ?? book.id}
                 className={
                   book.availability.label === 'Unavailable'
                     ? 'book-card book-card-unavailable'
@@ -258,7 +258,7 @@ export default function CatalogPage() {
 
                   <Link
                     className="book-view-link"
-                    to={`/books/${book.id}`}
+                    to={`/books/${book._id ?? book.id}`}
                   >
                     View book
                   </Link>

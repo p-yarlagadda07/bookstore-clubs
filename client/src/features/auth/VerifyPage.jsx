@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+
+import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import api from '../../api/client.js';
 import { Button, Card } from '../../components/index.js';
@@ -10,9 +11,13 @@ export default function VerifyPage() {
 
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState('');
+  const hasCalledVerify = useRef(false);
 
   useEffect(() => {
     async function verifyEmail() {
+      if (hasCalledVerify.current) return;
+      hasCalledVerify.current = true;
+
       if (!token) {
         setStatus('error');
         setError('This link is missing its token.');
