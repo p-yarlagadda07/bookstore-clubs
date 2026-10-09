@@ -27,7 +27,7 @@ Built with React (Vite), Node + Express, MongoDB Atlas (with vector search), Mon
 
 ## Running it locally
 **Running the AI parts**
-Install Ollama from ollama.com and open it. Then run `ollama pull nomic-embed-text` and `ollama pull llama3.1:8b`. On a slow laptop, use `llama3.2:3b` and set `OLLAMA_CHAT_MODEL` in `.env`. If an AI route returns `AI_UNAVAILABLE`, Ollama isn't running. Open the Ollama app or run `ollama serve`.
+Install Ollama from ollama.com and open it. Then run `ollama pull nomic-embed-text` and `ollama pull llama3.2:3b` (the default chat model). Don't use `llama3.1:8b`, it's too heavy for most laptops. If an AI route returns `AI_UNAVAILABLE`, Ollama isn't running. Open the Ollama app or run `ollama serve`.
 
 You need Git and Node 20 or newer. If you're working on the AI parts you'll also need
 [Ollama](https://ollama.com).

@@ -3,6 +3,8 @@ import { readFile } from 'node:fs/promises';
 import mongoose from 'mongoose';
 import argon2 from 'argon2';
 import { connectDB, disconnectDB } from '../src/config/db.js';
+import { isOllamaUp } from '../src/ai/ollama.js';
+import { embedAllBooks } from '../src/ai/embeddings/books.js';
 
 const reset = process.argv.includes('--reset');
 const DEMO_PASSWORD = 'Password@123';
@@ -234,7 +236,11 @@ async function seedAiData(bookIds, bookSource) {
 async function main() {
   await connectDB();
   if (reset) {
-    await mongoose.connection.dropDatabase();
+    // clear each collection instead of dropping the db, Atlas deletes the search indexes with it
+    const cols = await mongoose.connection.db.listCollections().toArray();
+    for (const c of cols) {
+      await col(c.name).deleteMany({});
+    }
     console.log('Database reset.');
   }
 
@@ -257,6 +263,12 @@ async function main() {
 
   const [excerpts, docs] = await seedAiData(bookIds, bookSource);
   console.log(`Excerpts: ${excerpts}, store docs: ${docs}`);
+
+  if (await isOllamaUp()) {
+    console.log(`Embedded ${await embedAllBooks()} books`);
+  } else {
+    console.log('Ollama is off, run npm run embed later');
+  }
 
   await disconnectDB();
 }
