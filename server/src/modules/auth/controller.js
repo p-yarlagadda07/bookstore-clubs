@@ -20,3 +20,12 @@ export async function logout(req, res) {
 }
 
 export const me = (req, res) => res.ok({ user: req.user });
+export async function signup(req, res) {
+  const user = await service.signup(req.body);
+  res.ok({ user }, 201);
+}
+
+export async function verify(req, res) {
+  const user = await service.verifyEmail(req.validatedQuery.token);
+  res.ok({ user });
+}

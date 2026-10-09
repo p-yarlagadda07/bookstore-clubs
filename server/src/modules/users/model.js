@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true },
     emailVerifiedAt: { type: Date, default: null },
+    verifyTokenHash: { type: String, select: false },
+    verifyTokenExpires: { type: Date },
     roles: { type: [String], enum: ['reader', 'bookseller', 'admin'], default: ['reader'] },
     moderatorOf: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Club' }],
     preferences: {
@@ -24,6 +26,8 @@ const userSchema = new mongoose.Schema(
 userSchema.set('toJSON', {
   transform: (_doc, ret) => {
     delete ret.passwordHash;
+    delete ret.verifyTokenHash;
+    delete ret.verifyTokenExpires;
     delete ret.__v;
     return ret;
   },

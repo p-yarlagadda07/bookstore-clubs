@@ -6,6 +6,8 @@ import {
   getClubProgress,
   createMeeting,
   getClubMembers,
+  updateClub,
+  removeClubMember,
 } from './service.js';
 
 export const listClubs = async (_req, res) => {
@@ -45,4 +47,13 @@ export const createMeetingController = async (req, res) => {
 export const getClubMembersController = async (req, res) => {
   const members = await getClubMembers(req.params.id);
   res.ok(members);
+};
+export const updateClubController = async (req, res) => {
+  const club = await updateClub(req.params.id, req.body);
+  res.ok(club);
+};
+
+export const removeClubMemberController = async (req, res) => {
+  await removeClubMember(req.params.id, req.params.userId, req.user._id);
+  res.ok({});
 };
