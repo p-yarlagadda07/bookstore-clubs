@@ -48,10 +48,34 @@ export async function reserve(user, bookId, { condition, pickupWindowId }) {
 }
 
 export async function getMyReservations(user) {
-  return Reservation.find({ userId: user._id })
+  const rows = await Reservation.find({ userId: user._id })
     .populate('bookId', 'title')
     .sort({ createdAt: -1 })
     .lean();
+
+  const inventories = await Inventory.find({ _id: { $in: rows.map((r) => r.inventoryId) } })
+    .select('pickupWindows')
+    .lean();
+  const windows = new Map();
+  for (const inv of inventories) {
+    for (const w of inv.pickupWindows ?? []) windows.set(String(w._id), w);
+  }
+
+  return {
+    items: rows.map((r) => {
+      const w = windows.get(String(r.pickupWindowId));
+      return {
+        id: r._id,
+        bookId: r.bookId?._id ?? r.bookId,
+        title: r.bookId?.title ?? '',
+        condition: r.condition,
+        status: r.status,
+        pickupWindow: w ? { start: w.start, end: w.end } : null,
+        expiresAt: r.expiresAt,
+        createdAt: r.createdAt,
+      };
+    }),
+  };
 }
 
 export async function cancelReservation(user, reservationId) {

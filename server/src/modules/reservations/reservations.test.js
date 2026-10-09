@@ -1,4 +1,4 @@
-﻿import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import { createApp } from '../../app.js';
 import { startTestDB, stopTestDB } from '../../../test/helpers/db.js';
@@ -119,5 +119,56 @@ describe('POST /api/books/:id/reservations', () => {
 
     const res = await reserve(agent, csrf, book._id, { condition: 'mint', pickupWindowId: 'x' });
     expect(res.status).toBe(400);
+  });
+});
+
+describe('my reservations and cancel', () => {
+  async function holdOne() {
+    const { book, windowId } = await bookWithCopies(2);
+    const me = await loginAs(app);
+    const res = await reserve(me.agent, me.csrf, book._id, {
+      condition: 'new',
+      pickupWindowId: String(windowId),
+    });
+    return { book, me, reservationId: res.body.data._id ?? res.body.data.id };
+  }
+
+  it('lists only my own reservations with the book title', async () => {
+    const { me } = await holdOne();
+    await holdOne();
+
+    const res = await me.agent.get('/api/reservations/mine');
+    expect(res.status).toBe(200);
+    expect(res.body.data.items).toHaveLength(1);
+    expect(res.body.data.items[0].title).toBe('Test Book');
+    expect(res.body.data.items[0].pickupWindow.start).toBeTruthy();
+  });
+
+  it('cancel puts the copy back', async () => {
+    const { book, me, reservationId } = await holdOne();
+
+    const res = await me.agent.delete(`/api/reservations/${reservationId}`).set('x-csrf-token', me.csrf);
+    expect(res.status).toBe(200);
+    expect(res.body.data.status).toBe('cancelled');
+
+    const inv = await Inventory.findOne({ bookId: book._id }).lean();
+    expect(inv.available).toBe(2);
+    expect(inv.held).toBe(0);
+  });
+
+  it('cancelling twice gives 409', async () => {
+    const { me, reservationId } = await holdOne();
+    await me.agent.delete(`/api/reservations/${reservationId}`).set('x-csrf-token', me.csrf);
+
+    const res = await me.agent.delete(`/api/reservations/${reservationId}`).set('x-csrf-token', me.csrf);
+    expect(res.status).toBe(409);
+  });
+
+  it("someone else's reservation gives 404", async () => {
+    const { reservationId } = await holdOne();
+    const other = await loginAs(app);
+
+    const res = await other.agent.delete(`/api/reservations/${reservationId}`).set('x-csrf-token', other.csrf);
+    expect(res.status).toBe(404);
   });
 });
