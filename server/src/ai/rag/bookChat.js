@@ -1,8 +1,10 @@
+
 import { retrieveBookChunks } from './mockRetriever.js';
+import { searchStoreDocs } from './policyRetriever.js';
 import { getBoundary } from '../../modules/progress/service.js';
 import { buildSystemPrompt } from './prompts.js';
 
-// mock version for now - real retrieval + ollama come in the next steps
+// Mock book retrieval for now; store policy questions use StoreDocs.
 export async function bookChat(user, { message, bookId, clubId }) {
   let boundary;
 
@@ -14,6 +16,33 @@ export async function bookChat(user, { message, bookId, clubId }) {
         answer: "Tell me which chapter you're on first, so I don't spoil anything.",
         status: 'needs_progress',
         citations: [],
+        conversationId: null,
+      };
+    }
+  } else {
+    const docs = await searchStoreDocs(message);
+
+    if (docs.length > 0) {
+      const used = docs.slice(0, 2);
+
+      const answer = used
+        .map((doc, i) => {
+          const sentences = doc.text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
+          const summary = sentences.slice(0, 2).join(' ').trim();
+          return `${summary} [${i + 1}]`;
+        })
+        .join(' ');
+
+      const citations = used.map((doc, i) => ({
+        n: i + 1,
+        kind: 'policy',
+        title: doc.title,
+      }));
+
+      return {
+        answer,
+        status: 'answered',
+        citations,
         conversationId: null,
       };
     }
