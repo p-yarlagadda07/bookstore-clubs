@@ -1,3 +1,4 @@
+import { ObjectId } from './common.js';
 import { z } from 'zod';
 import { IdParams } from './common.js';
 
@@ -24,7 +25,7 @@ export const UpdateClubBody = z
   .object({
     description: z.string().max(1000).optional(),
     rules: z.array(z.string().min(1).max(200)).max(10).optional(),
-    currentBookId: z.string().optional(),
+    currentBookId: ObjectId.optional(),
     pagesPerWeek: z.number().int().min(10).max(1000).optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
