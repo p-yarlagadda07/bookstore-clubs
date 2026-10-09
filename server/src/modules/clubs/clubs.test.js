@@ -213,6 +213,111 @@ describe('clubs moderator API', () => {
     expect(membersResponse.body.data.items[0].email).toBe(user.email);
   });
 
+  it('allows a club moderator to edit club rules', async () => {
+    const club = await Club.create({
+      name: 'Editable Club',
+      published: true,
+      rules: ['Old rule'],
+    });
+
+    const { agent, csrf } = await loginAs(app, {
+      moderatorOf: [club._id],
+    });
+
+    const response = await agent
+      .patch(`/api/clubs/${club._id}`)
+      .set('x-csrf-token', csrf)
+      .send({
+        rules: ['Be respectful', 'No spoilers'],
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.rules).toEqual(['Be respectful', 'No spoilers']);
+
+    const updated = await Club.findById(club._id).lean();
+    expect(updated.rules).toEqual(['Be respectful', 'No spoilers']);
+  });
+
+  it('blocks a normal reader from editing a club', async () => {
+    const club = await Club.create({
+      name: 'Reader Blocked Club',
+      published: true,
+      rules: ['Old rule'],
+    });
+
+    const { agent, csrf } = await loginAs(app);
+
+    const response = await agent
+      .patch(`/api/clubs/${club._id}`)
+      .set('x-csrf-token', csrf)
+      .send({
+        rules: ['New rule'],
+      });
+
+    expect(response.status).toBe(403);
+
+    const unchanged = await Club.findById(club._id).lean();
+    expect(unchanged.rules).toEqual(['Old rule']);
+  });
+
+  it('allows a moderator to remove a member and blocks that member from rejoining', async () => {
+    const club = await Club.create({
+      name: 'Remove Member Club',
+      published: true,
+    });
+
+    const moderator = await loginAs(app, {
+      moderatorOf: [club._id],
+    });
+
+    const member = await loginAs(app);
+
+    await Membership.create({
+      clubId: club._id,
+      userId: member.user._id,
+      status: 'active',
+    });
+
+    const removeResponse = await moderator.agent
+      .delete(`/api/clubs/${club._id}/members/${member.user._id}`)
+      .set('x-csrf-token', moderator.csrf);
+
+    expect(removeResponse.status).toBe(200);
+    expect(removeResponse.body.data).toEqual({});
+
+    const membership = await Membership.findOne({
+      clubId: club._id,
+      userId: member.user._id,
+    }).lean();
+
+    expect(membership.status).toBe('removed');
+
+    const rejoinResponse = await member.agent
+      .post(`/api/clubs/${club._id}/join`)
+      .set('x-csrf-token', member.csrf);
+
+    expect(rejoinResponse.status).toBe(403);
+  });
+
+  it('returns 404 when removing an unknown member', async () => {
+    const club = await Club.create({
+      name: 'Unknown Member Club',
+      published: true,
+    });
+
+    const { agent, csrf } = await loginAs(app, {
+      moderatorOf: [club._id],
+    });
+
+    const unknownUserId = new mongoose.Types.ObjectId();
+
+    const response = await agent
+      .delete(`/api/clubs/${club._id}/members/${unknownUserId}`)
+      .set('x-csrf-token', csrf);
+
+    expect(response.status).toBe(404);
+  });
+
   it('rejects a meeting with a past date', async () => {
     const club = await Club.create({
       name: 'Past Date Club',
