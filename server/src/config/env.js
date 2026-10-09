@@ -12,7 +12,7 @@ export const env = {
   SESSION_SECRET: process.env.SESSION_SECRET ?? 'dev-only-secret',
   CSRF_SECRET: process.env.CSRF_SECRET ?? 'dev-only-csrf-secret',
   OLLAMA_URL: process.env.OLLAMA_URL ?? 'http://localhost:11434',
-  OLLAMA_CHAT_MODEL: process.env.OLLAMA_CHAT_MODEL ?? 'llama3.1:8b',
+  OLLAMA_CHAT_MODEL: process.env.OLLAMA_CHAT_MODEL ?? 'llama3.2:3b',
   OLLAMA_EMBED_MODEL: process.env.OLLAMA_EMBED_MODEL ?? 'nomic-embed-text',
   AGENT_MODE: process.env.AGENT_MODE ?? 'tools',
 };
