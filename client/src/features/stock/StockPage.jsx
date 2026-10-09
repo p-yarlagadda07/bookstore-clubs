@@ -3,14 +3,12 @@ import api from '../../api/client.js';
 import { pickupMockResponse } from './stock.mock';
 import './stock.css';
 
-
-
 const EMPTY_ADJUSTMENT = {
   condition: 'new',
   delta: '',
   reason: '',
 };
-function groupStockByBook(items = []) {
+function groupStockByBook(items) {
   const books = new Map();
 
   for (const item of items) {
@@ -19,23 +17,25 @@ function groupStockByBook(items = []) {
     if (!books.has(bookId)) {
       books.set(bookId, {
         id: bookId,
-        title: item.title || 'Untitled',
-        author: (item.authors || []).join(', '),
-        status: item.status || 'active',
+        title: item.title,
+        author: Array.isArray(item.authors) ? item.authors.join(', ') : '',
+        status: item.status,
         new: null,
         used: null,
       });
     }
 
     const book = books.get(bookId);
-    const condition = item.condition?.toLowerCase();
 
-    if (condition === 'new' || condition === 'used') {
-      book[condition] = item;
-    }
+    book[item.condition] = {
+      id: item.id,
+      total: item.total,
+      available: item.available,
+      held: item.held,
+    };
 
-    if (item.status === 'unavailable') {
-      book.status = 'unavailable';
+    if (item.status !== 'active') {
+      book.status = item.status;
     }
   }
 
@@ -44,29 +44,29 @@ function groupStockByBook(items = []) {
 
 function StockPage() {
   const [activeTab, setActiveTab] = useState('stock');
-const [stockItems, setStockItems] = useState([]);
-const [pickups, setPickups] = useState(pickupMockResponse.items);
-const [loading, setLoading] = useState(true);
+  const [stockItems, setStockItems] = useState([]);
+  const [pickups, setPickups] = useState(pickupMockResponse.items);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [adjustingBook, setAdjustingBook] = useState(null);
   const [adjustment, setAdjustment] = useState(EMPTY_ADJUSTMENT);
   const [error, setError] = useState('');
   const fetchStock = async () => {
-  setLoading(true);
-  setError('');
+    setLoading(true);
+    setError('');
 
-  try {
-    const response = await api.get('/inventory');
-   setStockItems(groupStockByBook(response.items ?? []));
-  } catch (err) {
-    setError(err.message || 'Failed to load stock. Please try again.');
-  } finally {
-    setLoading(false);
-  }
-};
-useEffect(() => {
-  fetchStock();
-}, []);
+    try {
+      const response = await api.get('/inventory', { params: { limit: 100 } });
+      setStockItems(groupStockByBook(response.items ?? []));
+    } catch (err) {
+      setError(err.message || 'Failed to load stock. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchStock();
+  }, []);
 
   const filteredStock = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -76,11 +76,11 @@ useEffect(() => {
     }
 
     return stockItems.filter((book) => {
-  const title = (book.title ?? '').toLowerCase();
-  const authors = (book.author ?? '').toLowerCase();
+      const title = (book.title ?? '').toLowerCase();
+      const authors = (book.author ?? '').toLowerCase();
 
-  return title.includes(query) || authors.includes(query);
-});
+      return title.includes(query) || authors.includes(query);
+    });
   }, [search, stockItems]);
 
   const openAdjustDialog = (book) => {
@@ -95,78 +95,56 @@ useEffect(() => {
     setError('');
   };
 
-  
-const handleAdjustment = async (event) => {
-  event.preventDefault();
+  const handleAdjustment = async (event) => {
+    event.preventDefault();
 
-  const delta = Number(adjustment.delta);
-  const reason = adjustment.reason.trim();
-  const current = adjustingBook?.[adjustment.condition];
+    const delta = Number(adjustment.delta);
+    const reason = adjustment.reason.trim();
+    const current = adjustingBook?.[adjustment.condition];
 
-  if (!reason) {
-    return setError('Reason is required.');
-  }
+    if (!reason) {
+      return setError('Reason is required.');
+    }
 
-  if (!Number.isInteger(delta) || delta === 0) {
-    return setError('Amount must be a non-zero whole number.');
-  }
+    if (!Number.isInteger(delta) || delta === 0) {
+      return setError('Amount must be a non-zero whole number.');
+    }
 
-  if (!current) {
-    return setError('No inventory record exists for this condition.');
-  }
+    if (!current) {
+      return setError('No inventory record exists for this condition.');
+    }
 
-  if (current.total + delta < current.held) {
-    return setError("Total can't be lower than copies on hold.");
-  }
+    if (current.total + delta < current.held) {
+      return setError("Total can't be lower than copies on hold.");
+    }
 
-  try {
-    setError('');
+    try {
+      setError('');
 
-    await api.patch(`/inventory/${current.id}`, {
-      delta,
-      reason,
-    });
+      await api.patch(`/inventory/${current.id}`, {
+        delta,
+        reason,
+      });
 
-    closeAdjustDialog();
-    await fetchStock();
-  } catch (err) {
-    setError(err.message || 'Failed to adjust stock. Please try again.');
-  }
-};
+      closeAdjustDialog();
+      await fetchStock();
+    } catch (err) {
+      setError(err.message || 'Failed to adjust stock. Please try again.');
+    }
+  };
 
- 
-const toggleAvailability = async (bookId) => {
-  const book = stockItems.find((item) => item.id === bookId);
-
-  if (!book) return;
-
-  const nextStatus =
-    book.status === 'active' ? 'unavailable' : 'active';
-
-  const inventoryRows = [book.new, book.used].filter(Boolean);
-
-  try {
-    setError('');
-
-    await Promise.all(
-      inventoryRows.map((item) =>
-        api.patch(`/inventory/${item.id}`, {
-          status: nextStatus,
-          reason:
-            nextStatus === 'unavailable'
-              ? 'Marked unavailable from stock page'
-              : 'Marked available from stock page',
-        }),
+  const toggleAvailability = (bookId) => {
+    setStockItems((currentItems) =>
+      currentItems.map((book) =>
+        book.id === bookId
+          ? {
+              ...book,
+              status: book.status === 'active' ? 'unavailable' : 'active',
+            }
+          : book,
       ),
     );
-
-    await fetchStock();
-  } catch (err) {
-    setError(
-      err.message || 'Failed to update availability. Please try again.',
-    );
-  }
-};
+  };
 
   const confirmCollection = (reservationId) => {
     const pickup = pickups.find((item) => item.id === reservationId);
@@ -257,89 +235,88 @@ const toggleAvailability = async (bookId) => {
           {error && <p className="stock-error">{error}</p>}
 
           {loading ? (
-            
-  <p className="stock-empty">Loading stock...</p>
-) : (
-  <div className="stock-table-wrapper">
-            <table className="stock-table">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Author</th>
-                  <th colSpan="3">New</th>
-                  <th colSpan="3">Used</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-
-                <tr className="stock-table__subhead">
-                  <th></th>
-                  <th></th>
-                  <th>Total</th>
-                  <th>Available</th>
-                  <th>Held</th>
-                  <th>Total</th>
-                  <th>Available</th>
-                  <th>Held</th>
-                  <th></th>
-                  <th></th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {filteredStock.length === 0 ? (
+            <p className="stock-empty">Loading stock...</p>
+          ) : (
+            <div className="stock-table-wrapper">
+              <table className="stock-table">
+                <thead>
                   <tr>
-                    <td colSpan="10" className="stock-empty">
-                      No books found.
-                    </td>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th colSpan="3">New</th>
+                    <th colSpan="3">Used</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
-                ) : (
-                  filteredStock.map((book) => (
-                    <tr key={book.id}>
-                      <td className="stock-title">{book.title}</td>
-                      <td>{book.author}</td>
-<td>{book.new?.total ?? 0}</td>
-<td>{book.new?.available ?? 0}</td>
-<td>{book.new?.held ?? 0}</td>
 
-                    <td>{book.used?.total ?? 0}</td>
-<td>{book.used?.available ?? 0}</td>
-<td>{book.used?.held ?? 0}</td>
+                  <tr className="stock-table__subhead">
+                    <th></th>
+                    <th></th>
+                    <th>Total</th>
+                    <th>Available</th>
+                    <th>Held</th>
+                    <th>Total</th>
+                    <th>Available</th>
+                    <th>Held</th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                </thead>
 
-                      <td>
-                        <span className={`stock-status stock-status--${book.status}`}>
-                          {book.status}
-                        </span>
-                      </td>
-
-                      <td>
-                        <div className="stock-actions">
-                          <button
-                            type="button"
-                            className="stock-button stock-button--secondary"
-                            onClick={() => openAdjustDialog(book)}
-                          >
-                            Adjust
-                          </button>
-
-                          <button
-                            type="button"
-                            className="stock-button stock-button--text"
-                            onClick={() => toggleAvailability(book.id)}
-                          >
-                            {book.status === 'active' ? 'Mark unavailable' : 'Mark available'}
-                          </button>
-                        </div>
+                <tbody>
+                  {filteredStock.length === 0 ? (
+                    <tr>
+                      <td colSpan="10" className="stock-empty">
+                        No books found.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-          </table>
-  </div>
-)}
-</section>
-)}
+                  ) : (
+                    filteredStock.map((book) => (
+                      <tr key={book.id}>
+                        <td className="stock-title">{book.title}</td>
+                        <td>{book.author}</td>
+                        <td>{book.new?.total ?? 0}</td>
+                        <td>{book.new?.available ?? 0}</td>
+                        <td>{book.new?.held ?? 0}</td>
+
+                        <td>{book.used?.total ?? 0}</td>
+                        <td>{book.used?.available ?? 0}</td>
+                        <td>{book.used?.held ?? 0}</td>
+
+                        <td>
+                          <span className={`stock-status stock-status--${book.status}`}>
+                            {book.status}
+                          </span>
+                        </td>
+
+                        <td>
+                          <div className="stock-actions">
+                            <button
+                              type="button"
+                              className="stock-button stock-button--secondary"
+                              onClick={() => openAdjustDialog(book)}
+                            >
+                              Adjust
+                            </button>
+
+                            <button
+                              type="button"
+                              className="stock-button stock-button--text"
+                              onClick={() => toggleAvailability(book.id)}
+                            >
+                              {book.status === 'active' ? 'Mark unavailable' : 'Mark available'}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      )}
 
       {activeTab === 'pickups' && (
         <section className="stock-section">
