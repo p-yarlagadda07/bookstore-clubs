@@ -1,3 +1,4 @@
+
 import VerifyBanner from './app/VerifyBanner.jsx';
 
 import { Routes, Route, NavLink, useNavigate } from 'react-router-dom';
@@ -13,6 +14,13 @@ import VerifyPage from './features/auth/VerifyPage.jsx';
 import ForgotPage from './features/auth/ForgotPage.jsx';
 import ResetPage from './features/auth/ResetPage.jsx';
 import StockPage from './features/stock/StockPage.jsx';
+
+import CatalogPage from './features/books/CatalogPage.jsx';
+import BookDetailPage from './features/books/BookDetailPage.jsx';
+import ReservationsPage from './features/reservations/ReservationsPage.jsx';
+import ListsPage from './features/readingLists/ListsPage.jsx';
+import ListDetailPage from './features/readingLists/ListDetailPage.jsx';
+
 import api from './api/client.js';
 import './app/layout.css';
 
@@ -99,24 +107,24 @@ export default function App() {
     <>
       <Header user={user} />
 
-<VerifyBanner user={user} />
+      <VerifyBanner user={user} />
 
-<main className="main">
+      <main className="main">
         <Routes>
           <Route
             path="/"
             element={<Placeholder name="Discovery" />}
           />
 
-         <Route
-  path="/books"
-  element={<Placeholder name="Catalog" />}
-/>
+          <Route
+            path="/books"
+            element={<CatalogPage />}
+          />
 
-<Route
-  path="/books/:id"
-  element={<Placeholder name="Book detail" />}
-/>
+          <Route
+            path="/books/:id"
+            element={<BookDetailPage />}
+          />
 
           <Route
             path="/login"
@@ -147,7 +155,7 @@ export default function App() {
             path="/reservations"
             element={
               <ProtectedRoute>
-                <Placeholder name="My reservations" />
+                <ReservationsPage />
               </ProtectedRoute>
             }
           />
@@ -156,7 +164,7 @@ export default function App() {
             path="/lists"
             element={
               <ProtectedRoute>
-                <Placeholder name="Reading lists" />
+                <ListsPage />
               </ProtectedRoute>
             }
           />
@@ -165,7 +173,7 @@ export default function App() {
             path="/lists/:id"
             element={
               <ProtectedRoute>
-                <Placeholder name="Reading list" />
+                <ListDetailPage />
               </ProtectedRoute>
             }
           />
@@ -204,9 +212,9 @@ export default function App() {
           />
 
           <Route
-  path="/staff/stock"
-  element={<StockPage />}
-/>
+            path="/staff/stock"
+            element={<StockPage />}
+          />
 
           <Route
             path="/staff/admin"
