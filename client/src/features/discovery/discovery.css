@@ -1,0 +1,136 @@
+.discover-page {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+.discover-page h1 {
+  margin-bottom: var(--space-2);
+  font-size: 2rem;
+}
+
+.discover-intro {
+  color: var(--color-muted);
+  margin-bottom: var(--space-4);
+  line-height: 1.6;
+}
+
+.discover-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.discover-form label {
+  font-weight: 600;
+}
+
+.discover-form textarea {
+  width: 100%;
+  padding: var(--space-3);
+  font: inherit;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  resize: vertical;
+}
+
+.discover-form textarea:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.discover-form button {
+  align-self: flex-start;
+}
+
+.discover-status,
+.discover-empty,
+.discover-error {
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  border-radius: var(--radius);
+}
+
+.discover-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-muted);
+}
+
+.discover-empty {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.discover-error {
+  color: var(--color-danger);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.discover-error a {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.discover-results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.discover-results h2 {
+  margin-bottom: 0;
+}
+
+.discover-results .card {
+  padding: var(--space-4);
+}
+
+.discover-results h3 {
+  margin-top: 0;
+  margin-bottom: var(--space-2);
+}
+
+.discover-results h3 a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.discover-results h3 a:hover {
+  text-decoration: underline;
+}
+
+.discover-authors {
+  color: var(--color-muted);
+  margin: 0 0 var(--space-2);
+}
+
+.discover-synopsis {
+  line-height: 1.6;
+  margin-bottom: var(--space-3);
+}
+
+@media (max-width: 600px) {
+  .discover-page {
+    padding: var(--space-3);
+  }
+
+  .discover-page h1 {
+    font-size: 1.6rem;
+  }
+
+  .discover-form {
+    padding: var(--space-3);
+  }
+}

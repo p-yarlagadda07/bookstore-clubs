@@ -16,6 +16,7 @@ import ResetPage from './features/auth/ResetPage.jsx';
 import StockPage from './features/stock/StockPage.jsx';
 
 import CatalogPage from './features/books/CatalogPage.jsx';
+import DiscoverPage from './features/discovery/DiscoverPage.jsx';
 import BookDetailPage from './features/books/BookDetailPage.jsx';
 import ReservationsPage from './features/reservations/ReservationsPage.jsx';
 import ListsPage from './features/readingLists/ListsPage.jsx';
@@ -64,18 +65,18 @@ function Header({ user }) {
   return (
     <header className="header">
       <NavLink to="/" className="brand">
-        Bookstore
+        Booklore
       </NavLink>
 
-      <NavLink to="/books">Books</NavLink>
-      <NavLink to="/clubs">Clubs</NavLink>
+      <NavLink to="/books">Catalog</NavLink>
+      <NavLink to="/clubs">Reading Circles</NavLink>
 
       {user && (
         <>
-          <NavLink to="/reservations">Reservations</NavLink>
-          <NavLink to="/lists">Lists</NavLink>
+          <NavLink to="/reservations">My Holds</NavLink>
+          <NavLink to="/lists">My Shelves</NavLink>
           <NavLink to="/settings">Settings</NavLink>
-          <NavLink to="/chat">Chat</NavLink>
+          <NavLink to="/chat">Chapter Chat</NavLink>
 
           <span>{user.name}</span>
 
@@ -89,11 +90,17 @@ function Header({ user }) {
         </>
       )}
 
-      {isBookseller && <NavLink to="/staff/stock">Stock</NavLink>}
+      {isBookseller && (
+        <NavLink to="/staff/stock">Stockroom</NavLink>
+      )}
 
-      {isAdmin && <NavLink to="/staff/admin">Admin</NavLink>}
+      {isAdmin && (
+        <NavLink to="/staff/admin">Logbook</NavLink>
+      )}
 
-      {isModerator && <NavLink to="/agent">Agent</NavLink>}
+      {isModerator && (
+        <NavLink to="/agent">Next Read</NavLink>
+      )}
 
       {!user && <NavLink to="/login">Login</NavLink>}
     </header>
@@ -113,7 +120,7 @@ export default function App() {
         <Routes>
           <Route
             path="/"
-            element={<Placeholder name="Discovery" />}
+            element={<DiscoverPage />}
           />
 
           <Route
