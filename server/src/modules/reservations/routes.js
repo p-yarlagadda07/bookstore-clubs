@@ -1,6 +1,11 @@
 import { Router } from 'express';
 
-import { reserve } from './service.js';
+import {
+  reserve,
+  getMyReservations,
+  cancelReservation,
+} from './service.js';
+
 import { ReserveBody } from '@bookstore/shared/schemas/reservations';
 import { IdParams } from '@bookstore/shared/schemas/common';
 
@@ -20,8 +25,26 @@ router.post(
   }),
   asyncHandler(async (req, res) => {
     const reservation = await reserve(req.user, req.params.id, req.body);
-
     return res.ok(reservation, 201);
+  }),
+);
+
+router.get(
+  '/reservations/mine',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const reservations = await getMyReservations(req.user);
+    return res.ok(reservations);
+  }),
+);
+
+router.delete(
+  '/reservations/:id',
+  requireAuth,
+  validate({ params: IdParams }),
+  asyncHandler(async (req, res) => {
+    const reservation = await cancelReservation(req.user, req.params.id);
+    return res.ok(reservation);
   }),
 );
 
