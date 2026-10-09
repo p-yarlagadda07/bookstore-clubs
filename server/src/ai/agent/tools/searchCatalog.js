@@ -1,7 +1,7 @@
 import { tool } from '@langchain/core/tools';
 
 import { SearchCatalogInput } from '@bookstore/shared/schemas/readingAgent';
-import { fakeBooks } from './fakeData.js';
+import Book from '../../../modules/books/model.js';
 
 const emitToolEvent = (config, status, summary) => {
   const context = config?.context ?? config;
@@ -17,34 +17,42 @@ const emitToolEvent = (config, status, summary) => {
 
 export const searchCatalog = tool(
   async (input, config) => {
-    emitToolEvent(config, 'started', 'Searching the fake catalog');
+    emitToolEvent(config, 'started', 'Searching the real catalog');
 
     try {
       const words = input.query
         .toLowerCase()
         .split(/[^a-z0-9]+/)
-        .filter((word) => word.length > 2);
+        .filter((word) => word.length > 3);
+
       const themes = (input.themes ?? []).map((theme) => theme.toLowerCase());
       const moods = (input.moods ?? []).map((mood) => mood.toLowerCase());
 
-      const results = fakeBooks
-        .filter((book) => input.maxPages === undefined || book.pages <= input.maxPages)
+      const books = await Book.find({ approvedSource: true }).lean();
+
+      const results = books
+        .filter((book) => input.maxPages === undefined || book.pageCount <= input.maxPages)
         .map((book) => {
-          const text = [book.title, ...book.themes, ...book.moods, ...book.authors]
+          const bookThemes = (book.themes ?? []).map((theme) => theme.toLowerCase());
+          const bookMoods = (book.moods ?? []).map((mood) => mood.toLowerCase());
+
+          const text = [book.title, ...bookThemes, ...bookMoods, book.synopsis ?? '']
             .join(' ')
             .toLowerCase();
+
           const matchedWords = words.filter((word) => text.includes(word));
-          const matchedThemes = themes.filter((theme) => book.themes.includes(theme));
-          const matchedMoods = moods.filter((mood) => book.moods.includes(mood));
+          const matchedThemes = themes.filter((theme) => bookThemes.includes(theme));
+          const matchedMoods = moods.filter((mood) => bookMoods.includes(mood));
+
           const matched = [...new Set([...matchedWords, ...matchedThemes, ...matchedMoods])];
 
           return {
-            bookId: book.bookId,
+            bookId: String(book._id),
             title: book.title,
             authors: book.authors,
             themes: book.themes,
-            pages: book.pages,
-            score: matched.length,
+            pages: book.pageCount,
+            score: matchedWords.length + matchedThemes.length + matchedMoods.length,
             why: matched.length ? `Matches: ${matched.join(', ')}` : '',
           };
         })
@@ -68,7 +76,7 @@ export const searchCatalog = tool(
   {
     name: 'searchCatalog',
     description:
-      "Search the bookstore catalog for books matching the club's request, themes, moods, and page limit.",
+      "Search approved bookstore books for titles matching the club's request, themes, and moods.",
     schema: SearchCatalogInput,
   },
 );
