@@ -64,11 +64,14 @@ function Header({ user }) {
 
   return (
     <header className="header">
-      <NavLink to="/" className="brand">
-        Booklore
-      </NavLink>
+      
+<NavLink to="/" className="brand">
+  Booklore
+</NavLink>
 
-      <NavLink to="/books">Catalog</NavLink>
+<NavLink to="/" end>Smart Search</NavLink>
+<NavLink to="/books">Catalog</NavLink>
+
       <NavLink to="/clubs">Reading Circles</NavLink>
 
       {user && (
