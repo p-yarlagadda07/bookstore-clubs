@@ -1,5 +1,11 @@
+
 import { Router } from 'express';
-import { CreateMeetingBody, UpdateClubBody } from '@bookstore/shared/schemas/clubs';
+import {
+  CreateMeetingBody,
+  UpdateClubBody,
+  ExcerptListQuery,
+  ApproveExcerptBody,
+} from '@bookstore/shared/schemas/clubs';
 import { IdParams } from '@bookstore/shared';
 import { requireAuth, requireVerified, requireClubModerator } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
@@ -13,6 +19,8 @@ import {
   getClubMembersController,
   updateClubController,
   removeClubMemberController,
+  listClubExcerptsController,
+  updateExcerptApprovalController,
 } from './controller.js';
 
 const router = Router();
@@ -70,6 +78,32 @@ router.delete(
     }),
   }),
   asyncHandler(removeClubMemberController),
+);
+
+// List excerpts for the club's current book
+router.get(
+  '/clubs/:id/excerpts',
+  requireAuth,
+  requireClubModerator('id'),
+  validate({
+    params: IdParams,
+    query: ExcerptListQuery,
+  }),
+  asyncHandler(listClubExcerptsController),
+);
+
+// Approve or unapprove an excerpt
+router.patch(
+  '/clubs/:id/excerpts/:excerptId',
+  requireAuth,
+  requireClubModerator('id'),
+  validate({
+    params: IdParams.extend({
+      excerptId: IdParams.shape.id,
+    }),
+    body: ApproveExcerptBody,
+  }),
+  asyncHandler(updateExcerptApprovalController),
 );
 
 export default router;
