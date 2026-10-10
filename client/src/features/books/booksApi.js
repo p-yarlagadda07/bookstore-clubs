@@ -23,15 +23,19 @@ export async function listBooks({
   if (!USE_MOCK) {
     const params = { page, limit };
 
-if (q.trim()) params.q = q.trim();
-if (theme) params.theme = theme;
-if (mood) params.mood = mood;
-if (maxPages) params.maxPages = maxPages;
-if (available) params.available = true;
+    if (q.trim()) params.q = q.trim();
+    if (theme) params.theme = theme;
+    if (mood) params.mood = mood;
+    if (maxPages) params.maxPages = maxPages;
+    if (available) params.available = true;
 
-const response = await api.get('/books', { params });
+    const response = await api.get('/books', { params });
 
-    return response;
+    return {
+      ...response,
+      books: response.items ?? [],
+      totalPages: Math.max(1, Math.ceil(response.total / response.limit)),
+    };
   }
 
   await delay(300);
@@ -42,32 +46,19 @@ const response = await api.get('/books', { params });
     const matchesSearch =
       !search ||
       book.title.toLowerCase().includes(search) ||
-      book.authors.some((author) =>
-        author.toLowerCase().includes(search)
-      );
+      book.authors.some((author) => author.toLowerCase().includes(search));
 
-    const matchesTheme =
-      !theme || book.themes.includes(theme);
+    const matchesTheme = !theme || book.themes.includes(theme);
 
-    const matchesMood =
-      !mood || book.moods.includes(mood);
+    const matchesMood = !mood || book.moods.includes(mood);
 
-    const matchesMaxPages =
-      !maxPages || book.pageCount <= Number(maxPages);
+    const matchesMaxPages = !maxPages || book.pageCount <= Number(maxPages);
 
     const matchesAvailable =
       !available ||
-      (book.availability.reservable &&
-        (book.availability.new > 0 ||
-          book.availability.used > 0));
+      (book.availability.reservable && (book.availability.new > 0 || book.availability.used > 0));
 
-    return (
-      matchesSearch &&
-      matchesTheme &&
-      matchesMood &&
-      matchesMaxPages &&
-      matchesAvailable
-    );
+    return matchesSearch && matchesTheme && matchesMood && matchesMaxPages && matchesAvailable;
   });
 
   const total = filtered.length;
@@ -81,10 +72,7 @@ const response = await api.get('/books', { params });
     page: Number(page),
     limit: Number(limit),
     total,
-    totalPages: Math.max(
-      1,
-      Math.ceil(total / Number(limit))
-    ),
+    totalPages: Math.max(1, Math.ceil(total / Number(limit))),
   };
 }
 
@@ -106,10 +94,7 @@ export async function getBook(id) {
   return cloneBook(book);
 }
 
-export async function reserveBook(
-  id,
-  { condition, pickupWindowId }
-) {
+export async function reserveBook(id, { condition, pickupWindowId }) {
   if (!USE_MOCK) {
     return api.post(`/books/${id}/reservations`, { condition, pickupWindowId });
   }
@@ -124,22 +109,16 @@ export async function reserveBook(
     throw error;
   }
 
-  const inventory = book.inventory.find(
-    (item) => item.condition === condition
-  );
+  const inventory = book.inventory.find((item) => item.condition === condition);
 
   if (!inventory || inventory.available <= 0) {
-    const error = new Error(
-      'This copy is no longer available.'
-    );
+    const error = new Error('This copy is no longer available.');
     error.code = 'OUT_OF_STOCK';
     error.status = 409;
     throw error;
   }
 
-  const pickupWindow = inventory.pickupWindows.find(
-    (window) => window._id === pickupWindowId
-  );
+  const pickupWindow = inventory.pickupWindows.find((window) => window._id === pickupWindowId);
 
   if (!pickupWindow) {
     const error = new Error('Pickup window not found.');
@@ -156,8 +135,7 @@ export async function reserveBook(
     book.availability.used -= 1;
   }
 
-  const remainingCopies =
-    book.availability.new + book.availability.used;
+  const remainingCopies = book.availability.new + book.availability.used;
 
   if (remainingCopies === 0) {
     book.availability.label = 'Unavailable';

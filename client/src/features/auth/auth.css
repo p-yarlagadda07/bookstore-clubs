@@ -50,3 +50,17 @@
 .auth-links a:hover {
   text-decoration: underline;
 }
+
+.auth-page .card {
+  width: min(100%, 420px);
+  padding: 32px 28px 28px;
+}
+
+.auth-form {
+  width: 100%;
+}
+
+.auth-form h1 {
+  font-size: 2.6rem;
+  margin: 0 0 24px;
+}
