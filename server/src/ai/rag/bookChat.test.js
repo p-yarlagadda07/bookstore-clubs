@@ -1,12 +1,4 @@
-import {
-  describe,
-  expect,
-  it,
-  beforeAll,
-  afterAll,
-  beforeEach,
-  vi,
-} from 'vitest';
+import { describe, expect, it, beforeAll, afterAll, beforeEach, vi } from 'vitest';
 import request from 'supertest';
 import mongoose from 'mongoose';
 
@@ -48,13 +40,7 @@ beforeEach(async () => {
   isOllamaUp.mockResolvedValue(true);
 });
 
-async function addExcerpt({
-  text,
-  chapter = 1,
-  approved = true,
-  pageStart = 1,
-  pageEnd = 2,
-}) {
+async function addExcerpt({ text, chapter = 1, approved = true, pageStart = 1, pageEnd = 2 }) {
   return Excerpt.create({
     bookId,
     text,
@@ -138,9 +124,7 @@ describe('bookChat with approved excerpts', () => {
 
     expect(humanMessage).toContain('early story');
     expect(humanMessage).not.toContain('final secret');
-    expect(
-      result.citations.every((citation) => citation.chapter <= 2),
-    ).toBe(true);
+    expect(result.citations.every((citation) => citation.chapter <= 2)).toBe(true);
   });
 
   it('returns not_in_sources when no approved excerpt matches', async () => {
@@ -193,9 +177,7 @@ describe('bookChat with approved excerpts', () => {
     );
 
     expect(result.status).toBe('answered');
-    expect(result.answer).toContain(
-      'The lighthouse guides ships along the coast.',
-    );
+    expect(result.answer).toContain('The lighthouse guides ships along the coast.');
     expect(result.answer).toContain('[1]');
     expect(chat.invoke).not.toHaveBeenCalled();
   });
@@ -217,9 +199,7 @@ describe('bookChat with approved excerpts', () => {
 
     expect(result.status).toBe('answered');
     expect(result.answer).toContain('[1]');
-    expect(result.answer).toContain(
-      'The lighthouse guides ships along the coast.',
-    );
+    expect(result.answer).toContain('The lighthouse guides ships along the coast.');
   });
 });
 
@@ -276,9 +256,7 @@ describe('POST /api/book-chat', () => {
     const res = await request(app).get('/api/auth/csrf');
     expect(res.status).toBe(200);
 
-    const result = await request(app)
-      .post('/api/book-chat')
-      .send({ message: 'hi' });
+    const result = await request(app).post('/api/book-chat').send({ message: 'hi' });
 
     expect([401, 403]).toContain(result.status);
   });

@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import api from "../../api/client.js";
-import "./clubs.css";
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import api from '../../api/client.js';
+import './clubs.css';
 
 export default function ClubDetailPage() {
   const { id } = useParams();
@@ -10,7 +10,7 @@ export default function ClubDetailPage() {
   const [isJoined, setIsJoined] = useState(false);
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -18,16 +18,16 @@ export default function ClubDetailPage() {
     async function loadClub() {
       try {
         setLoading(true);
-        setError("");
+        setError('');
 
         const clubData = await api.get(`/clubs/${id}`);
 
-if (!cancelled) {
-  setClub(clubData);
-}
+        if (!cancelled) {
+          setClub(clubData);
+        }
       } catch (err) {
         if (!cancelled) {
-          setError(err?.message ?? "Unable to load club.");
+          setError(err?.message ?? 'Unable to load club.');
         }
       } finally {
         if (!cancelled) {
@@ -48,16 +48,16 @@ if (!cancelled) {
 
     try {
       setJoining(true);
-      setError("");
+      setError('');
 
       await api.post(`/clubs/${id}/join`);
 
       setIsJoined(true);
     } catch (err) {
-      if (err?.code === "CONFLICT") {
+      if (err?.code === 'CONFLICT') {
         setIsJoined(true);
       } else {
-        setError(err?.message ?? "Unable to join club.");
+        setError(err?.message ?? 'Unable to join club.');
       }
     } finally {
       setJoining(false);
@@ -103,12 +103,8 @@ if (!cancelled) {
             <h1>{club.name}</h1>
           </div>
 
-          <button
-            className="club-button"
-            onClick={handleJoin}
-            disabled={isJoined || joining}
-          >
-            {joining ? "Joining..." : isJoined ? "Joined" : "Join Club"}
+          <button className="club-button" onClick={handleJoin} disabled={isJoined || joining}>
+            {joining ? 'Joining...' : isJoined ? 'Joined' : 'Join Club'}
           </button>
         </div>
 
@@ -144,7 +140,7 @@ if (!cancelled) {
           <div className="meetings-list">
             {club.meetings?.map((meeting) => (
               <article className="meeting-card" key={meeting.id}>
-              <strong>{new Date(meeting.date).toLocaleDateString()}</strong>
+                <strong>{new Date(meeting.date).toLocaleDateString()}</strong>
                 <span>{meeting.time}</span>
                 <span>{meeting.location}</span>
                 <p>{meeting.agenda}</p>

@@ -44,7 +44,13 @@ export default function ListDetailPage() {
     enabled: Boolean(list),
   });
 
-  if (isLoading) return <section><h1>Reading List</h1><p>Loading list...</p></section>;
+  if (isLoading)
+    return (
+      <section>
+        <h1>Reading List</h1>
+        <p>Loading list...</p>
+      </section>
+    );
 
   if (isError) {
     return (
@@ -65,9 +71,7 @@ export default function ListDetailPage() {
       <p>{items.length} books in this list</p>
 
       {removeMutation.isError && (
-        <p role="alert">
-          {removeMutation.error?.message || 'Could not remove the book.'}
-        </p>
+        <p role="alert">{removeMutation.error?.message || 'Could not remove the book.'}</p>
       )}
 
       {booksQuery.isLoading ? (
@@ -80,12 +84,8 @@ export default function ListDetailPage() {
             <li key={item.bookId}>
               {item.book ? (
                 <>
-                  <Link to={`/books/${item.book._id ?? item.book.id}`}>
-                    {item.book.title}
-                  </Link>
-                  {item.book.authors?.length > 0 && (
-                    <span> — {item.book.authors.join(', ')}</span>
-                  )}
+                  <Link to={`/books/${item.book._id ?? item.book.id}`}>{item.book.title}</Link>
+                  {item.book.authors?.length > 0 && <span>, {item.book.authors.join(', ')}</span>}
                 </>
               ) : (
                 <span>Book details unavailable ({item.bookId})</span>

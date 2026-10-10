@@ -9,8 +9,6 @@
   margin-bottom: 28px;
 }
 
-
-
 .moderator-header h1 {
   margin: 0 0 10px;
   font-size: clamp(28px, 4vw, 38px);
@@ -39,7 +37,6 @@
 .moderator-members {
   margin-top: 18px;
 }
-
 
 .moderator-member {
   display: flex;

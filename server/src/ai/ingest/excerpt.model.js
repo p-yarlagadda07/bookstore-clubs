@@ -14,7 +14,7 @@ const excerptSchema = new mongoose.Schema(
     approvedBy: { type: ObjectId, ref: 'User' },
     embedding: { type: [Number], select: false },
   },
-  { timestamps: true, collection: 'excerpts' }
+  { timestamps: true, collection: 'excerpts' },
 );
 
 excerptSchema.index({ bookId: 1, approved: 1, chapter: 1 });

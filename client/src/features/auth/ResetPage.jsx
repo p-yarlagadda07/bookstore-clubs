@@ -46,9 +46,7 @@ export default function ResetPage() {
       setPassword('');
       setConfirmPassword('');
     } catch (err) {
-      setError(
-        err?.message || 'Unable to reset your password. Please try again.'
-      );
+      setError(err?.message || 'Unable to reset your password. Please try again.');
     } finally {
       setSending(false);
     }
@@ -93,11 +91,7 @@ export default function ResetPage() {
               </p>
             )}
 
-            <Button
-              type="submit"
-              disabled={sending}
-              data-testid="reset-btn"
-            >
+            <Button type="submit" disabled={sending} data-testid="reset-btn">
               {sending ? 'Changing password...' : 'Change password'}
             </Button>
           </form>

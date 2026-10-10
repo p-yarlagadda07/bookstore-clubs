@@ -1,28 +1,28 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import api from "../../api/client.js";
-import "./clubs.css";
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import api from '../../api/client.js';
+import './clubs.css';
 
 export default function ClubsPage() {
   const [clubs, setClubs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   useEffect(() => {
     let cancelled = false;
-async function loadClubs() {
+    async function loadClubs() {
       try {
         setLoading(true);
-        setError("");
+        setError('');
 
-        const { items } = await api.get("/clubs");
+        const { items } = await api.get('/clubs');
 
         if (!cancelled) {
           setClubs(items);
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err?.message ?? "Unable to load clubs.");
+          setError(err?.message ?? 'Unable to load clubs.');
         }
       } finally {
         if (!cancelled) {
@@ -38,16 +38,13 @@ async function loadClubs() {
     };
   }, []);
 
-
-
   return (
     <section className="clubs-page">
       <div className="clubs-header">
         <p className="club-label">COMMUNITY</p>
         <h1>Book Clubs</h1>
         <p>
-          Discover local book clubs, see what they are reading, and join a
-          community of readers.
+          Discover local book clubs, see what they are reading, and join a community of readers.
         </p>
       </div>
 
@@ -55,9 +52,7 @@ async function loadClubs() {
 
       {error && <p role="alert">{error}</p>}
 
-      {!loading && !error && clubs.length === 0 && (
-        <p>No clubs are available right now.</p>
-      )}
+      {!loading && !error && clubs.length === 0 && <p>No clubs are available right now.</p>}
 
       {!loading && !error && clubs.length > 0 && (
         <div className="clubs-grid">
@@ -76,10 +71,7 @@ async function loadClubs() {
                   </div>
                 )}
               </div>
-              <Link
-                className="club-button"
-                to={`/clubs/${club.id}`}
-              >
+              <Link className="club-button" to={`/clubs/${club.id}`}>
                 View Club
               </Link>
             </article>

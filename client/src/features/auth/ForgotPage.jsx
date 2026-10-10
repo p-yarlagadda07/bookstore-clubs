@@ -21,13 +21,9 @@ export default function ForgotPage() {
         email,
       });
 
-      setMessage(
-        "If that email has an account, we've sent a reset link."
-      );
+      setMessage("If that email has an account, we've sent a reset link.");
     } catch (err) {
-      setError(
-        err?.message || 'Unable to process your request. Please try again.'
-      );
+      setError(err?.message || 'Unable to process your request. Please try again.');
     } finally {
       setSending(false);
     }
@@ -61,11 +57,7 @@ export default function ForgotPage() {
               </p>
             )}
 
-            <Button
-              type="submit"
-              disabled={sending}
-              data-testid="forgot-btn"
-            >
+            <Button type="submit" disabled={sending} data-testid="forgot-btn">
               {sending ? 'Sending...' : 'Send reset link'}
             </Button>
           </form>

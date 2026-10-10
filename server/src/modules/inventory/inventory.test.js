@@ -17,8 +17,18 @@ beforeEach(async () => {
   await Inventory.deleteMany({});
   await AuditLog.deleteMany({});
   await Book.deleteMany({});
-  const book = await Book.create({ title: 'Murder at Platform Nine', authors: ['A. Writer'], approvedSource: true });
-  row = await Inventory.create({ bookId: book._id, condition: 'new', total: 5, available: 3, held: 2 });
+  const book = await Book.create({
+    title: 'Murder at Platform Nine',
+    authors: ['A. Writer'],
+    approvedSource: true,
+  });
+  row = await Inventory.create({
+    bookId: book._id,
+    condition: 'new',
+    total: 5,
+    available: 3,
+    held: 2,
+  });
 });
 
 describe('GET /api/inventory', () => {

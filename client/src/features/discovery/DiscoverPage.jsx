@@ -36,7 +36,7 @@ export default function DiscoverPage() {
       setError(
         err.code === 'AI_UNAVAILABLE'
           ? 'Smart Search is offline right now.'
-          : err.message || 'Something went wrong. Please try again.'
+          : err.message || 'Something went wrong. Please try again.',
       );
     } finally {
       setLoading(false);
@@ -51,9 +51,7 @@ export default function DiscoverPage() {
       </p>
 
       <form className="discover-form" onSubmit={handleSearch}>
-        <label htmlFor="book-description">
-          Describe the book you remember
-        </label>
+        <label htmlFor="book-description">Describe the book you remember</label>
 
         <textarea
           id="book-description"
@@ -85,9 +83,7 @@ export default function DiscoverPage() {
       )}
 
       {!loading && searched && !error && books.length === 0 && (
-        <p className="discover-empty">
-          No close matches, try describing it differently
-        </p>
+        <p className="discover-empty">No close matches, try describing it differently</p>
       )}
 
       {!loading && books.length > 0 && (
@@ -101,22 +97,16 @@ export default function DiscoverPage() {
               </h3>
 
               <p className="discover-authors">
-                {Array.isArray(book.authors)
-                  ? book.authors.join(', ')
-                  : book.authors}
+                {Array.isArray(book.authors) ? book.authors.join(', ') : book.authors}
               </p>
 
               {book.synopsis && (
                 <p className="discover-synopsis">
-                  {book.synopsis.length > 150
-                    ? `${book.synopsis.slice(0, 150)}...`
-                    : book.synopsis}
+                  {book.synopsis.length > 150 ? `${book.synopsis.slice(0, 150)}...` : book.synopsis}
                 </p>
               )}
 
-              {book.availability?.label && (
-                <Badge>{book.availability.label}</Badge>
-              )}
+              {book.availability?.label && <Badge>{book.availability.label}</Badge>}
             </Card>
           ))}
         </div>

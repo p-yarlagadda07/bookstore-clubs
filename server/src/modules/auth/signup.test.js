@@ -77,7 +77,10 @@ describe('verify', () => {
   it('rejects an expired token', async () => {
     await signup({ name: 'Eva', email: 'eva@test.local', password: PASSWORD });
     const token = lastToken();
-    await User.updateOne({ email: 'eva@test.local' }, { verifyTokenExpires: new Date(Date.now() - 1000) });
+    await User.updateOne(
+      { email: 'eva@test.local' },
+      { verifyTokenExpires: new Date(Date.now() - 1000) },
+    );
     const res = await request(app).get(`/api/auth/verify?token=${token}`);
     expect(res.status).toBe(400);
   });

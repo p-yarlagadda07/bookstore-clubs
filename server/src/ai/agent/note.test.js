@@ -24,8 +24,7 @@ const shortlist = [
   },
 ];
 
-const DISCLAIMER =
-  'Recommendations only. No book was reserved or selected.';
+const DISCLAIMER = 'Recommendations only. No book was reserved or selected.';
 
 describe('writeNote', () => {
   beforeEach(() => {
@@ -50,9 +49,7 @@ describe('writeNote', () => {
 
     const note = await writeNote(shortlist, constraints);
 
-    expect(note).toBe(
-      `Short Mystery is a good choice for your book club. ${DISCLAIMER}`,
-    );
+    expect(note).toBe(`Short Mystery is a good choice for your book club. ${DISCLAIMER}`);
     expect(chat.invoke).toHaveBeenCalledOnce();
   });
 
@@ -66,13 +63,11 @@ describe('writeNote', () => {
     expect(note).toContain(DISCLAIMER);
   });
 
- it('returns the shorter-book message for an empty shortlist', async () => {
-  const note = await writeNote([], constraints);
+  it('returns the shorter-book message for an empty shortlist', async () => {
+    const note = await writeNote([], constraints);
 
-  expect(note).toBe(
-    `No book fits the time and copies, try a shorter book. ${DISCLAIMER}`,
-  );
-  expect(note).toContain(DISCLAIMER);
-  expect(chat.invoke).not.toHaveBeenCalled();
-});
+    expect(note).toBe(`No book fits the time and copies, try a shorter book. ${DISCLAIMER}`);
+    expect(note).toContain(DISCLAIMER);
+    expect(chat.invoke).not.toHaveBeenCalled();
+  });
 });

@@ -20,7 +20,10 @@ export async function loginAs(app, { roles = ['reader'], verified = true, modera
   const { body } = await agent.get('/api/auth/csrf');
   const csrf = body.data.token;
 
-  const res = await agent.post('/api/auth/login').set('x-csrf-token', csrf).send({ email, password });
+  const res = await agent
+    .post('/api/auth/login')
+    .set('x-csrf-token', csrf)
+    .send({ email, password });
   if (res.status !== 200) {
     throw new Error(`loginAs failed: ${res.status} ${JSON.stringify(res.body)}`);
   }
