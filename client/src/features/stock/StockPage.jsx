@@ -188,7 +188,7 @@ function StockPage() {
       <header className="stock-page__header">
         <div>
           <p className="stock-page__eyebrow">Staff</p>
-         <h1>Stockroom</h1>
+          <h1>Stockroom</h1>
           <p className="stock-page__description">Manage book inventory and reader pickups.</p>
         </div>
       </header>

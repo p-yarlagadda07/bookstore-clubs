@@ -10,12 +10,7 @@ export default function ListsPage() {
   const [editingName, setEditingName] = useState('');
   const [message, setMessage] = useState('');
 
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ['reading-lists'],
     queryFn: () => api.get('/reading-lists'),
   });
@@ -33,8 +28,7 @@ export default function ListsPage() {
   });
 
   const renameMutation = useMutation({
-    mutationFn: ({ id, name: newName }) =>
-      api.patch(`/reading-lists/${id}`, { name: newName }),
+    mutationFn: ({ id, name: newName }) => api.patch(`/reading-lists/${id}`, { name: newName }),
     onSuccess: () => {
       setEditingId(null);
       setEditingName('');
@@ -67,7 +61,13 @@ export default function ListsPage() {
     }
   }
 
-  if (isLoading) return <section><h1>My Reading Lists</h1><p>Loading lists...</p></section>;
+  if (isLoading)
+    return (
+      <section>
+        <h1>My Reading Lists</h1>
+        <p>Loading lists...</p>
+      </section>
+    );
 
   if (isError) {
     return (

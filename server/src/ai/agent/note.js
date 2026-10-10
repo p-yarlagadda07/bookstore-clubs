@@ -1,8 +1,7 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { chat, isOllamaUp } from '../ollama.js';
 
-const DISCLAIMER =
-  'Recommendations only. No book was reserved or selected.';
+const DISCLAIMER = 'Recommendations only. No book was reserved or selected.';
 
 export function templateNote(shortlist, constraints) {
   if (!shortlist.length) {

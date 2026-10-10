@@ -63,7 +63,9 @@ describe('auth middleware', () => {
   it('requireClubModerator only allows moderators of that club', async () => {
     const clubId = newId();
     const user = { roles: ['reader'], moderatorOf: [clubId] };
-    expect(await run(requireClubModerator(), { user, params: { id: String(clubId) } })).toBeUndefined();
+    expect(
+      await run(requireClubModerator(), { user, params: { id: String(clubId) } }),
+    ).toBeUndefined();
     const err = await run(requireClubModerator(), { user, params: { id: String(newId()) } });
     expect(err.status).toBe(403);
   });
@@ -74,19 +76,25 @@ describe('assertCan', () => {
 
   it('stock.update is only for booksellers', async () => {
     await expect(assertCan(reader, 'stock.update')).rejects.toMatchObject({ status: 403 });
-    await expect(assertCan({ ...reader, roles: ['bookseller'] }, 'stock.update')).resolves.toBe(true);
+    await expect(assertCan({ ...reader, roles: ['bookseller'] }, 'stock.update')).resolves.toBe(
+      true,
+    );
   });
 
   it('club.member checks memberships', async () => {
     const clubId = newId();
-    await expect(assertCan(reader, 'club.member', { clubId })).rejects.toMatchObject({ status: 403 });
+    await expect(assertCan(reader, 'club.member', { clubId })).rejects.toMatchObject({
+      status: 403,
+    });
     await Membership.create({ clubId, userId: reader._id });
     await expect(assertCan(reader, 'club.member', { clubId })).resolves.toBe(true);
   });
 
   it('admin cannot change their own role', async () => {
     const admin = { _id: newId(), roles: ['admin'] };
-    await expect(assertCan(admin, 'role.change', { targetUserId: admin._id })).rejects.toMatchObject({ status: 403 });
+    await expect(
+      assertCan(admin, 'role.change', { targetUserId: admin._id }),
+    ).rejects.toMatchObject({ status: 403 });
     await expect(assertCan(admin, 'role.change', { targetUserId: newId() })).resolves.toBe(true);
   });
 });

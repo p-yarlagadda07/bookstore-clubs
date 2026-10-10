@@ -1,4 +1,3 @@
-
 import VerifyBanner from './app/VerifyBanner.jsx';
 
 import { Routes, Route, NavLink, useNavigate } from 'react-router-dom';
@@ -51,8 +50,7 @@ function Header({ user }) {
   const roles = user?.roles ?? [];
   const isAdmin = roles.includes('admin');
   const isBookseller = roles.includes('bookseller') || isAdmin;
-  const isModerator =
-    (user?.moderatorOf?.length ?? 0) > 0 || isAdmin;
+  const isModerator = (user?.moderatorOf?.length ?? 0) > 0 || isAdmin;
 
   async function handleLogout() {
     try {
@@ -65,13 +63,14 @@ function Header({ user }) {
 
   return (
     <header className="header">
-      
-<NavLink to="/" className="brand">
-  Booklore
-</NavLink>
+      <NavLink to="/" className="brand">
+        Booklore
+      </NavLink>
 
-<NavLink to="/" end>Smart Search</NavLink>
-<NavLink to="/books">Catalog</NavLink>
+      <NavLink to="/" end>
+        Smart Search
+      </NavLink>
+      <NavLink to="/books">Catalog</NavLink>
 
       <NavLink to="/clubs">Reading Circles</NavLink>
 
@@ -84,27 +83,17 @@ function Header({ user }) {
 
           <span>{user.name}</span>
 
-          <button
-            type="button"
-            onClick={handleLogout}
-            data-testid="logout-btn"
-          >
+          <button type="button" onClick={handleLogout} data-testid="logout-btn">
             Logout
           </button>
         </>
       )}
 
-      {isBookseller && (
-        <NavLink to="/staff/stock">Stockroom</NavLink>
-      )}
+      {isBookseller && <NavLink to="/staff/stock">Stockroom</NavLink>}
 
-      {isAdmin && (
-        <NavLink to="/staff/admin">Logbook</NavLink>
-      )}
+      {isAdmin && <NavLink to="/staff/admin">Logbook</NavLink>}
 
-      {isModerator && (
-        <NavLink to="/agent">Next Read</NavLink>
-      )}
+      {isModerator && <NavLink to="/agent">Next Read</NavLink>}
 
       {!user && <NavLink to="/login">Login</NavLink>}
     </header>
@@ -122,45 +111,21 @@ export default function App() {
 
       <main className="main">
         <Routes>
-          <Route
-            path="/"
-            element={<DiscoverPage />}
-          />
+          <Route path="/" element={<DiscoverPage />} />
 
-          <Route
-            path="/books"
-            element={<CatalogPage />}
-          />
+          <Route path="/books" element={<CatalogPage />} />
 
-          <Route
-            path="/books/:id"
-            element={<BookDetailPage />}
-          />
+          <Route path="/books/:id" element={<BookDetailPage />} />
 
-          <Route
-            path="/login"
-            element={<LoginPage />}
-          />
+          <Route path="/login" element={<LoginPage />} />
 
-          <Route
-            path="/signup"
-            element={<SignupPage />}
-          />
+          <Route path="/signup" element={<SignupPage />} />
 
-          <Route
-            path="/verify"
-            element={<VerifyPage />}
-          />
+          <Route path="/verify" element={<VerifyPage />} />
 
-          <Route
-            path="/forgot"
-            element={<ForgotPage />}
-          />
+          <Route path="/forgot" element={<ForgotPage />} />
 
-          <Route
-            path="/reset"
-            element={<ResetPage />}
-          />
+          <Route path="/reset" element={<ResetPage />} />
 
           <Route
             path="/reservations"
@@ -207,40 +172,19 @@ export default function App() {
             }
           />
 
-          <Route
-            path="/clubs"
-            element={<ClubsPage />}
-          />
+          <Route path="/clubs" element={<ClubsPage />} />
 
-          <Route
-            path="/clubs/:id"
-            element={<ClubDetailPage />}
-          />
+          <Route path="/clubs/:id" element={<ClubDetailPage />} />
 
-          <Route
-            path="/clubs/:id/manage"
-element={<ModeratorConsolePage />}
-          />
+          <Route path="/clubs/:id/manage" element={<ModeratorConsolePage />} />
 
-          <Route
-            path="/staff/stock"
-            element={<StockPage />}
-          />
+          <Route path="/staff/stock" element={<StockPage />} />
 
-          <Route
-            path="/staff/admin"
-            element={<Placeholder name="Admin" />}
-          />
+          <Route path="/staff/admin" element={<Placeholder name="Admin" />} />
 
-          <Route
-            path="/agent"
-            element={<Placeholder name="Reading agent" />}
-          />
+          <Route path="/agent" element={<Placeholder name="Reading agent" />} />
 
-          <Route
-            path="*"
-            element={<NotFound />}
-          />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
     </>

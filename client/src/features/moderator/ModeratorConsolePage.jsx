@@ -64,11 +64,9 @@ export default function ModeratorConsolePage() {
 
       await api.delete(`/clubs/${id}/members/${member.id}`);
 
-      setMembers((current) =>
-        current.filter((item) => String(item.id) !== String(member.id)),
-      );
+      setMembers((current) => current.filter((item) => String(item.id) !== String(member.id)));
 
-      setMessage('Member removed successfully.');
+      setMessage('Member removed.');
     } catch (err) {
       setError(err?.message ?? 'Unable to remove this member.');
     } finally {
@@ -98,7 +96,7 @@ export default function ModeratorConsolePage() {
         agenda: '',
       });
 
-      setMessage('Meeting scheduled successfully.');
+      setMessage('Meeting scheduled.');
     } catch (err) {
       setError(err?.message ?? 'Unable to schedule the meeting.');
     } finally {
@@ -119,34 +117,34 @@ export default function ModeratorConsolePage() {
       return;
     }
 
-let pace;
+    let pace;
 
-if (pagesPerWeek.trim() !== '') {
-  pace = Number(pagesPerWeek);
+    if (pagesPerWeek.trim() !== '') {
+      pace = Number(pagesPerWeek);
 
-  if (!Number.isInteger(pace) || pace < 10 || pace > 1000) {
-    setError('Reading pace must be between 10 and 1000 pages per week.');
-    return;
-  }
-}
+      if (!Number.isInteger(pace) || pace < 10 || pace > 1000) {
+        setError('Reading pace must be between 10 and 1000 pages per week.');
+        return;
+      }
+    }
 
     try {
       setSaving(true);
       setError('');
       setMessage('');
 
-     const updates = {
-  description,
-  rules,
-};
+      const updates = {
+        description,
+        rules,
+      };
 
-if (pagesPerWeek.trim() !== '') {
-  updates.pagesPerWeek = pace;
-}
+      if (pagesPerWeek.trim() !== '') {
+        updates.pagesPerWeek = pace;
+      }
 
-await api.patch(`/clubs/${id}`, updates);
+      await api.patch(`/clubs/${id}`, updates);
 
-      setMessage('Club details updated successfully.');
+      setMessage('Club details saved.');
       await loadConsole();
     } catch (err) {
       setError(err?.message ?? 'Unable to update club details.');
@@ -166,9 +164,7 @@ await api.patch(`/clubs/${id}`, updates);
   if (!club) {
     return (
       <section className="moderator-page">
-        <p role="alert">
-          {error || 'Unable to find this club.'}
-        </p>
+        <p role="alert">{error || 'Unable to find this club.'}</p>
       </section>
     );
   }
@@ -176,7 +172,7 @@ await api.patch(`/clubs/${id}`, updates);
   return (
     <section className="moderator-page">
       <header className="moderator-header">
-      <h1>Host Desk</h1>
+        <h1>Host Desk</h1>
         <p>Manage members, meetings, and reading rules for {club.name}.</p>
       </header>
 
@@ -215,9 +211,7 @@ await api.patch(`/clubs/${id}`, updates);
                   onClick={() => handleRemoveMember(member)}
                   disabled={removingId === String(member.id)}
                 >
-                  {removingId === String(member.id)
-                    ? 'Removing...'
-                    : 'Remove'}
+                  {removingId === String(member.id) ? 'Removing...' : 'Remove'}
                 </button>
               </article>
             ))}
@@ -235,9 +229,7 @@ await api.patch(`/clubs/${id}`, updates);
               type="date"
               value={meeting.date}
               min={new Date().toLocaleDateString('en-CA')}
-              onChange={(event) =>
-                setMeeting({ ...meeting, date: event.target.value })
-              }
+              onChange={(event) => setMeeting({ ...meeting, date: event.target.value })}
               required
             />
           </label>
@@ -247,9 +239,7 @@ await api.patch(`/clubs/${id}`, updates);
             <input
               type="time"
               value={meeting.time}
-              onChange={(event) =>
-                setMeeting({ ...meeting, time: event.target.value })
-              }
+              onChange={(event) => setMeeting({ ...meeting, time: event.target.value })}
               required
             />
           </label>
@@ -261,9 +251,7 @@ await api.patch(`/clubs/${id}`, updates);
               value={meeting.location}
               maxLength={120}
               placeholder="e.g. Library meeting room"
-              onChange={(event) =>
-                setMeeting({ ...meeting, location: event.target.value })
-              }
+              onChange={(event) => setMeeting({ ...meeting, location: event.target.value })}
               required
             />
           </label>
@@ -274,9 +262,7 @@ await api.patch(`/clubs/${id}`, updates);
               value={meeting.agenda}
               maxLength={500}
               placeholder="What will the club discuss?"
-              onChange={(event) =>
-                setMeeting({ ...meeting, agenda: event.target.value })
-              }
+              onChange={(event) => setMeeting({ ...meeting, agenda: event.target.value })}
             />
           </label>
 
@@ -322,9 +308,7 @@ await api.patch(`/clubs/${id}`, updates);
               onChange={(event) => setPagesPerWeek(event.target.value)}
               required
             />
-            <span className="moderator-help">
-              Enter a value from 10 to 1000.
-            </span>
+            <span className="moderator-help">Enter a value from 10 to 1000.</span>
           </label>
 
           <button type="submit" disabled={saving}>

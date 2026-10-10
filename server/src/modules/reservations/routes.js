@@ -1,15 +1,12 @@
 import { Router } from 'express';
 
-import {
-  reserve,
-  getMyReservations,
-  cancelReservation,
-} from './service.js';
+import { reserve, getMyReservations, cancelReservation, collectReservation } from './service.js';
 
 import { ReserveBody } from '@bookstore/shared/schemas/reservations';
 import { IdParams } from '@bookstore/shared/schemas/common';
 
-import { requireAuth, requireVerified } from '../../middleware/auth.js';
+import { requireAuth, requireVerified, requireRole } from '../../middleware/auth.js';
+
 import { validate } from '../../middleware/validate.js';
 import { asyncHandler } from '../../lib/asyncHandler.js';
 
@@ -44,6 +41,17 @@ router.delete(
   validate({ params: IdParams }),
   asyncHandler(async (req, res) => {
     const reservation = await cancelReservation(req.user, req.params.id);
+    return res.ok(reservation);
+  }),
+);
+
+router.patch(
+  '/reservations/:id/collect',
+  requireAuth,
+  requireRole('bookseller'),
+  validate({ params: IdParams }),
+  asyncHandler(async (req, res) => {
+    const reservation = await collectReservation(req.user, req.params.id);
     return res.ok(reservation);
   }),
 );

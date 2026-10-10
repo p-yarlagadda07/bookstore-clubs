@@ -114,7 +114,12 @@ export async function adjustStock(user, id, { delta, status, reason }) {
   await row.save();
 
   const after = { total: row.total, available: row.available, held: row.held, status: row.status };
-  await logAudit(user, 'stock.adjust', { type: 'inventory', id: row._id }, { before, after, reason });
+  await logAudit(
+    user,
+    'stock.adjust',
+    { type: 'inventory', id: row._id },
+    { before, after, reason },
+  );
 
   const book = await Book.findById(row.bookId).select('title authors').lean();
   return toRow(row.toObject(), book);

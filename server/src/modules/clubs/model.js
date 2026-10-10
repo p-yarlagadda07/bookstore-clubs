@@ -37,7 +37,7 @@ const clubSchema = new mongoose.Schema(
       },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const membershipSchema = new mongoose.Schema(
@@ -62,7 +62,7 @@ const membershipSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 membershipSchema.index({ clubId: 1, userId: 1 }, { unique: true });
@@ -112,7 +112,7 @@ const meetingSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 meetingSchema.index({ clubId: 1 });

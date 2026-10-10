@@ -4,10 +4,7 @@ import { compareClubConstraints } from './tools/compareClubConstraints.js';
 import { writeNote } from './note.js';
 
 export const runAgent = async ({ constraints, request, emit }) => {
-  const searchResult = await searchCatalog.invoke(
-    { query: request },
-    { context: { emit } },
-  );
+  const searchResult = await searchCatalog.invoke({ query: request }, { context: { emit } });
 
   const stockResult = await checkStockAndLength.invoke(
     {
@@ -32,18 +29,13 @@ export const runAgent = async ({ constraints, request, emit }) => {
     .map((book) => {
       const stock = stockResult.find((item) => item.bookId === book.bookId);
 
-      const bookConstraints = constraintResult.find(
-        (item) => item.bookId === book.bookId,
-      );
+      const bookConstraints = constraintResult.find((item) => item.bookId === book.bookId);
 
       if (!stock || !bookConstraints) {
         return null;
       }
 
-      if (
-        !stock.enoughCopies ||
-        !['fits', 'tight'].includes(bookConstraints.timeFit)
-      ) {
+      if (!stock.enoughCopies || !['fits', 'tight'].includes(bookConstraints.timeFit)) {
         return null;
       }
 

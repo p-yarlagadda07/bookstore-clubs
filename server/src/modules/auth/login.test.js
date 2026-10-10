@@ -50,12 +50,15 @@ describe('login, me, logout', () => {
     expect(wrongPass.status).toBe(401);
     expect(noUser.status).toBe(401);
     expect(wrongPass.body.error.message).toBe(noUser.body.error.message);
-        expect(wrongPass.body.error.code).toBe('INVALID_CREDENTIALS');
+    expect(wrongPass.body.error.code).toBe('INVALID_CREDENTIALS');
   });
 
   it('rejects a bad body with 400', async () => {
     const { agent, csrf } = await csrfAgent();
-    const res = await agent.post('/api/auth/login').set('x-csrf-token', csrf).send({ email: 'not-an-email' });
+    const res = await agent
+      .post('/api/auth/login')
+      .set('x-csrf-token', csrf)
+      .send({ email: 'not-an-email' });
     expect(res.status).toBe(400);
     expect(res.body.error.code).toBe('VALIDATION_ERROR');
   });

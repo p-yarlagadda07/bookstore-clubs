@@ -16,7 +16,12 @@ afterAll(stopTestDB);
 describe('logAudit', () => {
   it('saves a row', async () => {
     const targetId = new mongoose.Types.ObjectId();
-    await logAudit(actor, 'stock.adjust', { type: 'inventory', id: targetId }, { before: 3, after: 5 });
+    await logAudit(
+      actor,
+      'stock.adjust',
+      { type: 'inventory', id: targetId },
+      { before: 3, after: 5 },
+    );
     const row = await AuditLog.findOne({ action: 'stock.adjust' }).lean();
     expect(String(row.actorId)).toBe(String(actor._id));
     expect(row.targetType).toBe('inventory');

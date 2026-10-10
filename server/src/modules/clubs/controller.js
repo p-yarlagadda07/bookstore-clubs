@@ -13,7 +13,6 @@ import {
   updateExcerptApproval,
 } from './service.js';
 
-
 export const listClubs = async (_req, res) => {
   res.ok(await getPublishedClubs());
 };
@@ -62,12 +61,8 @@ export const removeClubMemberController = async (req, res) => {
   res.ok({});
 };
 
-
 export const listClubExcerptsController = async (req, res) => {
-  const result = await listClubExcerpts(
-    req.params.id,
-    req.query.status ?? 'pending',
-  );
+  const result = await listClubExcerpts(req.params.id, req.query.status ?? 'pending');
   res.ok(result);
 };
 

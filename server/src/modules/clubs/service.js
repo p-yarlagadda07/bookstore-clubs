@@ -106,7 +106,8 @@ export async function isMember(clubId, userId) {
 export async function getConstraints(clubId, user) {
   const club = await getClub(clubId);
   if (!club) throw new AppError('NOT_FOUND', 404, 'Club not found');
-  if (!user || !(await isMember(clubId, user._id))) {
+  const isModerator = (user?.moderatorOf ?? []).some((id) => String(id) === String(clubId));
+  if (!user || !(isModerator || (await isMember(clubId, user._id)))) {
     throw new AppError('FORBIDDEN', 403, 'Only club members can do this');
   }
 
@@ -185,10 +186,7 @@ export async function getClubMembers(clubId) {
 
   const users = await mongoose.connection
     .collection('users')
-    .find(
-      { _id: { $in: userIds } },
-      { projection: { name: 1, email: 1 } },
-    )
+    .find({ _id: { $in: userIds } }, { projection: { name: 1, email: 1 } })
     .toArray();
 
   const userMap = new Map(users.map((user) => [String(user._id), user]));
@@ -256,7 +254,6 @@ export async function removeClubMember(clubId, userId, moderatorId) {
   return {};
 }
 
-
 export async function listClubExcerpts(clubId, status = 'pending') {
   const club = await Club.findById(clubId).lean();
 
@@ -284,9 +281,7 @@ export async function listClubExcerpts(clubId, status = 'pending') {
   if (status === 'pending') filter.approved = false;
   if (status === 'approved') filter.approved = true;
 
-  const excerpts = await Excerpt.find(filter)
-    .sort({ chapter: 1, pageStart: 1, _id: 1 })
-    .lean();
+  const excerpts = await Excerpt.find(filter).sort({ chapter: 1, pageStart: 1, _id: 1 }).lean();
 
   return {
     book: { id: book._id, title: book.title },
@@ -300,8 +295,6 @@ export async function listClubExcerpts(clubId, status = 'pending') {
     })),
   };
 }
-
-
 
 export async function updateExcerptApproval(clubId, excerptId, approved, user) {
   const club = await Club.findById(clubId).lean();
@@ -327,12 +320,7 @@ export async function updateExcerptApproval(clubId, excerptId, approved, user) {
   excerpt.approvedBy = approved ? user._id : null;
   await excerpt.save();
 
-  await logAudit(
-    user,
-    'excerpt.approve',
-    { type: 'excerpt', id: excerpt._id },
-    { approved },
-  );
+  await logAudit(user, 'excerpt.approve', { type: 'excerpt', id: excerpt._id }, { approved });
 
   return {
     id: excerpt._id,

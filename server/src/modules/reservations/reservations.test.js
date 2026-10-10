@@ -1,3 +1,4 @@
+import { expireHolds } from '../../jobs/expireHolds.js';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import { createApp } from '../../app.js';
@@ -6,6 +7,7 @@ import { loginAs } from '../../../test/helpers/auth.js';
 import Reservation from './model.js';
 import Inventory from '../inventory/model.js';
 import Book from '../books/model.js';
+
 
 const app = createApp();
 
@@ -147,7 +149,9 @@ describe('my reservations and cancel', () => {
   it('cancel puts the copy back', async () => {
     const { book, me, reservationId } = await holdOne();
 
-    const res = await me.agent.delete(`/api/reservations/${reservationId}`).set('x-csrf-token', me.csrf);
+    const res = await me.agent
+      .delete(`/api/reservations/${reservationId}`)
+      .set('x-csrf-token', me.csrf);
     expect(res.status).toBe(200);
     expect(res.body.data.status).toBe('cancelled');
 
@@ -160,7 +164,9 @@ describe('my reservations and cancel', () => {
     const { me, reservationId } = await holdOne();
     await me.agent.delete(`/api/reservations/${reservationId}`).set('x-csrf-token', me.csrf);
 
-    const res = await me.agent.delete(`/api/reservations/${reservationId}`).set('x-csrf-token', me.csrf);
+    const res = await me.agent
+      .delete(`/api/reservations/${reservationId}`)
+      .set('x-csrf-token', me.csrf);
     expect(res.status).toBe(409);
   });
 
@@ -168,7 +174,128 @@ describe('my reservations and cancel', () => {
     const { reservationId } = await holdOne();
     const other = await loginAs(app);
 
-    const res = await other.agent.delete(`/api/reservations/${reservationId}`).set('x-csrf-token', other.csrf);
+    const res = await other.agent
+      .delete(`/api/reservations/${reservationId}`)
+      .set('x-csrf-token', other.csrf);
     expect(res.status).toBe(404);
+  });
+});
+
+describe('collect reservations', () => {
+  async function makeHold() {
+    const { book, windowId } = await bookWithCopies(2);
+    const reader = await loginAs(app);
+
+    const created = await reserve(reader.agent, reader.csrf, book._id, {
+      condition: 'new',
+      pickupWindowId: String(windowId),
+    });
+
+    expect(created.status).toBe(201);
+
+    return {
+      book,
+      reservationId: created.body.data._id ?? created.body.data.id,
+    };
+  }
+
+  it('allows a bookseller to collect a held reservation', async () => {
+    const { book, reservationId } = await makeHold();
+    const seller = await loginAs(app, { roles: ['bookseller'] });
+
+    const res = await seller.agent
+      .patch(`/api/reservations/${reservationId}/collect`)
+      .set('x-csrf-token', seller.csrf);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.status).toBe('collected');
+
+    const inv = await Inventory.findOne({ bookId: book._id }).lean();
+    expect(inv.total).toBe(1);
+    expect(inv.available).toBe(1);
+    expect(inv.held).toBe(0);
+  });
+
+  it('rejects collection by a reader with 403', async () => {
+    const { reservationId } = await makeHold();
+    const reader = await loginAs(app);
+
+    const res = await reader.agent
+      .patch(`/api/reservations/${reservationId}/collect`)
+      .set('x-csrf-token', reader.csrf);
+
+    expect(res.status).toBe(403);
+  });
+
+  it('rejects collecting the same reservation twice with 409', async () => {
+    const { reservationId } = await makeHold();
+    const seller = await loginAs(app, { roles: ['bookseller'] });
+
+    const first = await seller.agent
+      .patch(`/api/reservations/${reservationId}/collect`)
+      .set('x-csrf-token', seller.csrf);
+
+    expect(first.status).toBe(200);
+
+    const second = await seller.agent
+      .patch(`/api/reservations/${reservationId}/collect`)
+      .set('x-csrf-token', seller.csrf);
+
+    expect(second.status).toBe(409);
+    expect(second.body.error.code).toBe('NOT_COLLECTABLE');
+  });
+});
+
+describe('expire reservation holds', () => {
+  async function makeHold() {
+    const { book, windowId } = await bookWithCopies(2);
+    const reader = await loginAs(app);
+
+    const created = await reserve(reader.agent, reader.csrf, book._id, {
+      condition: 'new',
+      pickupWindowId: String(windowId),
+    });
+
+    expect(created.status).toBe(201);
+
+    return {
+      book,
+      reservationId: created.body.data._id ?? created.body.data.id,
+    };
+  }
+
+  it('expires an overdue hold and restores inventory', async () => {
+    const { book, reservationId } = await makeHold();
+
+    await Reservation.updateOne(
+      { _id: reservationId },
+      { $set: { expiresAt: new Date(Date.now() - 60_000) } },
+    );
+
+    const count = await expireHolds(new Date());
+
+    expect(count).toBe(1);
+
+    const reservation = await Reservation.findById(reservationId).lean();
+    expect(reservation.status).toBe('expired');
+
+    const inv = await Inventory.findOne({ bookId: book._id }).lean();
+    expect(inv.available).toBe(2);
+    expect(inv.held).toBe(0);
+  });
+
+  it('keeps a hold that has not expired', async () => {
+    const { book, reservationId } = await makeHold();
+
+    const count = await expireHolds(new Date());
+
+    expect(count).toBe(0);
+
+    const reservation = await Reservation.findById(reservationId).lean();
+    expect(reservation.status).toBe('held');
+
+    const inv = await Inventory.findOne({ bookId: book._id }).lean();
+    expect(inv.available).toBe(1);
+    expect(inv.held).toBe(1);
   });
 });

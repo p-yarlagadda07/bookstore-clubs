@@ -16,11 +16,7 @@ const emitToolEvent = (config, status, summary) => {
 
 export const compareClubConstraints = tool(
   async (input, config) => {
-    emitToolEvent(
-      config,
-      'started',
-      'Comparing books with club reading constraints',
-    );
+    emitToolEvent(config, 'started', 'Comparing books with club reading constraints');
 
     try {
       const results = input.books.map((book) => {
@@ -46,20 +42,14 @@ export const compareClubConstraints = tool(
         };
       });
 
-      emitToolEvent(
-        config,
-        'succeeded',
-        `Compared ${results.length} books with club constraints`,
-      );
+      emitToolEvent(config, 'succeeded', `Compared ${results.length} books with club constraints`);
 
       return results;
     } catch (error) {
       emitToolEvent(
         config,
         'failed',
-        error instanceof Error
-          ? error.message
-          : 'Club constraint comparison failed',
+        error instanceof Error ? error.message : 'Club constraint comparison failed',
       );
 
       throw error;

@@ -29,7 +29,7 @@ describe('Excerpt model', () => {
 
   it('needs a chapter', async () => {
     await expect(
-      Excerpt.create({ bookId: new mongoose.Types.ObjectId(), text: 'no chapter' })
+      Excerpt.create({ bookId: new mongoose.Types.ObjectId(), text: 'no chapter' }),
     ).rejects.toThrow(/chapter/);
   });
 });
@@ -52,8 +52,6 @@ describe('StoreDoc model', () => {
   });
 
   it('rejects an unknown type', async () => {
-    await expect(
-      StoreDoc.create({ title: 'x', type: 'blog', text: 'y' })
-    ).rejects.toThrow(/type/);
+    await expect(StoreDoc.create({ title: 'x', type: 'blog', text: 'y' })).rejects.toThrow(/type/);
   });
 });

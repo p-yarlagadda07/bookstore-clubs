@@ -67,11 +67,7 @@ export default function LoginPage() {
               </p>
             )}
 
-            <Button
-              type="submit"
-              disabled={sending}
-              data-testid="login-btn"
-            >
+            <Button type="submit" disabled={sending} data-testid="login-btn">
               {sending ? 'Logging in...' : 'Log in'}
             </Button>
           </form>

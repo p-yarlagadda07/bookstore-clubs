@@ -8,7 +8,7 @@ const storeDocSchema = new mongoose.Schema(
     chunkIndex: { type: Number, default: 0 },
     embedding: { type: [Number], select: false },
   },
-  { timestamps: true, collection: 'storedocs' }
+  { timestamps: true, collection: 'storedocs' },
 );
 
 export default mongoose.model('StoreDoc', storeDocSchema);
