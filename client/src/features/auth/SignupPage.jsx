@@ -37,18 +37,13 @@ export default function SignupPage() {
         password,
       });
 
-      setSuccess(
-        'Account created. Check your email for a verification link.'
-      );
+      setSuccess('Account created. Check your email for a verification link.');
       setName('');
       setEmail('');
       setPassword('');
       setConfirmPassword('');
     } catch (err) {
-      setError(
-        err?.message ||
-          'Unable to create your account. Please try again.'
-      );
+      setError(err?.message || 'Unable to create your account. Please try again.');
     } finally {
       setSending(false);
     }
@@ -111,11 +106,7 @@ export default function SignupPage() {
               </p>
             )}
 
-            <Button
-              type="submit"
-              disabled={sending}
-              data-testid="signup-btn"
-            >
+            <Button type="submit" disabled={sending} data-testid="signup-btn">
               {sending ? 'Creating account...' : 'Create account'}
             </Button>
           </form>

@@ -59,9 +59,9 @@ api.interceptors.response.use(
       err.response?.data?.error ?? {
         code: 'NETWORK',
         message: 'Network error',
-      }
+      },
     );
-  }
+  },
 );
 
 export function clearCsrfToken() {

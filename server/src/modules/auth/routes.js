@@ -16,8 +16,7 @@ const loginLimiter = rateLimit({
   skipSuccessfulRequests: true,
   standardHeaders: 'draft-8',
   legacyHeaders: false,
-  keyGenerator: (req) =>
-    `${ipKeyGenerator(req.ip)}:${String(req.body?.email ?? '').toLowerCase()}`,
+  keyGenerator: (req) => `${ipKeyGenerator(req.ip)}:${String(req.body?.email ?? '').toLowerCase()}`,
   handler: (_req, _res, next) =>
     next(new AppError('RATE_LIMITED', 429, 'Too many login attempts, try again in 15 minutes')),
 });
@@ -48,9 +47,19 @@ router.get('/auth/csrf', ctrl.csrf);
 router.post('/auth/login', loginLimiter, validate({ body: LoginBody }), asyncHandler(ctrl.login));
 router.post('/auth/logout', asyncHandler(ctrl.logout));
 router.get('/auth/me', requireAuth, ctrl.me);
-router.post('/auth/signup', signupLimiter, validate({ body: SignupBody }), asyncHandler(ctrl.signup));
+router.post(
+  '/auth/signup',
+  signupLimiter,
+  validate({ body: SignupBody }),
+  asyncHandler(ctrl.signup),
+);
 router.get('/auth/verify', validate({ query: VerifyQuery }), asyncHandler(ctrl.verify));
-router.post('/auth/forgot', forgotLimiter, validate({ body: ForgotBody }), asyncHandler(ctrl.forgot));
+router.post(
+  '/auth/forgot',
+  forgotLimiter,
+  validate({ body: ForgotBody }),
+  asyncHandler(ctrl.forgot),
+);
 router.post('/auth/reset', validate({ body: ResetBody }), asyncHandler(ctrl.reset));
 
 export default router;

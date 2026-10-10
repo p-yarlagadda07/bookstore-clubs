@@ -3,8 +3,7 @@ import { User } from '../modules/users/model.js';
 import { Membership } from '../modules/clubs/model.js';
 
 const isAdmin = (user) => !!user?.roles?.includes('admin');
-const moderates = (user, clubId) =>
-  (user?.moderatorOf ?? []).map(String).includes(String(clubId));
+const moderates = (user, clubId) => (user?.moderatorOf ?? []).map(String).includes(String(clubId));
 
 export const requireAuth = async (req, _res, next) => {
   try {

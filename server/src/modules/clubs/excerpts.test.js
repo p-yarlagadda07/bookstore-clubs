@@ -1,14 +1,6 @@
-
 import { createApp } from '../../app.js';
 import { loginAs } from '../../../test/helpers/auth.js';
-import {
-  beforeAll,
-  afterAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from 'vitest';
+import { beforeAll, afterAll, beforeEach, describe, expect, it } from 'vitest';
 import mongoose from 'mongoose';
 import { startTestDB, stopTestDB } from '../../../test/helpers/db.js';
 import { Club } from './model.js';
@@ -73,9 +65,7 @@ describe('Club excerpt approval', () => {
     expect(response.status).toBe(200);
     expect(response.body.data.book.title).toBe('Test Book');
     expect(response.body.data.items).toHaveLength(1);
-    expect(String(response.body.data.items[0].id)).toBe(
-      String(pending._id),
-    );
+    expect(String(response.body.data.items[0].id)).toBe(String(pending._id));
     expect(response.body.data.items[0].approved).toBe(false);
   });
 
@@ -106,15 +96,11 @@ describe('Club excerpt approval', () => {
     expect(audit).not.toBeNull();
     expect(audit.details.approved).toBe(true);
 
-    const listResponse = await agent.get(
-      `/api/clubs/${club._id}/excerpts?status=approved`,
-    );
+    const listResponse = await agent.get(`/api/clubs/${club._id}/excerpts?status=approved`);
 
     expect(listResponse.status).toBe(200);
     expect(listResponse.body.data.items).toHaveLength(1);
-    expect(String(listResponse.body.data.items[0].id)).toBe(
-      String(excerpt._id),
-    );
+    expect(String(listResponse.body.data.items[0].id)).toBe(String(excerpt._id));
   });
 
   it('rejects a regular reader with 403', async () => {
@@ -122,9 +108,7 @@ describe('Club excerpt approval', () => {
     const excerpt = await createExcerpt(book._id);
     const { agent, csrf } = await loginAs(app);
 
-    const listResponse = await agent.get(
-      `/api/clubs/${club._id}/excerpts`,
-    );
+    const listResponse = await agent.get(`/api/clubs/${club._id}/excerpts`);
     expect(listResponse.status).toBe(403);
 
     const patchResponse = await agent

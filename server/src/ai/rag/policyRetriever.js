@@ -1,4 +1,3 @@
-
 import StoreDoc from '../ingest/storeDoc.model.js';
 
 export async function searchStoreDocs(question, k = 2) {
@@ -11,18 +10,14 @@ export async function searchStoreDocs(question, k = 2) {
     return [];
   }
 
-  const docs = await StoreDoc.find({})
-    .select('title type text')
-    .lean();
+  const docs = await StoreDoc.find({}).select('title type text').lean();
 
   return docs
     .map((doc) => {
       const title = doc.title.toLowerCase();
       const text = doc.text.toLowerCase();
 
-      const score = words.filter(
-        (word) => title.includes(word) || text.includes(word),
-      ).length;
+      const score = words.filter((word) => title.includes(word) || text.includes(word)).length;
 
       return {
         id: doc._id,

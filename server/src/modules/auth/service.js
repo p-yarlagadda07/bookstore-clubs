@@ -7,7 +7,7 @@ import { env } from '../../config/env.js';
 export async function checkLogin(email, password) {
   const user = await User.findOne({ email });
   const ok = user && (await argon2.verify(user.passwordHash, password).catch(() => false));
-    if (!ok) throw new AppError('INVALID_CREDENTIALS', 401, 'Invalid email or password');
+  if (!ok) throw new AppError('INVALID_CREDENTIALS', 401, 'Invalid email or password');
   return user;
 }
 const sha256 = (s) => crypto.createHash('sha256').update(s).digest('hex');
@@ -45,7 +45,10 @@ export async function verifyEmail(token) {
   // token fields are removed in the same update, so a link only works once
   const user = await User.findOneAndUpdate(
     { verifyTokenHash: sha256(token), verifyTokenExpires: { $gt: new Date() } },
-    { $set: { emailVerifiedAt: new Date() }, $unset: { verifyTokenHash: 1, verifyTokenExpires: 1 } },
+    {
+      $set: { emailVerifiedAt: new Date() },
+      $unset: { verifyTokenHash: 1, verifyTokenExpires: 1 },
+    },
     { new: true },
   );
   if (!user) throw new AppError('TOKEN_INVALID', 400, 'This link is invalid or has expired');

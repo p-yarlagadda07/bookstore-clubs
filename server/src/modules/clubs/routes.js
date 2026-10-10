@@ -1,4 +1,3 @@
-
 import { Router } from 'express';
 import {
   CreateMeetingBody,
@@ -80,7 +79,6 @@ router.delete(
   asyncHandler(removeClubMemberController),
 );
 
-// List excerpts for the club's current book
 router.get(
   '/clubs/:id/excerpts',
   requireAuth,
@@ -92,7 +90,6 @@ router.get(
   asyncHandler(listClubExcerptsController),
 );
 
-// Approve or unapprove an excerpt
 router.patch(
   '/clubs/:id/excerpts/:excerptId',
   requireAuth,
