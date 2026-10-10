@@ -28,7 +28,7 @@ router.get(
     }));
 
     res.ok({ items });
-  })
+  }),
 );
 
 export default router;

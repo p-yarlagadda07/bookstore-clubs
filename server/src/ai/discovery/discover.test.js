@@ -14,8 +14,26 @@ afterAll(stopTestDB);
 describe('GET /api/books/discover', () => {
   it('returns matching books', async () => {
     vectorSearchBooks.mockResolvedValue([
-      { _id: new mongoose.Types.ObjectId(), title: 'Book One', authors: ['A'], themes: ['mystery'], moods: ['tense'], pageCount: 200, synopsis: 'Short text', score: 0.9 },
-      { _id: new mongoose.Types.ObjectId(), title: 'Book Two', authors: ['B'], themes: ['sea'], moods: ['calm'], pageCount: 300, synopsis: 'More text', score: 0.8 },
+      {
+        _id: new mongoose.Types.ObjectId(),
+        title: 'Book One',
+        authors: ['A'],
+        themes: ['mystery'],
+        moods: ['tense'],
+        pageCount: 200,
+        synopsis: 'Short text',
+        score: 0.9,
+      },
+      {
+        _id: new mongoose.Types.ObjectId(),
+        title: 'Book Two',
+        authors: ['B'],
+        themes: ['sea'],
+        moods: ['calm'],
+        pageCount: 300,
+        synopsis: 'More text',
+        score: 0.8,
+      },
     ]);
 
     const res = await request(app).get('/api/books/discover?q=lighthouse keeper');
