@@ -1,6 +1,7 @@
 import { searchCatalog } from './tools/searchCatalog.js';
 import { checkStockAndLength } from './tools/checkStockAndLength.js';
 import { compareClubConstraints } from './tools/compareClubConstraints.js';
+import { writeNote } from './note.js';
 
 export const runAgent = async ({ constraints, request, emit }) => {
   const searchResult = await searchCatalog.invoke(
@@ -30,6 +31,7 @@ export const runAgent = async ({ constraints, request, emit }) => {
   const shortlist = searchResult
     .map((book) => {
       const stock = stockResult.find((item) => item.bookId === book.bookId);
+
       const bookConstraints = constraintResult.find(
         (item) => item.bookId === book.bookId,
       );
@@ -62,10 +64,10 @@ export const runAgent = async ({ constraints, request, emit }) => {
     .filter(Boolean)
     .slice(0, 3);
 
+  const note = await writeNote(shortlist, constraints);
+
   return {
     shortlist,
-    note: shortlist.length
-      ? 'Recommendations only. No book was reserved or selected.'
-      : 'No book fits the time and copies, try a shorter book.',
+    note,
   };
 };
