@@ -23,7 +23,7 @@ export default function ModeratorConsolePage() {
 
   const [rulesText, setRulesText] = useState('');
   const [description, setDescription] = useState('');
-  const [pagesPerWeek, setPagesPerWeek] = useState('100');
+  const [pagesPerWeek, setPagesPerWeek] = useState('');
 
   const loadConsole = useCallback(async () => {
     try {
@@ -119,23 +119,32 @@ export default function ModeratorConsolePage() {
       return;
     }
 
-    const pace = Number(pagesPerWeek);
+let pace;
 
-    if (!Number.isInteger(pace) || pace < 10 || pace > 1000) {
-      setError('Reading pace must be between 10 and 1000 pages per week.');
-      return;
-    }
+if (pagesPerWeek.trim() !== '') {
+  pace = Number(pagesPerWeek);
+
+  if (!Number.isInteger(pace) || pace < 10 || pace > 1000) {
+    setError('Reading pace must be between 10 and 1000 pages per week.');
+    return;
+  }
+}
 
     try {
       setSaving(true);
       setError('');
       setMessage('');
 
-      await api.patch(`/clubs/${id}`, {
-        description,
-        rules,
-        pagesPerWeek: pace,
-      });
+     const updates = {
+  description,
+  rules,
+};
+
+if (pagesPerWeek.trim() !== '') {
+  updates.pagesPerWeek = pace;
+}
+
+await api.patch(`/clubs/${id}`, updates);
 
       setMessage('Club details updated successfully.');
       await loadConsole();
@@ -167,8 +176,7 @@ export default function ModeratorConsolePage() {
   return (
     <section className="moderator-page">
       <header className="moderator-header">
-        <p className="moderator-eyebrow">CLUB MANAGEMENT</p>
-        <h1>Moderator Console</h1>
+      <h1>Host Desk</h1>
         <p>Manage members, meetings, and reading rules for {club.name}.</p>
       </header>
 

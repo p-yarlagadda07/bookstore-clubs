@@ -2,20 +2,14 @@
   max-width: 1000px;
   margin: 0 auto;
   padding: 32px 20px 56px;
-  color: #20283a;
+  color: var(--color-text);
 }
 
 .moderator-header {
   margin-bottom: 28px;
 }
 
-.moderator-eyebrow {
-  margin-bottom: 8px;
-  color: #5365b5;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 2px;
-}
+
 
 .moderator-header h1 {
   margin: 0 0 10px;
@@ -25,18 +19,17 @@
 .moderator-header > p:last-child,
 .moderator-muted,
 .moderator-help {
-  color: #667085;
+  color: var(--color-muted);
 }
 
 .moderator-card {
   margin-bottom: 24px;
   padding: 24px;
-  background: #ffffff;
-  border: 1px solid #e4e7ec;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
-  box-shadow: 0 5px 18px rgba(16, 24, 40, 0.04);
+  box-shadow: 0 5px 18px color-mix(in srgb, var(--color-text) 4%, transparent);
 }
-
 .moderator-card h2 {
   margin-top: 0;
   margin-bottom: 8px;
@@ -47,13 +40,14 @@
   margin-top: 18px;
 }
 
+
 .moderator-member {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 16px 0;
-  border-bottom: 1px solid #edf0f4;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .moderator-member:last-child {
@@ -72,7 +66,7 @@
 }
 
 .moderator-member-info span {
-  color: #667085;
+  color: var(--color-muted);
   font-size: 14px;
   overflow-wrap: anywhere;
 }
@@ -96,10 +90,10 @@
   box-sizing: border-box;
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid #d0d5dd;
+  border: 1px solid var(--color-border);
   border-radius: 9px;
-  background: #ffffff;
-  color: #20283a;
+  background: var(--color-surface);
+  color: var(--color-text);
   font: inherit;
 }
 
@@ -110,8 +104,8 @@
 
 .moderator-form input:focus,
 .moderator-form textarea:focus {
-  outline: 2px solid #c7d2fe;
-  border-color: #6675cc;
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 25%, transparent);
+  border-color: var(--color-primary);
 }
 
 .moderator-form button,
@@ -126,14 +120,14 @@
 }
 
 .moderator-form button {
-  background: #4657b5;
-  color: #ffffff;
+  background: var(--color-primary);
+  color: var(--color-surface);
 }
 
 .moderator-danger {
   flex-shrink: 0;
-  background: #fff0f0;
-  color: #b42318;
+  background: color-mix(in srgb, var(--color-danger) 8%, var(--color-surface));
+  color: var(--color-danger);
 }
 
 .moderator-form button:disabled,
@@ -150,13 +144,13 @@
 }
 
 .moderator-alert {
-  background: #fff1f0;
-  color: #b42318;
+  background: color-mix(in srgb, var(--color-danger) 8%, var(--color-surface));
+  color: var(--color-danger);
 }
 
 .moderator-success {
-  background: #ecfdf3;
-  color: #027a48;
+  background: color-mix(in srgb, var(--color-success) 8%, var(--color-surface));
+  color: var(--color-success);
 }
 
 .moderator-help {
