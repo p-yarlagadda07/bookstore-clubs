@@ -1,90 +1,106 @@
-
-import { retrieveBookChunks } from './mockRetriever.js';
+import { searchExcerpts } from './excerptRetriever.js';
 import { searchStoreDocs } from './policyRetriever.js';
 import { getBoundary } from '../../modules/progress/service.js';
 import { buildSystemPrompt } from './prompts.js';
+import { chat, isOllamaUp } from '../ollama.js';
 
-// Mock book retrieval for now; store policy questions use StoreDocs.
+// Book chat uses approved excerpts; store policy questions use StoreDocs.
 export async function bookChat(user, { message, bookId, clubId }) {
-  let boundary;
+let boundary;
 
-  if (bookId) {
-    boundary = await getBoundary(user._id, bookId, clubId);
+if (bookId) {
+boundary = await getBoundary(user._id, bookId, clubId);
 
-    if (!boundary.declared) {
-      return {
-        answer: "Tell me which chapter you're on first, so I don't spoil anything.",
-        status: 'needs_progress',
-        citations: [],
-        conversationId: null,
-      };
-    }
-  } else {
-    const docs = await searchStoreDocs(message);
+if (!boundary.declared) {
+  return {
+    answer: "Tell me which chapter you're on first, so I don't spoil anything.",
+    status: 'needs_progress',
+    citations: [],
+    conversationId: null,
+  };
+}
 
-    if (docs.length > 0) {
-      const used = docs.slice(0, 2);
+} else {
+const docs = await searchStoreDocs(message);
 
-      const answer = used
-        .map((doc, i) => {
-          const sentences = doc.text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
-          const summary = sentences.slice(0, 2).join(' ').trim();
-          return `${summary} [${i + 1}]`;
-        })
-        .join(' ');
+if (docs.length > 0) {
+  const used = docs.slice(0, 2);
 
-      const citations = used.map((doc, i) => ({
-        n: i + 1,
-        kind: 'policy',
-        title: doc.title,
-      }));
+  const answer = used
+    .map((doc, i) => {
+      const sentences = doc.text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
+      const summary = sentences.slice(0, 2).join(' ').trim();
+      return `${summary} [${i + 1}]`;
+    })
+    .join(' ');
 
-      return {
-        answer,
-        status: 'answered',
-        citations,
-        conversationId: null,
-      };
-    }
-  }
-
-  const words = message
-    .toLowerCase()
-    .split(/[^a-z0-9]+/)
-    .filter((w) => w.length > 3);
-
-  let chunks = retrieveBookChunks().filter((c) =>
-    words.some((w) => c.text.toLowerCase().includes(w)),
-  );
-
-  if (bookId) {
-    chunks = chunks.filter((c) => c.chapter <= boundary.chapter);
-  }
-
-  if (chunks.length === 0) {
-    return {
-      answer: "I don't have approved material about that yet.",
-      status: 'not_in_sources',
-      citations: [],
-      conversationId: null,
-    };
-  }
-
-  const used = chunks.slice(0, 2);
-  const answer = used.map((c, i) => `${c.text} [${i + 1}]`).join(' ');
-  const citations = used.map((c, i) => ({
+  const citations = used.map((doc, i) => ({
     n: i + 1,
-    kind: 'excerpt',
-    title: c.title,
-    chapter: c.chapter,
-    pageStart: c.pageStart,
-    pageEnd: c.pageEnd,
+    kind: 'policy',
+    title: doc.title,
   }));
 
-  // Build the prompt with the reader's spoiler boundary.
-  if (bookId) {
-    buildSystemPrompt(boundary.chapter);
-  }
+  return {
+    answer,
+    status: 'answered',
+    citations,
+    conversationId: null,
+  };
+}
 
-  return { answer, status: 'answered', citations, conversationId: null };
+return {
+  answer: "I don't have approved material about that yet.",
+  status: 'not_in_sources',
+  citations: [],
+  conversationId: null,
+};
+
+}
+
+const chunks = await searchExcerpts(bookId, boundary.chapter, message);
+
+if (chunks.length === 0) {
+return {
+answer: "I don't have approved material about that yet.",
+status: 'not_in_sources',
+citations: [],
+conversationId: null,
+};
+}
+
+const context = chunks
+.map((chunk, i) => `[${i + 1}] (chapter ${chunk.chapter}) ${chunk.text}`)
+.join('\n\n');
+
+let answer;
+
+if (await isOllamaUp()) {
+try {
+const res = await chat.invoke([
+['system', buildSystemPrompt(boundary.chapter)],
+['human', `CONTEXT:\n${context}\n\nQUESTION: ${message}`],
+]);
+answer = res.content;
+} catch {
+answer = chunks
+.slice(0, 2)
+.map((chunk, i) => `${chunk.text} [${i + 1}]`)
+.join(' ');
+}
+} else {
+answer = chunks
+.slice(0, 2)
+.map((chunk, i) => `${chunk.text} [${i + 1}]`)
+.join(' ');
+}
+
+const citations = chunks.map((chunk, i) => ({
+n: i + 1,
+kind: 'excerpt',
+chapter: chunk.chapter,
+pageStart: chunk.pageStart,
+pageEnd: chunk.pageEnd,
+}));
+
+return { answer, status: 'answered', citations, conversationId: null };
 }
