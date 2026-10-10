@@ -106,7 +106,8 @@ export async function isMember(clubId, userId) {
 export async function getConstraints(clubId, user) {
   const club = await getClub(clubId);
   if (!club) throw new AppError('NOT_FOUND', 404, 'Club not found');
-  if (!user || !(await isMember(clubId, user._id))) {
+  const isModerator = (user?.moderatorOf ?? []).some((id) => String(id) === String(clubId));
+  if (!user || !(isModerator || (await isMember(clubId, user._id)))) {
     throw new AppError('FORBIDDEN', 403, 'Only club members can do this');
   }
 
