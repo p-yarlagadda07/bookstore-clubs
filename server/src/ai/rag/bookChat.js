@@ -1,10 +1,10 @@
-
-import { retrieveBookChunks } from './mockRetriever.js';
+import { searchExcerpts } from './excerptRetriever.js';
 import { searchStoreDocs } from './policyRetriever.js';
 import { getBoundary } from '../../modules/progress/service.js';
 import { buildSystemPrompt } from './prompts.js';
+import { chat, isOllamaUp } from '../ollama.js';
 
-// Mock book retrieval for now; store policy questions use StoreDocs.
+// Book chat uses approved excerpts; store policy questions use StoreDocs.
 export async function bookChat(user, { message, bookId, clubId }) {
   let boundary;
 
@@ -46,20 +46,16 @@ export async function bookChat(user, { message, bookId, clubId }) {
         conversationId: null,
       };
     }
+
+    return {
+      answer: "I don't have approved material about that yet.",
+      status: 'not_in_sources',
+      citations: [],
+      conversationId: null,
+    };
   }
 
-  const words = message
-    .toLowerCase()
-    .split(/[^a-z0-9]+/)
-    .filter((w) => w.length > 3);
-
-  let chunks = retrieveBookChunks().filter((c) =>
-    words.some((w) => c.text.toLowerCase().includes(w)),
-  );
-
-  if (bookId) {
-    chunks = chunks.filter((c) => c.chapter <= boundary.chapter);
-  }
+  const chunks = await searchExcerpts(bookId, boundary.chapter, message);
 
   if (chunks.length === 0) {
     return {
@@ -70,21 +66,39 @@ export async function bookChat(user, { message, bookId, clubId }) {
     };
   }
 
-  const used = chunks.slice(0, 2);
-  const answer = used.map((c, i) => `${c.text} [${i + 1}]`).join(' ');
-  const citations = used.map((c, i) => ({
+  const context = chunks
+    .map((chunk, i) => `[${i + 1}] (chapter ${chunk.chapter}) ${chunk.text}`)
+    .join('\n\n');
+
+  let answer;
+
+  if (await isOllamaUp()) {
+    try {
+      const res = await chat.invoke([
+        ['system', buildSystemPrompt(boundary.chapter)],
+        ['human', `CONTEXT:\n${context}\n\nQUESTION: ${message}`],
+      ]);
+      answer = res.content;
+    } catch {
+      answer = chunks
+        .slice(0, 2)
+        .map((chunk, i) => `${chunk.text} [${i + 1}]`)
+        .join(' ');
+    }
+  } else {
+    answer = chunks
+      .slice(0, 2)
+      .map((chunk, i) => `${chunk.text} [${i + 1}]`)
+      .join(' ');
+  }
+
+  const citations = chunks.map((chunk, i) => ({
     n: i + 1,
     kind: 'excerpt',
-    title: c.title,
-    chapter: c.chapter,
-    pageStart: c.pageStart,
-    pageEnd: c.pageEnd,
+    chapter: chunk.chapter,
+    pageStart: chunk.pageStart,
+    pageEnd: chunk.pageEnd,
   }));
-
-  // Build the prompt with the reader's spoiler boundary.
-  if (bookId) {
-    buildSystemPrompt(boundary.chapter);
-  }
 
   return { answer, status: 'answered', citations, conversationId: null };
 }
