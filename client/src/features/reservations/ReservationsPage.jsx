@@ -1,6 +1,15 @@
-
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Badge, Card } from '../../components/index.js';
 import api from '../../api/client.js';
+
+const fmt = (d) =>
+  new Date(d).toLocaleString('en-IN', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
 
 export default function ReservationsPage() {
   const queryClient = useQueryClient();
@@ -32,7 +41,7 @@ export default function ReservationsPage() {
   if (isLoading) {
     return (
       <main className="books-page">
-        <h1>My Reservations</h1>
+        <h1>My Holds</h1>
         <p>Loading your reservations...</p>
       </main>
     );
@@ -41,7 +50,7 @@ export default function ReservationsPage() {
   if (isError) {
     return (
       <main className="books-page">
-        <h1>My Reservations</h1>
+        <h1>My Holds</h1>
         <p role="alert">
           Reservations are temporarily unavailable. The reservations API
           may not be connected yet.
@@ -56,7 +65,7 @@ export default function ReservationsPage() {
 
   return (
     <main className="books-page">
-      <h1>My Reservations</h1>
+      <h1>My Holds</h1>
       <p>View and manage your book reservations.</p>
 
       {cancelMutation.isError && (
@@ -69,13 +78,15 @@ export default function ReservationsPage() {
       {reservations.length === 0 ? (
         <p>You don't have any reservations yet.</p>
       ) : (
-        <ul>
+        <div className="reservation-list">
           {reservations.map((reservation) => {
             const reservationId = reservation.id ?? reservation._id;
             const status = reservation.status ?? 'unknown';
+            const start = reservation.pickupWindow?.start;
+            const end = reservation.pickupWindow?.end;
 
             return (
-              <li key={reservationId}>
+              <Card key={reservationId}>
                 <h2>{reservation.title || 'Reserved book'}</h2>
 
                 <p>
@@ -84,22 +95,25 @@ export default function ReservationsPage() {
                 </p>
 
                 <p>
-                  <strong>Status:</strong> {status}
+                  <strong>Status:</strong> <Badge>{status}</Badge>
                 </p>
 
-                {reservation.pickupWindow && (
+                {start && end && (
                   <p>
                     <strong>Pickup window:</strong>{' '}
-                    {reservation.pickupWindow.start || 'N/A'}
+                    {fmt(start)}
                     {' – '}
-                    {reservation.pickupWindow.end || 'N/A'}
+                    {new Date(end).toLocaleTimeString('en-IN', {
+                      hour: 'numeric',
+                      minute: '2-digit',
+                    })}
                   </p>
                 )}
 
                 {reservation.expiresAt && (
                   <p>
                     <strong>Expires:</strong>{' '}
-                    {new Date(reservation.expiresAt).toLocaleString()}
+                    {new Date(reservation.expiresAt).toLocaleString('en-IN')}
                   </p>
                 )}
 
@@ -122,10 +136,10 @@ export default function ReservationsPage() {
                       : 'Cancel reservation'}
                   </button>
                 )}
-              </li>
+              </Card>
             );
           })}
-        </ul>
+        </div>
       )}
     </main>
   );
