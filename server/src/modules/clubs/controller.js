@@ -1,4 +1,5 @@
 import { AppError } from '../../lib/AppError.js';
+
 import {
   getPublishedClubs,
   getPublishedClubById,
@@ -8,7 +9,10 @@ import {
   getClubMembers,
   updateClub,
   removeClubMember,
+  listClubExcerpts,
+  updateExcerptApproval,
 } from './service.js';
+
 
 export const listClubs = async (_req, res) => {
   res.ok(await getPublishedClubs());
@@ -56,4 +60,23 @@ export const updateClubController = async (req, res) => {
 export const removeClubMemberController = async (req, res) => {
   await removeClubMember(req.params.id, req.params.userId, req.user._id);
   res.ok({});
+};
+
+
+export const listClubExcerptsController = async (req, res) => {
+  const result = await listClubExcerpts(
+    req.params.id,
+    req.query.status ?? 'pending',
+  );
+  res.ok(result);
+};
+
+export const updateExcerptApprovalController = async (req, res) => {
+  const result = await updateExcerptApproval(
+    req.params.id,
+    req.params.excerptId,
+    req.body.approved,
+    req.user,
+  );
+  res.ok(result);
 };

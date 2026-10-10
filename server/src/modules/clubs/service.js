@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import { Club, Membership, Meeting } from './model.js';
 import Progress from '../progress/model.js';
 import { AppError } from '../../lib/AppError.js';
+import Excerpt from '../../ai/ingest/excerpt.model.js';
+import { logAudit } from '../audit/service.js';
 
 // Sowmya's Book model isn't merged yet, so read the books collection directly for now
 async function getBooksById(ids) {
@@ -252,4 +254,92 @@ export async function removeClubMember(clubId, userId, moderatorId) {
   await membership.save();
 
   return {};
+}
+
+
+export async function listClubExcerpts(clubId, status = 'pending') {
+  const club = await Club.findById(clubId).lean();
+
+  if (!club) {
+    throw new AppError('NOT_FOUND', 404, 'Club not found');
+  }
+
+  if (!club.currentBookId) {
+    return { book: null, items: [] };
+  }
+
+  const book = await mongoose.connection
+    .collection('books')
+    .findOne(
+      { _id: new mongoose.Types.ObjectId(String(club.currentBookId)) },
+      { projection: { title: 1 } },
+    );
+
+  if (!book) {
+    return { book: null, items: [] };
+  }
+
+  const filter = { bookId: club.currentBookId };
+
+  if (status === 'pending') filter.approved = false;
+  if (status === 'approved') filter.approved = true;
+
+  const excerpts = await Excerpt.find(filter)
+    .sort({ chapter: 1, pageStart: 1, _id: 1 })
+    .lean();
+
+  return {
+    book: { id: book._id, title: book.title },
+    items: excerpts.map((excerpt) => ({
+      id: excerpt._id,
+      chapter: excerpt.chapter,
+      pageStart: excerpt.pageStart ?? null,
+      pageEnd: excerpt.pageEnd ?? null,
+      text: excerpt.text,
+      approved: excerpt.approved,
+    })),
+  };
+}
+
+
+
+export async function updateExcerptApproval(clubId, excerptId, approved, user) {
+  const club = await Club.findById(clubId).lean();
+
+  if (!club) {
+    throw new AppError('NOT_FOUND', 404, 'Club not found');
+  }
+
+  if (!club.currentBookId) {
+    throw new AppError('NOT_FOUND', 404, 'Excerpt not found for this club');
+  }
+
+  const excerpt = await Excerpt.findOne({
+    _id: excerptId,
+    bookId: club.currentBookId,
+  });
+
+  if (!excerpt) {
+    throw new AppError('NOT_FOUND', 404, 'Excerpt not found for this club');
+  }
+
+  excerpt.approved = approved;
+  excerpt.approvedBy = approved ? user._id : null;
+  await excerpt.save();
+
+  await logAudit(
+    user,
+    'excerpt.approve',
+    { type: 'excerpt', id: excerpt._id },
+    { approved },
+  );
+
+  return {
+    id: excerpt._id,
+    chapter: excerpt.chapter,
+    pageStart: excerpt.pageStart ?? null,
+    pageEnd: excerpt.pageEnd ?? null,
+    text: excerpt.text,
+    approved: excerpt.approved,
+  };
 }
