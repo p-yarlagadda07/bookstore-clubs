@@ -51,3 +51,33 @@ export async function verifyEmail(token) {
   if (!user) throw new AppError('TOKEN_INVALID', 400, 'This link is invalid or has expired');
   return user;
 }
+export async function requestReset(email) {
+  const user = await User.findOne({ email });
+  // unknown email: do nothing, but the route still answers 200
+  if (!user) return;
+
+  const token = crypto.randomBytes(32).toString('hex');
+  await User.updateOne(
+    { _id: user._id },
+    {
+      $set: {
+        resetTokenHash: sha256(token),
+        resetTokenExpires: new Date(Date.now() + 60 * 60 * 1000),
+      },
+    },
+  );
+  console.log(`Reset link: ${env.CLIENT_ORIGIN}/reset?token=${token}`);
+}
+
+export async function resetPassword(token, password) {
+  // token fields are removed in the same update, so the link works only once
+  const user = await User.findOneAndUpdate(
+    { resetTokenHash: sha256(token), resetTokenExpires: { $gt: new Date() } },
+    {
+      $set: { passwordHash: await argon2.hash(password) },
+      $unset: { resetTokenHash: 1, resetTokenExpires: 1 },
+    },
+    { new: true },
+  );
+  if (!user) throw new AppError('TOKEN_INVALID', 400, 'This link is invalid or has expired');
+}
