@@ -1,3 +1,4 @@
+import { logAudit } from '../audit/service.js';
 import Inventory from '../inventory/model.js';
 import Reservation from './model.js';
 import { AppError } from '../../lib/AppError.js';
@@ -127,6 +128,49 @@ export async function cancelReservation(user, reservationId) {
       'Inventory could not be restored',
     );
   }
+
+  return reservation;
+}
+
+export async function collectReservation(user, reservationId) {
+  const reservation = await Reservation.findOneAndUpdate(
+    { _id: reservationId, status: 'held' },
+    { $set: { status: 'collected' } },
+    { new: true },
+  );
+
+  if (!reservation) {
+    throw new AppError(
+      'NOT_COLLECTABLE',
+      409,
+      'Only held reservations can be collected',
+    );
+  }
+
+  const inventory = await Inventory.findOneAndUpdate(
+    { _id: reservation.inventoryId, held: { $gt: 0 }, total: { $gt: 0 } },
+    { $inc: { held: -1, total: -1 } },
+    { new: true },
+  );
+
+  if (!inventory) {
+    await Reservation.updateOne(
+      { _id: reservation._id, status: 'collected' },
+      { $set: { status: 'held' } },
+    );
+
+    throw new AppError(
+      'INVENTORY_CONFLICT',
+      409,
+      'Inventory could not be updated',
+    );
+  }
+
+  await logAudit(
+    user,
+    'reservation.collect',
+    { type: 'reservation', id: reservation._id },
+  );
 
   return reservation;
 }
