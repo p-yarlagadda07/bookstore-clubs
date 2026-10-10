@@ -14,6 +14,7 @@ import VerifyPage from './features/auth/VerifyPage.jsx';
 import ForgotPage from './features/auth/ForgotPage.jsx';
 import ResetPage from './features/auth/ResetPage.jsx';
 import StockPage from './features/stock/StockPage.jsx';
+import ModeratorConsolePage from './features/moderator/ModeratorConsolePage.jsx';
 
 import CatalogPage from './features/books/CatalogPage.jsx';
 import DiscoverPage from './features/discovery/DiscoverPage.jsx';
@@ -218,7 +219,7 @@ export default function App() {
 
           <Route
             path="/clubs/:id/manage"
-            element={<Placeholder name="Moderator console" />}
+element={<ModeratorConsolePage />}
           />
 
           <Route
