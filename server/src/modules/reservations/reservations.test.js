@@ -1,4 +1,4 @@
-﻿import { expireHolds } from '../../jobs/expireHolds.js';
+import { expireHolds } from '../../jobs/expireHolds.js';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import { createApp } from '../../app.js';
@@ -7,6 +7,7 @@ import { loginAs } from '../../../test/helpers/auth.js';
 import Reservation from './model.js';
 import Inventory from '../inventory/model.js';
 import Book from '../books/model.js';
+
 
 const app = createApp();
 
@@ -148,7 +149,9 @@ describe('my reservations and cancel', () => {
   it('cancel puts the copy back', async () => {
     const { book, me, reservationId } = await holdOne();
 
-    const res = await me.agent.delete(`/api/reservations/${reservationId}`).set('x-csrf-token', me.csrf);
+    const res = await me.agent
+      .delete(`/api/reservations/${reservationId}`)
+      .set('x-csrf-token', me.csrf);
     expect(res.status).toBe(200);
     expect(res.body.data.status).toBe('cancelled');
 
@@ -161,7 +164,9 @@ describe('my reservations and cancel', () => {
     const { me, reservationId } = await holdOne();
     await me.agent.delete(`/api/reservations/${reservationId}`).set('x-csrf-token', me.csrf);
 
-    const res = await me.agent.delete(`/api/reservations/${reservationId}`).set('x-csrf-token', me.csrf);
+    const res = await me.agent
+      .delete(`/api/reservations/${reservationId}`)
+      .set('x-csrf-token', me.csrf);
     expect(res.status).toBe(409);
   });
 
@@ -169,7 +174,9 @@ describe('my reservations and cancel', () => {
     const { reservationId } = await holdOne();
     const other = await loginAs(app);
 
-    const res = await other.agent.delete(`/api/reservations/${reservationId}`).set('x-csrf-token', other.csrf);
+    const res = await other.agent
+      .delete(`/api/reservations/${reservationId}`)
+      .set('x-csrf-token', other.csrf);
     expect(res.status).toBe(404);
   });
 });

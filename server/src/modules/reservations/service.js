@@ -100,11 +100,7 @@ export async function cancelReservation(user, reservationId) {
       throw new AppError('NOT_FOUND', 404, 'Reservation not found');
     }
 
-    throw new AppError(
-      'RESERVATION_NOT_HELD',
-      409,
-      'Only held reservations can be cancelled',
-    );
+    throw new AppError('RESERVATION_NOT_HELD', 409, 'Only held reservations can be cancelled');
   }
 
   const inventory = await Inventory.findOneAndUpdate(
@@ -122,11 +118,7 @@ export async function cancelReservation(user, reservationId) {
       { $set: { status: 'held' } },
     );
 
-    throw new AppError(
-      'INVENTORY_CONFLICT',
-      409,
-      'Inventory could not be restored',
-    );
+    throw new AppError('INVENTORY_CONFLICT', 409, 'Inventory could not be restored');
   }
 
   return reservation;
@@ -140,11 +132,7 @@ export async function collectReservation(user, reservationId) {
   );
 
   if (!reservation) {
-    throw new AppError(
-      'NOT_COLLECTABLE',
-      409,
-      'Only held reservations can be collected',
-    );
+    throw new AppError('NOT_COLLECTABLE', 409, 'Only held reservations can be collected');
   }
 
   const inventory = await Inventory.findOneAndUpdate(
@@ -159,18 +147,10 @@ export async function collectReservation(user, reservationId) {
       { $set: { status: 'held' } },
     );
 
-    throw new AppError(
-      'INVENTORY_CONFLICT',
-      409,
-      'Inventory could not be updated',
-    );
+    throw new AppError('INVENTORY_CONFLICT', 409, 'Inventory could not be updated');
   }
 
-  await logAudit(
-    user,
-    'reservation.collect',
-    { type: 'reservation', id: reservation._id },
-  );
+  await logAudit(user, 'reservation.collect', { type: 'reservation', id: reservation._id });
 
   return reservation;
 }
