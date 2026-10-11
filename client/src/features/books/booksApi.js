@@ -33,3 +33,11 @@ export function getBook(id) {
 export function reserveBook(id, { condition, pickupWindowId }) {
   return api.post(`/books/${id}/reservations`, { condition, pickupWindowId });
 }
+
+export function createBook(data) {
+  return api.post('/books', data);
+}
+
+export function updateBook(id, changes) {
+  return api.patch(`/books/${id}`, changes);
+}

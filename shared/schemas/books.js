@@ -1,4 +1,3 @@
-
 import { z } from 'zod';
 
 export const ListBooksQuery = z.object({
@@ -18,14 +17,25 @@ export const ListBooksQuery = z.object({
 export const CreateBookBody = z.object({
   title: z.string().trim().min(1).max(200),
   authors: z.array(z.string().trim().min(1)).min(1),
-  synopsis: z.string().trim().max(2000),
-  themes: z.array(z.string().trim()).max(10),
-  moods: z.array(z.string().trim()).max(10),
+  isbn: z.string().trim().max(20).optional(),
+  synopsis: z.string().trim().max(2000).default(''),
+  themes: z.array(z.string().trim().min(1)).max(10).default([]),
+  moods: z.array(z.string().trim().min(1)).max(10).default([]),
   pageCount: z.number().int().min(1).max(5000),
   chapterCount: z.number().int().min(1).max(200).optional(),
 });
 
-export const UpdateBookBody = CreateBookBody.partial().refine(
-  (data) => Object.keys(data).length > 0,
-  { message: 'At least one field must be provided' },
-);
+// no defaults here, otherwise a PATCH with only a title would wipe the themes
+export const UpdateBookBody = z
+  .object({
+    title: z.string().trim().min(1).max(200),
+    authors: z.array(z.string().trim().min(1)).min(1),
+    isbn: z.string().trim().max(20),
+    synopsis: z.string().trim().max(2000),
+    themes: z.array(z.string().trim().min(1)).max(10),
+    moods: z.array(z.string().trim().min(1)).max(10),
+    pageCount: z.number().int().min(1).max(5000),
+    chapterCount: z.number().int().min(1).max(200),
+  })
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, { message: 'Send at least one field' });
