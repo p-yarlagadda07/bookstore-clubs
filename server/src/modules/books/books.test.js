@@ -1,12 +1,20 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
-import { beforeAll, afterAll, describe, it, expect } from 'vitest';
+import { beforeAll, afterAll, describe, it, expect, vi } from 'vitest';
 
 import { createApp } from '../../app.js';
 import Inventory from '../inventory/model.js';
 import Book from './model.js';
 import CatalogSource from '../catalogSources/model.js';
+import { AuditLog } from '../audit/model.js';
 import { startTestDB, stopTestDB } from '../../../test/helpers/db.js';
+import { loginAs } from '../../../test/helpers/auth.js';
+
+// keep the tests away from a real Ollama on the laptop
+vi.mock('../../ai/ollama.js', async (importOriginal) => ({
+  ...(await importOriginal()),
+  isOllamaUp: async () => false,
+}));
 
 const app = createApp();
 
@@ -105,5 +113,90 @@ describe('Books API', () => {
 
     const detail = await request(app).get(`/api/books/${few._id}`);
     expect(detail.body.data.availability.label).toBe('Few left');
+  });
+});
+
+const newBook = {
+  title: 'The Salt Road',
+  authors: ['Asha Rao'],
+  synopsis: 'Two sisters walk the old salt route to find their missing father.',
+  themes: ['family', 'journey'],
+  moods: ['hopeful'],
+  pageCount: 260,
+};
+
+describe('POST /api/books', () => {
+  it('bookseller adds a book and it gets empty stock rows', async () => {
+    const { agent, csrf } = await loginAs(app, { roles: ['bookseller'] });
+    const res = await agent.post('/api/books').set('x-csrf-token', csrf).send(newBook);
+
+    expect(res.status).toBe(201);
+    expect(res.body.data.title).toBe('The Salt Road');
+    expect(res.body.data.inventory).toHaveLength(2);
+
+    const log = await AuditLog.findOne({ action: 'book.create' }).lean();
+    expect(String(log.targetId)).toBe(res.body.data._id);
+  });
+
+  it('only title, authors and pages are needed', async () => {
+    const { agent, csrf } = await loginAs(app, { roles: ['bookseller'] });
+    const res = await agent
+      .post('/api/books')
+      .set('x-csrf-token', csrf)
+      .send({ title: 'Short One', authors: ['K. Das'], pageCount: 90 });
+
+    expect(res.status).toBe(201);
+    expect(res.body.data.themes).toEqual([]);
+  });
+
+  it('reader gets 403', async () => {
+    const { agent, csrf } = await loginAs(app);
+    const res = await agent.post('/api/books').set('x-csrf-token', csrf).send(newBook);
+    expect(res.status).toBe(403);
+  });
+
+  it('missing title gets 400', async () => {
+    const { agent, csrf } = await loginAs(app, { roles: ['bookseller'] });
+    const res = await agent
+      .post('/api/books')
+      .set('x-csrf-token', csrf)
+      .send({ ...newBook, title: '' });
+    expect(res.status).toBe(400);
+  });
+});
+
+describe('PATCH /api/books/:id', () => {
+  it('bookseller changes the page count and the rest stays', async () => {
+    const book = await Book.create({ ...newBook, title: 'Edit Me', approvedSource: true });
+    const { agent, csrf } = await loginAs(app, { roles: ['bookseller'] });
+
+    const res = await agent
+      .patch(`/api/books/${book._id}`)
+      .set('x-csrf-token', csrf)
+      .send({ pageCount: 300 });
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.pageCount).toBe(300);
+    expect(res.body.data.themes).toEqual(['family', 'journey']);
+
+    const log = await AuditLog.findOne({ action: 'book.update' }).lean();
+    expect(log.details.before.pageCount).toBe(260);
+  });
+
+  it('empty body gets 400', async () => {
+    const book = await Book.create({ ...newBook, approvedSource: true });
+    const { agent, csrf } = await loginAs(app, { roles: ['bookseller'] });
+
+    const res = await agent.patch(`/api/books/${book._id}`).set('x-csrf-token', csrf).send({});
+    expect(res.status).toBe(400);
+  });
+
+  it('unknown book gets 404', async () => {
+    const { agent, csrf } = await loginAs(app, { roles: ['bookseller'] });
+    const res = await agent
+      .patch(`/api/books/${new mongoose.Types.ObjectId()}`)
+      .set('x-csrf-token', csrf)
+      .send({ pageCount: 100 });
+    expect(res.status).toBe(404);
   });
 });

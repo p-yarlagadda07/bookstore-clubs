@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import api from '../../api/client.js';
 import { pickupMockResponse } from './stock.mock';
+import BookFormDialog from './BookFormDialog.jsx';
 import './stock.css';
 
 const EMPTY_ADJUSTMENT = {
@@ -51,6 +52,8 @@ function StockPage() {
   const [adjustingBook, setAdjustingBook] = useState(null);
   const [adjustment, setAdjustment] = useState(EMPTY_ADJUSTMENT);
   const [error, setError] = useState('');
+  // null = closed, 'new' = add, otherwise the id of the book being edited
+  const [bookForm, setBookForm] = useState(null);
   const fetchStock = async () => {
     setLoading(true);
     setError('');
@@ -191,6 +194,13 @@ function StockPage() {
           <h1>Stockroom</h1>
           <p className="stock-page__description">Manage book inventory and reader pickups.</p>
         </div>
+        <button
+          type="button"
+          className="stock-button stock-button--primary"
+          onClick={() => setBookForm('new')}
+        >
+          Add a book
+        </button>
       </header>
 
       <div className="stock-tabs" role="tablist">
@@ -297,6 +307,14 @@ function StockPage() {
                               onClick={() => openAdjustDialog(book)}
                             >
                               Adjust
+                            </button>
+
+                            <button
+                              type="button"
+                              className="stock-button stock-button--secondary"
+                              onClick={() => setBookForm(book.id)}
+                            >
+                              Edit
                             </button>
 
                             <button
@@ -460,6 +478,17 @@ function StockPage() {
             </form>
           </div>
         </div>
+      )}
+
+      {bookForm && (
+        <BookFormDialog
+          bookId={bookForm === 'new' ? null : bookForm}
+          onClose={() => setBookForm(null)}
+          onSaved={() => {
+            setBookForm(null);
+            fetchStock();
+          }}
+        />
       )}
     </main>
   );
