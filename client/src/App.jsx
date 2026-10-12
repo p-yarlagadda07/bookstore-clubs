@@ -21,18 +21,12 @@ import BookDetailPage from './features/books/BookDetailPage.jsx';
 import ReservationsPage from './features/reservations/ReservationsPage.jsx';
 import ListsPage from './features/readingLists/ListsPage.jsx';
 import ListDetailPage from './features/readingLists/ListDetailPage.jsx';
+import ChapterChatPage from './features/chat/ChapterChatPage.jsx';
+import NextReadPage from './features/agent/NextReadPage.jsx';
+import LogbookPage from './features/admin/LogbookPage.jsx';
 
 import api from './api/client.js';
 import './app/layout.css';
-
-function Placeholder({ name }) {
-  return (
-    <div>
-      <h2>{name}</h2>
-      <p>Coming soon.</p>
-    </div>
-  );
-}
 
 function NotFound() {
   return (
@@ -78,7 +72,6 @@ function Header({ user }) {
         <>
           <NavLink to="/reservations">My Holds</NavLink>
           <NavLink to="/lists">My Shelves</NavLink>
-          <NavLink to="/settings">Settings</NavLink>
           <NavLink to="/chat">Chapter Chat</NavLink>
 
           <span>{user.name}</span>
@@ -155,19 +148,10 @@ export default function App() {
           />
 
           <Route
-            path="/settings"
-            element={
-              <ProtectedRoute>
-                <Placeholder name="Settings" />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
             path="/chat"
             element={
               <ProtectedRoute>
-                <Placeholder name="Book chat" />
+                <ChapterChatPage />
               </ProtectedRoute>
             }
           />
@@ -180,9 +164,16 @@ export default function App() {
 
           <Route path="/staff/stock" element={<StockPage />} />
 
-          <Route path="/staff/admin" element={<Placeholder name="Admin" />} />
+          <Route path="/staff/admin" element={<LogbookPage />} />
 
-          <Route path="/agent" element={<Placeholder name="Reading agent" />} />
+          <Route
+            path="/agent"
+            element={
+              <ProtectedRoute>
+                <NextReadPage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

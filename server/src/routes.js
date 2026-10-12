@@ -15,6 +15,10 @@ import conversations from './modules/conversations/routes.js';
 import discovery from './ai/discovery/routes.js';
 import rag from './ai/rag/routes.js';
 import agent from './ai/agent/routes.js';
+import alerts from './modules/alerts/routes.js';
+import calendar from './modules/calendar/routes.js';
+import shopFloor from './modules/shopFloor/routes.js';
+import talkingPoints from './ai/talkingPoints/routes.js';
 
 const api = Router();
 
@@ -39,6 +43,10 @@ for (const r of [
   conversations,
   rag,
   agent,
+  alerts,
+  calendar,
+  shopFloor,
+  talkingPoints,
 ]) {
   api.use(r);
 }
