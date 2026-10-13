@@ -29,3 +29,37 @@ export async function vectorSearchBooks(q, limit) {
     },
   ]);
 }
+
+export async function similarBooks(bookId, limit) {
+  const book = await Book.findOne({ _id: bookId, approvedSource: true })
+    .select('+embedding')
+    .lean();
+  if (!book) return null;
+  if (!book.embedding || book.embedding.length === 0) return [];
+
+  const rows = await Book.aggregate([
+    {
+      $vectorSearch: {
+        index: 'books_vec',
+        path: 'embedding',
+        queryVector: book.embedding,
+        numCandidates: 100,
+        limit: limit + 1,
+        filter: { approvedSource: true },
+      },
+    },
+    {
+      $project: {
+        title: 1,
+        authors: 1,
+        themes: 1,
+        moods: 1,
+        pageCount: 1,
+        synopsis: 1,
+        score: { $meta: 'vectorSearchScore' },
+      },
+    },
+  ]);
+
+  return rows.filter((r) => String(r._id) !== String(bookId)).slice(0, limit);
+}
