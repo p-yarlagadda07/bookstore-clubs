@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import useMe from '../../app/useMe.js';
+import Badge from '../../components/Badge.jsx';
 import api from '../../api/client.js';
 import './nextRead.css';
 
@@ -8,25 +11,10 @@ const agentSteps = [
   { name: 'compareClubConstraints', label: 'Checking your club schedule' },
 ];
 
-function getStepLabel(event) {
-  const labels = {
-    searchCatalog: 'Searching the catalog',
-    checkStockAndLength: 'Checking copies and book length',
-    compareClubConstraints: 'Comparing club requirements',
-  };
-
-  return labels[event?.name] ?? event?.name ?? 'Working on your recommendations';
-}
-
-
-function getEventDetails(event) {
-  if (typeof event?.message === 'string') return event.message;
-  if (typeof event?.output === 'string') return event.output;
-  if (typeof event?.result === 'string') return event.result;
-  return '';
-}
-
 export default function NextReadPage() {
+  const { user } = useMe();
+  const isAdmin = user?.roles?.includes('admin');
+
   const [clubs, setClubs] = useState([]);
   const [clubId, setClubId] = useState('');
   const [request, setRequest] = useState('');
@@ -42,17 +30,31 @@ export default function NextReadPage() {
     async function loadClubs() {
       try {
         const response = await api.get('/clubs');
+
         if (!cancelled) {
           const items = response?.items ?? [];
-          setClubs(items);
-          if (items.length > 0) setClubId(String(items[0].id));
+          const moderatorClubIds = (user?.moderatorOf ?? []).map(String);
+          const visibleClubs = isAdmin
+            ? items
+            : items.filter((club) => moderatorClubIds.includes(String(club.id)));
+
+          setClubs(visibleClubs);
+          setClubId((currentId) =>
+            visibleClubs.some((club) => String(club.id) === currentId)
+              ? currentId
+              : visibleClubs.length > 0
+                ? String(visibleClubs[0].id)
+                : '',
+          );
         }
       } catch (err) {
         if (!cancelled) {
           setError(err?.message ?? 'Unable to load clubs.');
         }
       } finally {
-        if (!cancelled) setLoadingClubs(false);
+        if (!cancelled) {
+          setLoadingClubs(false);
+        }
       }
     }
 
@@ -61,7 +63,7 @@ export default function NextReadPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [user, isAdmin]);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -74,7 +76,6 @@ export default function NextReadPage() {
     setResult(null);
 
     try {
-      // Fetch a fresh CSRF token using the same endpoint as the API client.
       const csrfResponse = await fetch('/api/auth/csrf', {
         credentials: 'include',
       });
@@ -101,12 +102,14 @@ export default function NextReadPage() {
 
       if (!response.ok) {
         let message = 'Unable to get recommendations.';
+
         try {
           const body = await response.json();
           message = body?.error?.message ?? message;
         } catch {
-          // The server may return a non-JSON error.
+          message = 'Unable to get recommendations.';
         }
+
         throw new Error(message);
       }
 
@@ -134,6 +137,7 @@ export default function NextReadPage() {
         if (dataLines.length === 0) return;
 
         let payload;
+
         try {
           payload = JSON.parse(dataLines.join('\n'));
         } catch {
@@ -151,6 +155,7 @@ export default function NextReadPage() {
 
       while (true) {
         const { value, done } = await reader.read();
+
         buffer += decoder.decode(value ?? new Uint8Array(), { stream: !done });
 
         const blocks = buffer.split(/\r?\n\r?\n/);
@@ -163,11 +168,8 @@ export default function NextReadPage() {
         if (done) break;
       }
 
-      if (buffer.trim()) processEvent(buffer);
-
-      if (!result && steps.length === 0) {
-        // State updates may not be immediately visible here; this is only a fallback
-        // when the server completed without emitting a usable result.
+      if (buffer.trim()) {
+        processEvent(buffer);
       }
     } catch (err) {
       setError(err?.message ?? 'Something went wrong while finding your next read.');
@@ -179,7 +181,7 @@ export default function NextReadPage() {
   return (
     <main className="next-read-page">
       <header className="next-read-header">
-        <p className="next-read-eyebrow">YOUR CLUB'S READING ASSISTANT</p>
+        <p className="next-read-eyebrow">Moderators</p>
         <h1>Next Read</h1>
         <p className="next-read-description">
           Tell us what your club wants to read. The agent will search real books, check
@@ -245,58 +247,32 @@ export default function NextReadPage() {
           </p>
 
           <ol className="next-read-steps">
-            {agentSteps.map((step, index) => {
-             
-const event = [...steps]
-  .reverse()
-  .find((item) => item?.name === step.name);
-
-const status = event?.status;
-const completed = status === 'succeeded';
-const failed = status === 'failed';
-
+            {agentSteps.map((step) => {
+              const event = [...steps].reverse().find((item) => item?.name === step.name);
+              const status = event?.status;
+              const completed = status === 'succeeded';
+              const failed = status === 'failed';
 
               return (
                 <li className="next-read-step" key={step.name}>
                   <span className="next-read-step-marker">
-                   
-{completed ? '✓' : failed ? '✕' : status === 'started' ? '⏳' : running ? index + 1 : '–'}
-
+                    {completed
+                      ? 'Done'
+                      : failed
+                        ? 'Failed'
+                        : status === 'started' || running
+                          ? 'Working'
+                          : ''}
                   </span>
+
                   <div>
                     <strong>{step.label}</strong>
-
-{status && (
-  <span className="next-read-muted">
-    {' — '}
-    {status === 'started'
-      ? 'In progress'
-      : status === 'succeeded'
-        ? 'Completed'
-        : status === 'failed'
-          ? 'Failed'
-          : status}
-  </span>
-)}
-
-                    {event && getEventDetails(event) && <p>{getEventDetails(event)}</p>}
-                    {!event && running && (
-                      <p className="next-read-muted">Waiting for this step...</p>
-                    )}
+                    {event?.summary && <p>{event.summary}</p>}
                   </div>
                 </li>
               );
             })}
           </ol>
-
-          {steps
-            .filter((item) => !agentSteps.some((step) => step.name === item?.name))
-            .map((item, index) => (
-              <p key={`${item?.name ?? 'step'}-${index}`}>
-                {getStepLabel(item)}
-                {getEventDetails(item) ? ` — ${getEventDetails(item)}` : ''}
-              </p>
-            ))}
         </section>
       )}
 
@@ -307,32 +283,44 @@ const failed = status === 'failed';
 
           {result.shortlist?.length > 0 ? (
             <div className="next-read-results">
-              {result.shortlist.map((book) => (
-                <article className="next-read-book" key={book.bookId}>
-                  <h3>{book.title}</h3>
-                  <p>
-                    <strong>Author:</strong>{' '}
-                    {Array.isArray(book.authors) ? book.authors.join(', ') : book.authors}
-                  </p>
-                  <p>
-                    <strong>Length:</strong> {book.pages} pages
-                  </p>
-                  <p>
-                    <strong>Availability:</strong> {book.copies} copies
-                  </p>
-                  <p>
-                    <strong>Schedule fit:</strong> {book.timeFit}
-                  </p>
+              {result.shortlist.map((book) => {
+                const isTight = String(book.timeFit ?? '')
+                  .toLowerCase()
+                  .includes('tight');
 
-                  {book.evidence?.length > 0 && (
-                    <ul className="next-read-evidence">
-                      {book.evidence.map((item, index) => (
-                        <li key={`${book.bookId}-evidence-${index}`}>{item}</li>
-                      ))}
-                    </ul>
-                  )}
-                </article>
-              ))}
+                return (
+                  <article className="next-read-book" key={book.bookId}>
+                    <h3>
+                      <Link to={`/books/${book.bookId}`}>{book.title}</Link>
+                    </h3>
+
+                    <p>
+                      <strong>Author:</strong>{' '}
+                      {Array.isArray(book.authors) ? book.authors.join(', ') : book.authors}
+                    </p>
+
+                    <p>
+                      <strong>Length:</strong> {book.pages} pages
+                    </p>
+
+                    <p>
+                      <strong>Availability:</strong> {book.copies} copies
+                    </p>
+
+                    <p>
+                      <strong>Schedule fit:</strong> <Badge>{isTight ? 'Tight' : 'Fits'}</Badge>
+                    </p>
+
+                    {book.evidence?.length > 0 && (
+                      <ul className="next-read-evidence">
+                        {book.evidence.map((item, index) => (
+                          <li key={`${book.bookId}-evidence-${index}`}>{item}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </article>
+                );
+              })}
             </div>
           ) : (
             <p>

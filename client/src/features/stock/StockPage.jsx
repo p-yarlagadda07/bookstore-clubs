@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from 'react';
 import api from '../../api/client.js';
 import { pickupMockResponse } from './stock.mock';
@@ -149,8 +148,7 @@ function StockPage() {
       return;
     }
 
-    const nextStatus =
-      book.status === 'active' ? 'unavailable' : 'active';
+    const nextStatus = book.status === 'active' ? 'unavailable' : 'active';
 
     try {
       setError('');
@@ -171,7 +169,6 @@ function StockPage() {
 
       await fetchStock();
     } catch (err) {
-      console.error('Failed to update stock availability:', err);
       setError(err.message || 'Could not update availability. Please try again.');
     }
   };
@@ -210,9 +207,7 @@ function StockPage() {
       }),
     );
 
-    setPickups((currentPickups) =>
-      currentPickups.filter((item) => item.id !== reservationId),
-    );
+    setPickups((currentPickups) => currentPickups.filter((item) => item.id !== reservationId));
   };
 
   return (
@@ -221,9 +216,7 @@ function StockPage() {
         <div>
           <p className="stock-page__eyebrow">Staff</p>
           <h1>Stockroom</h1>
-          <p className="stock-page__description">
-            Manage book inventory and reader pickups.
-          </p>
+          <p className="stock-page__description">Manage book inventory and reader pickups.</p>
         </div>
 
         <button
@@ -326,9 +319,7 @@ function StockPage() {
                         <td>{book.used?.held ?? 0}</td>
 
                         <td>
-                          <span
-                            className={`stock-status stock-status--${book.status}`}
-                          >
+                          <span className={`stock-status stock-status--${book.status}`}>
                             {book.status}
                           </span>
                         </td>
@@ -356,9 +347,7 @@ function StockPage() {
                               className="stock-button stock-button--text"
                               onClick={() => toggleAvailability(book.id)}
                             >
-                              {book.status === 'active'
-                                ? 'Mark unavailable'
-                                : 'Mark available'}
+                              {book.status === 'active' ? 'Mark unavailable' : 'Mark available'}
                             </button>
                           </div>
                         </td>
@@ -424,11 +413,7 @@ function StockPage() {
       )}
 
       {adjustingBook && (
-        <div
-          className="stock-dialog-backdrop"
-          role="presentation"
-          onMouseDown={closeAdjustDialog}
-        >
+        <div className="stock-dialog-backdrop" role="presentation" onMouseDown={closeAdjustDialog}>
           <div
             className="stock-dialog"
             role="dialog"
@@ -511,10 +496,7 @@ function StockPage() {
                   Cancel
                 </button>
 
-                <button
-                  type="submit"
-                  className="stock-button stock-button--primary"
-                >
+                <button type="submit" className="stock-button stock-button--primary">
                   Save adjustment
                 </button>
               </div>

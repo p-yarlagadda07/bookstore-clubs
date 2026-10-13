@@ -139,7 +139,7 @@
 
 .next-read-note {
   padding: 18px;
-  background: #fff4c7;
+  background: var(--color-soft);
   border-left: 6px solid var(--color-accent);
   border-radius: 8px;
   white-space: pre-wrap;
