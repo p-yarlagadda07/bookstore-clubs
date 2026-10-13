@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -38,8 +37,7 @@ export default function BookDetailPage() {
   const lists = listsData?.items ?? [];
 
   const addToListMutation = useMutation({
-    mutationFn: ({ listId, bookId }) =>
-      api.post(`/reading-lists/${listId}/items`, { bookId }),
+    mutationFn: ({ listId, bookId }) => api.post(`/reading-lists/${listId}/items`, { bookId }),
     onSuccess: () => {
       setListMessage('Book added to your reading list!');
       setShowListPicker(false);
@@ -47,9 +45,7 @@ export default function BookDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['reading-lists'] });
     },
     onError: (err) => {
-      setListMessage(
-        err.message || 'Could not add this book to the reading list.',
-      );
+      setListMessage(err.message || 'Could not add this book to the reading list.');
     },
   });
 
@@ -99,14 +95,10 @@ export default function BookDetailPage() {
             <div className="book-detail-header">
               <div>
                 <h1>{book.title}</h1>
-                <p className="book-authors">
-                  By {book.authors?.join(', ') || 'Unknown author'}
-                </p>
+                <p className="book-authors">By {book.authors?.join(', ') || 'Unknown author'}</p>
               </div>
 
-              <Badge>
-                {book.availability?.label || 'Availability unknown'}
-              </Badge>
+              <Badge>{book.availability?.label || 'Availability unknown'}</Badge>
             </div>
 
             <div className="book-detail-info">
@@ -115,7 +107,6 @@ export default function BookDetailPage() {
                   <strong>Pages:</strong> {book.pageCount}
                 </p>
               )}
-
               {book.chapterCount && (
                 <p>
                   <strong>Chapters:</strong> {book.chapterCount}
@@ -164,27 +155,19 @@ export default function BookDetailPage() {
                 {(book.inventory ?? []).map((item) => (
                   <div
                     className={
-                      item.available > 0
-                        ? 'inventory-row'
-                        : 'inventory-row unavailable-row'
+                      item.available > 0 ? 'inventory-row' : 'inventory-row unavailable-row'
                     }
                     key={item._id ?? item.id}
                   >
                     <div>
-                      <strong>
-                        {item.condition === 'new' ? 'New' : 'Used'}
-                      </strong>
+                      <strong>{item.condition === 'new' ? 'New' : 'Used'}</strong>
                       <span className="inventory-count">
-                        {item.available > 0
-                          ? `${item.available} available`
-                          : 'Unavailable'}
+                        {item.available > 0 ? `${item.available} available` : 'Unavailable'}
                       </span>
                     </div>
 
                     {item.available > 0 ? (
-                      <Badge>
-                        {item.available === 1 ? 'Few left' : 'Available'}
-                      </Badge>
+                      <Badge>{item.available === 1 ? 'Few left' : 'Available'}</Badge>
                     ) : (
                       <Badge>Unavailable</Badge>
                     )}
@@ -192,7 +175,6 @@ export default function BookDetailPage() {
                 ))}
               </div>
             </div>
-
             <div className="book-section">
               <h2>Reading Lists</h2>
 
@@ -225,24 +207,17 @@ export default function BookDetailPage() {
                       }}
                     >
                       <div>
-                        <label htmlFor="reading-list-choice">
-                          Choose a reading list
-                        </label>
+                        <label htmlFor="reading-list-choice">Choose a reading list</label>
 
                         <select
                           id="reading-list-choice"
                           value={selectedListId}
-                          onChange={(event) =>
-                            setSelectedListId(event.target.value)
-                          }
+                          onChange={(event) => setSelectedListId(event.target.value)}
                           required
                         >
                           <option value="">Select a list</option>
                           {lists.map((list) => (
-                            <option
-                              key={list._id ?? list.id}
-                              value={list._id ?? list.id}
-                            >
+                            <option key={list._id ?? list.id} value={list._id ?? list.id}>
                               {list.name}
                             </option>
                           ))}
@@ -250,9 +225,7 @@ export default function BookDetailPage() {
                       </div>
 
                       {listsError && (
-                        <p role="alert">
-                          Could not load your reading lists. Please try again.
-                        </p>
+                        <p role="alert">Could not load your reading lists. Please try again.</p>
                       )}
 
                       {!listsError && lists.length === 0 && (
@@ -264,13 +237,9 @@ export default function BookDetailPage() {
 
                       <button
                         type="submit"
-                        disabled={
-                          !selectedListId || addToListMutation.isPending
-                        }
+                        disabled={!selectedListId || addToListMutation.isPending}
                       >
-                        {addToListMutation.isPending
-                          ? 'Adding...'
-                          : 'Add book'}
+                        {addToListMutation.isPending ? 'Adding...' : 'Add book'}
                       </button>
 
                       <button
@@ -293,37 +262,19 @@ export default function BookDetailPage() {
                 </Link>
               )}
             </div>
-
-            {/* Chapter Chat link for logged-in readers */}
-            {isLoggedIn && (
-              <div className="reserve-area">
-                <Link
-                  className="reserve-link"
-                  to={`/chat?bookId=${encodeURIComponent(
-                    book._id ?? book.id ?? id,
-                  )}`}
-                >
-                  Ask Chapter Chat
-                </Link>
-              </div>
-            )}
-
-            {/* Existing reservation logic */}
             <div className="reserve-area">
+              <Link className="reserve-link" to={`/chat?bookId=${book._id ?? book.id}`}>
+                Ask Chapter Chat
+              </Link>
+
               {!hasAvailableCopy || !book.availability?.reservable ? (
                 <Badge>Unavailable</Badge>
               ) : !isLoggedIn ? (
-                <Link
-                  className="reserve-link"
-                  to="/login"
-                  state={{ from: `/books/${id}` }}
-                >
+                <Link className="reserve-link" to="/login" state={{ from: `/books/${id}` }}>
                   Log in to reserve
                 </Link>
               ) : !isVerified ? (
-                <p className="verify-message">
-                  Verify your email to reserve
-                </p>
+                <p className="verify-message">Verify your email to reserve</p>
               ) : (
                 <ReserveDialog book={book} />
               )}

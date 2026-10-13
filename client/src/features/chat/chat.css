@@ -1,33 +1,7 @@
-
 .chapter-chat {
   max-width: 900px;
   margin: 0 auto;
   gap: 1.25rem;
-}
-
-.chat-heading {
-  padding: 1rem 0 0.25rem;
-}
-
-.chat-heading h1 {
-  margin: 0.35rem 0;
-  font-family: Georgia, serif;
-  font-size: clamp(2rem, 5vw, 3.2rem);
-  line-height: 1.08;
-}
-
-.chat-heading > p:last-child,
-.chat-intro,
-.chat-footnote,
-.chat-muted {
-  color: var(--color-muted);
-  line-height: 1.6;
-}
-
-.eyebrow {
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
 }
 
 .chat-tabs {
@@ -50,7 +24,7 @@
 
 .chat-tabs button.active {
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-surface);
   border-color: var(--color-accent);
   font-weight: 700;
 }
@@ -98,6 +72,12 @@
   margin-bottom: 0;
 }
 
+.chat-intro,
+.chat-muted {
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
 .chat-messages {
   display: flex;
   flex-direction: column;
@@ -113,10 +93,6 @@
   padding: 2rem 1rem;
   text-align: center;
   color: var(--color-muted);
-}
-
-.chat-sparkle {
-  font-size: 2rem;
 }
 
 .chat-message {
@@ -205,11 +181,6 @@
 
 .chat-composer .field {
   margin-bottom: 0;
-}
-
-.chat-footnote {
-  margin-bottom: 0;
-  font-size: 0.8rem;
 }
 
 .chat-error {
