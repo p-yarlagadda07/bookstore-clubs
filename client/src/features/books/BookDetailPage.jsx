@@ -263,6 +263,10 @@ export default function BookDetailPage() {
               )}
             </div>
             <div className="reserve-area">
+              <Link className="reserve-link" to={`/chat?bookId=${book._id ?? book.id}`}>
+                Ask Chapter Chat
+              </Link>
+
               {!hasAvailableCopy || !book.availability?.reservable ? (
                 <Badge>Unavailable</Badge>
               ) : !isLoggedIn ? (
