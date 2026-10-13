@@ -1,5 +1,6 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { chat, isOllamaUp } from '../ollama.js';
+import { logger } from '../../lib/logger.js';
 
 const DISCLAIMER = 'Recommendations only. No book was reserved or selected.';
 
@@ -43,7 +44,10 @@ export async function writeNote(shortlist, constraints) {
         ),
       ]),
       new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Note generation timed out')), 15000);
+        setTimeout(
+          () => reject(new Error('Note generation timed out')),
+          15000,
+        );
       }),
     ]);
 
@@ -54,7 +58,8 @@ export async function writeNote(shortlist, constraints) {
     }
 
     return `${modelNote} ${DISCLAIMER}`;
-  } catch {
+  } catch (err) {
+    logger.warn({ err }, 'agent note fell back to template');
     return fallback;
   }
 }
