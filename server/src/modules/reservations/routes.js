@@ -1,6 +1,12 @@
 import { Router } from 'express';
 
-import { reserve, getMyReservations, cancelReservation, collectReservation } from './service.js';
+import {
+  reserve,
+  getMyReservations,
+  cancelReservation,
+  collectReservation,
+  getHeldReservations,
+} from './service.js';
 
 import { ReserveBody } from '@bookstore/shared/schemas/reservations';
 import { IdParams } from '@bookstore/shared/schemas/common';
@@ -34,7 +40,14 @@ router.get(
     return res.ok(reservations);
   }),
 );
-
+router.get(
+  '/reservations/held',
+  requireAuth,
+  requireRole('bookseller'),
+  asyncHandler(async (_req, res) => {
+    return res.ok(await getHeldReservations());
+  }),
+);
 router.delete(
   '/reservations/:id',
   requireAuth,

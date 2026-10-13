@@ -298,3 +298,56 @@ describe('expire reservation holds', () => {
     expect(inv.held).toBe(1);
   });
 });
+
+describe('GET /api/reservations/held', () => {
+  it('shows held reservations to booksellers but excludes cancelled reservations', async () => {
+    const { book, windowId } = await bookWithCopies(3);
+    const reader = await loginAs(app);
+
+    const created = await reserve(reader.agent, reader.csrf, book._id, {
+      condition: 'new',
+      pickupWindowId: String(windowId),
+    });
+    expect(created.status).toBe(201);
+
+    const reservationId = created.body.data._id ?? created.body.data.id;
+
+    await Reservation.updateOne({ _id: reservationId }, { $set: { status: 'cancelled' } });
+
+    const { book: heldBook, windowId: heldWindowId } = await bookWithCopies(2);
+
+    const held = await reserve(reader.agent, reader.csrf, heldBook._id, {
+      condition: 'new',
+      pickupWindowId: String(heldWindowId),
+    });
+    const heldReservationId = held.body.data._id ?? held.body.data.id;
+
+    expect(held.status).toBe(201);
+
+    const seller = await loginAs(app, { roles: ['bookseller'] });
+    const response = await seller.agent.get('/api/reservations/held');
+
+    expect(response.status).toBe(200);
+
+    expect(
+      response.body.data.items.some((item) => String(item.id) === String(heldReservationId)),
+    ).toBe(true);
+
+    expect(response.body.data.items.some((item) => String(item.id) === String(reservationId))).toBe(
+      false,
+    );
+
+    expect(response.body.data.items[0].title).toBe('Test Book');
+    expect(response.body.data.items[0].reader).toHaveProperty('name');
+    expect(response.body.data.items[0].reader).toHaveProperty('email');
+    expect(response.body.data.items[0].status).toBeUndefined();
+  });
+
+  it('rejects readers with 403', async () => {
+    const reader = await loginAs(app);
+
+    const response = await reader.agent.get('/api/reservations/held');
+
+    expect(response.status).toBe(403);
+  });
+});

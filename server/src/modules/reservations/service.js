@@ -156,3 +156,26 @@ export async function collectReservation(user, reservationId) {
 
   return reservation;
 }
+
+export async function getHeldReservations() {
+  const rows = await Reservation.find({ status: 'held' })
+    .populate('userId', 'name email')
+    .populate('bookId', 'title')
+    .sort({ expiresAt: 1 })
+    .lean();
+
+  return {
+    items: rows.map((reservation) => ({
+      id: reservation._id,
+      reader: {
+        name: reservation.userId?.name ?? '',
+        email: reservation.userId?.email ?? '',
+      },
+      bookId: reservation.bookId?._id ?? reservation.bookId,
+      title: reservation.bookId?.title ?? '',
+      condition: reservation.condition,
+      expiresAt: reservation.expiresAt,
+      createdAt: reservation.createdAt,
+    })),
+  };
+}
