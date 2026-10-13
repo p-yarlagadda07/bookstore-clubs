@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client.js';
+import { EmptyState, PageTitle, Spinner } from '../../components/index.js';
 
 export default function ListsPage() {
   const queryClient = useQueryClient();
@@ -63,16 +64,16 @@ export default function ListsPage() {
 
   if (isLoading)
     return (
-      <section>
-        <h1>My Reading Lists</h1>
-        <p>Loading lists...</p>
+      <section className="books-page">
+        <PageTitle number="05" label="Reading lists" title="My Shelves" />
+        <Spinner label="Dusting the shelves..." />
       </section>
     );
 
   if (isError) {
     return (
-      <section>
-        <h1>My Reading Lists</h1>
+      <section className="books-page">
+        <PageTitle number="05" label="Reading lists" title="My Shelves" />
         <p role="alert">{error?.message || 'Could not load reading lists.'}</p>
       </section>
     );
@@ -80,8 +81,9 @@ export default function ListsPage() {
 
   return (
     <section className="books-page">
-      <h1>My Reading Lists</h1>
-      <p>Save books you want to read and organise them into lists.</p>
+      <PageTitle number="05" label="Reading lists" title="My Shelves">
+        Save books you want to read and sort them into shelves.
+      </PageTitle>
 
       {message && <p role="status">{message}</p>}
 
@@ -101,7 +103,10 @@ export default function ListsPage() {
       </form>
 
       {lists.length === 0 ? (
-        <p>You haven't created any reading lists yet.</p>
+        <EmptyState
+          title="No shelves yet"
+          message="Make your first one above, like Books to read or Summer reads."
+        />
       ) : (
         <ul>
           {lists.map((list) => {

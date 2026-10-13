@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api/client.js';
+import { EmptyState, PageTitle, Spinner } from '../../components/index.js';
 import './clubs.css';
 
 export default function ClubsPage() {
@@ -40,19 +41,17 @@ export default function ClubsPage() {
 
   return (
     <section className="clubs-page">
-      <div className="clubs-header">
-        <p className="club-label">COMMUNITY</p>
-        <h1>Book Clubs</h1>
-        <p>
-          Discover local book clubs, see what they are reading, and join a community of readers.
-        </p>
-      </div>
+      <PageTitle number="03" label="Book clubs" title="Reading Circles">
+        See what each circle is reading, when they meet next, and pull up a chair.
+      </PageTitle>
 
-      {loading && <p>Loading clubs...</p>}
+      {loading && <Spinner label="Setting out the chairs..." />}
 
       {error && <p role="alert">{error}</p>}
 
-      {!loading && !error && clubs.length === 0 && <p>No clubs are available right now.</p>}
+      {!loading && !error && clubs.length === 0 && (
+        <EmptyState title="No circles yet" message="New reading circles will show up here." />
+      )}
 
       {!loading && !error && clubs.length > 0 && (
         <div className="clubs-grid">

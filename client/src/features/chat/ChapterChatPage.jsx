@@ -2,13 +2,21 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import api from '../../api/client.js';
 
-import { Badge, Button, Card, ErrorState, Input, Spinner } from '../../components/index.js';
+import {
+  Badge,
+  Button,
+  Card,
+  ErrorState,
+  Input,
+  PageTitle,
+  Spinner,
+} from '../../components/index.js';
 import { askChat, getMyBookmarks, setBookmark } from './chatApi.js';
 import './chat.css';
 
 export default function ChapterChatPage() {
   const [searchParams] = useSearchParams();
-  
+
   const initialBookId = searchParams.get('bookId') ?? '';
 
   const [tab, setTab] = useState('chapter');
@@ -159,7 +167,9 @@ export default function ChapterChatPage() {
 
   return (
     <section className="chapter-chat page-stack">
-      <h1>Chapter Chat</h1>
+      <PageTitle number="06" label="Spoiler-safe" title="Chapter Chat">
+        Ask about the book up to the chapter you&apos;re on, or ask the shop anything.
+      </PageTitle>
 
       <div className="chat-tabs" role="tablist" aria-label="Chat type">
         <button

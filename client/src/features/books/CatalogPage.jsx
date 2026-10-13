@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Badge, Card, Input } from '../../components/index.js';
+import { Badge, Card, EmptyState, Input, PageTitle, Spinner } from '../../components/index.js';
+import { stockTone } from './stockTone.js';
+import { spineColor } from './spine.js';
 import { listBooks } from './booksApi.js';
 import './books.css';
 
@@ -90,12 +92,9 @@ export default function CatalogPage() {
 
   return (
     <main className="books-page">
-      <section className="books-header">
-        <div>
-          <h1>Book Catalog</h1>
-          <p>Browse books and reserve an available copy.</p>
-        </div>
-      </section>
+      <PageTitle number="02" label="The shelves" title="Catalog">
+        Browse everything we stock and hold a copy for pickup.
+      </PageTitle>
 
       <section className="book-filters">
         <Input
@@ -162,11 +161,7 @@ export default function CatalogPage() {
         </button>
       </section>
 
-      {isLoading && (
-        <div className="books-state">
-          <p>Loading books...</p>
-        </div>
-      )}
+      {isLoading && <Spinner label="Printing the shelf..." />}
 
       {isError && (
         <div className="books-state" role="alert">
@@ -175,10 +170,11 @@ export default function CatalogPage() {
       )}
 
       {!isLoading && !isError && books.length === 0 && (
-        <div className="books-state">
-          <h2>No books found</h2>
-          <p>Try changing your search or filters.</p>
-        </div>
+        <EmptyState title="No books found" message="Try fewer filters or a different search.">
+          <button type="button" className="clear-filters" onClick={clearFilters}>
+            Clear filters
+          </button>
+        </EmptyState>
       )}
 
       {!isLoading && !isError && books.length > 0 && (
@@ -187,15 +183,18 @@ export default function CatalogPage() {
             {books.map((book) => (
               <Card
                 key={book._id ?? book.id}
+                style={{ '--spine': spineColor(book.title) }}
                 className={
                   book.availability?.label === 'Unavailable'
-                    ? 'book-card book-card-unavailable'
-                    : 'book-card'
+                    ? 'book-card card-hover spine book-card-unavailable'
+                    : 'book-card card-hover spine'
                 }
               >
                 <div className="book-card-content">
                   <div className="book-card-top">
-                    <Badge>{book.availability?.label}</Badge>
+                    <Badge tone={stockTone(book.availability?.label)}>
+                      {book.availability?.label}
+                    </Badge>
                   </div>
 
                   <h2>{book.title}</h2>

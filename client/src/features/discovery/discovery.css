@@ -5,15 +5,9 @@
   padding: var(--space-4);
 }
 
-.discover-page h1 {
-  margin-bottom: var(--space-2);
-  font-size: 2rem;
-}
-
-.discover-intro {
-  color: var(--color-muted);
-  margin-bottom: var(--space-4);
-  line-height: 1.6;
+.discover-page .page-title h1 {
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  max-width: 20ch;
 }
 
 .discover-form {
@@ -48,12 +42,36 @@
   outline-offset: 2px;
 }
 
-.discover-form button {
+.discover-form .btn {
   align-self: flex-start;
 }
 
+.discover-examples {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-muted);
+}
+
+.discover-example {
+  padding: 3px 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-width: 2px;
+  border-style: dashed;
+  background: var(--color-soft);
+  transition: background 0.12s ease;
+}
+
+.discover-example:hover {
+  background: var(--color-bg);
+  border-style: solid;
+}
+
 .discover-status,
-.discover-empty,
 .discover-error {
   margin-top: var(--space-4);
   padding: var(--space-3);
@@ -62,14 +80,7 @@
 
 .discover-status {
   display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--color-muted);
-}
-
-.discover-empty {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  justify-content: center;
 }
 
 .discover-error {
@@ -125,10 +136,6 @@
 @media (max-width: 600px) {
   .discover-page {
     padding: var(--space-3);
-  }
-
-  .discover-page h1 {
-    font-size: 1.6rem;
   }
 
   .discover-form {

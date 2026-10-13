@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Badge, Card } from '../../components/index.js';
+import { Link } from 'react-router-dom';
+import { Badge, Card, EmptyState, PageTitle, Spinner } from '../../components/index.js';
 import api from '../../api/client.js';
 
 const fmt = (d) =>
@@ -34,8 +35,8 @@ export default function ReservationsPage() {
   if (isLoading) {
     return (
       <main className="books-page">
-        <h1>My Holds</h1>
-        <p>Loading your reservations...</p>
+        <PageTitle number="04" label="Pickups" title="My Holds" />
+        <Spinner label="Finding your holds..." />
       </main>
     );
   }
@@ -43,7 +44,7 @@ export default function ReservationsPage() {
   if (isError) {
     return (
       <main className="books-page">
-        <h1>My Holds</h1>
+        <PageTitle number="04" label="Pickups" title="My Holds" />
         <p role="alert">
           Reservations are temporarily unavailable. The reservations API may not be connected yet.
         </p>
@@ -57,8 +58,9 @@ export default function ReservationsPage() {
 
   return (
     <main className="books-page">
-      <h1>My Holds</h1>
-      <p>View and manage your book reservations.</p>
+      <PageTitle number="04" label="Pickups" title="My Holds">
+        Books we&apos;re keeping aside for you, and when to collect them.
+      </PageTitle>
 
       {cancelMutation.isError && (
         <p role="alert">
@@ -67,7 +69,12 @@ export default function ReservationsPage() {
       )}
 
       {reservations.length === 0 ? (
-        <p>You don't have any reservations yet.</p>
+        <EmptyState
+          title="No holds yet"
+          message="Find something you like and we'll keep a copy aside."
+        >
+          <Link to="/books">Browse the catalog</Link>
+        </EmptyState>
       ) : (
         <div className="reservation-list">
           {reservations.map((reservation) => {
