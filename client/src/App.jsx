@@ -55,40 +55,57 @@ function Header({ user }) {
     }
   }
 
+  const isStaff = isBookseller || isModerator;
+
   return (
     <header className="header">
-      <NavLink to="/" className="brand">
-        Booklore
-      </NavLink>
+      <div className="header-top">
+        <NavLink to="/" className="brand">
+          Booklore
+        </NavLink>
 
-      <NavLink to="/" end>
-        Smart Search
-      </NavLink>
-      <NavLink to="/books">Catalog</NavLink>
+        {user ? (
+          <div className="account">
+            <span className="account-initial" aria-hidden="true">
+              {user.name?.[0]?.toUpperCase()}
+            </span>
+            <span className="account-name">{user.name}</span>
+            <button
+              type="button"
+              className="account-logout"
+              onClick={handleLogout}
+              data-testid="logout-btn"
+            >
+              Log out
+            </button>
+          </div>
+        ) : (
+          <NavLink to="/login" className="account-login">
+            Log in
+          </NavLink>
+        )}
+      </div>
 
-      <NavLink to="/clubs">Reading Circles</NavLink>
+      <nav className="nav">
+        <NavLink to="/" end>
+          Smart Search
+        </NavLink>
+        <NavLink to="/books">Catalog</NavLink>
+        <NavLink to="/clubs">Reading Circles</NavLink>
 
-      {user && (
-        <>
-          <NavLink to="/reservations">My Holds</NavLink>
-          <NavLink to="/lists">My Shelves</NavLink>
-          <NavLink to="/chat">Chapter Chat</NavLink>
+        {user && (
+          <>
+            <NavLink to="/reservations">My Holds</NavLink>
+            <NavLink to="/lists">My Shelves</NavLink>
+            <NavLink to="/chat">Chapter Chat</NavLink>
+          </>
+        )}
 
-          <span>{user.name}</span>
-
-          <button type="button" onClick={handleLogout} data-testid="logout-btn">
-            Logout
-          </button>
-        </>
-      )}
-
-      {isBookseller && <NavLink to="/staff/stock">Stockroom</NavLink>}
-
-      {isAdmin && <NavLink to="/staff/admin">Logbook</NavLink>}
-
-      {isModerator && <NavLink to="/agent">Next Read</NavLink>}
-
-      {!user && <NavLink to="/login">Login</NavLink>}
+        {isStaff && <span className="nav-divider">Staff</span>}
+        {isBookseller && <NavLink to="/staff/stock">Stockroom</NavLink>}
+        {isModerator && <NavLink to="/agent">Next Read</NavLink>}
+        {isAdmin && <NavLink to="/staff/admin">Logbook</NavLink>}
+      </nav>
     </header>
   );
 }

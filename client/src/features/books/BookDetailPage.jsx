@@ -10,7 +10,7 @@ import './books.css';
 
 export default function BookDetailPage() {
   const { id } = useParams();
-  const { data: meData } = useMe();
+  const { user } = useMe();
   const queryClient = useQueryClient();
 
   const [showListPicker, setShowListPicker] = useState(false);
@@ -31,7 +31,7 @@ export default function BookDetailPage() {
   const { data: listsData, isError: listsError } = useQuery({
     queryKey: ['reading-lists'],
     queryFn: () => api.get('/reading-lists'),
-    enabled: Boolean(meData?.user),
+    enabled: Boolean(user),
   });
 
   const lists = listsData?.items ?? [];
@@ -75,7 +75,6 @@ export default function BookDetailPage() {
     return null;
   }
 
-  const user = meData?.user;
   const isLoggedIn = Boolean(user);
   const isVerified = Boolean(user?.emailVerifiedAt);
 
