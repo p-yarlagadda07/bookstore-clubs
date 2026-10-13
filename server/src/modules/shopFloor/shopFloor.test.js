@@ -1,4 +1,3 @@
-
 import { beforeAll, afterAll, describe, it, expect } from 'vitest';
 
 import { createApp } from '../../app.js';
@@ -66,32 +65,27 @@ describe('GET /api/staff/shop-floor', () => {
 
   it('ranks books by holds created in the last 30 days', async () => {
     const book = await Book.create({ title: 'Most Held Test' });
-    const user = await loginAs(app, { roles: ['reader'] });
+    const { user } = await loginAs(app, { roles: ['reader'] });
+
     const inventory = await Inventory.create({
       bookId: book._id,
       condition: 'new',
       total: 3,
       available: 1,
       held: 2,
+      pickupWindows: [
+        {
+          start: new Date(),
+          end: new Date(Date.now() + 86400000),
+        },
+      ],
     });
 
-    const pickupWindowId = inventory.pickupWindows[0]?._id
-      ?? (await Inventory.findById(inventory._id)).pickupWindows[0]?._id;
-
-    // Create a valid pickup window if the inventory has none.
-    let windowId = pickupWindowId;
-    if (!windowId) {
-      const updated = await Inventory.findByIdAndUpdate(
-        inventory._id,
-        { $push: { pickupWindows: { start: new Date(), end: new Date(Date.now() + 86400000) } } },
-        { new: true },
-      );
-      windowId = updated.pickupWindows[0]._id;
-    }
+    const windowId = inventory.pickupWindows[0]._id;
 
     await Reservation.create([
       {
-        userId: user.user._id,
+        userId: user._id,
         bookId: book._id,
         inventoryId: inventory._id,
         condition: 'new',
@@ -100,7 +94,7 @@ describe('GET /api/staff/shop-floor', () => {
         expiresAt: new Date(Date.now() + 86400000),
       },
       {
-        userId: user.user._id,
+        userId: user._id,
         bookId: book._id,
         inventoryId: inventory._id,
         condition: 'new',
@@ -123,6 +117,7 @@ describe('GET /api/staff/shop-floor', () => {
   it('counts a held reservation expiring today as a pickup today', async () => {
     const book = await Book.create({ title: 'Pickup Today Test' });
     const { user } = await loginAs(app, { roles: ['reader'] });
+
     const inventory = await Inventory.create({
       bookId: book._id,
       condition: 'used',

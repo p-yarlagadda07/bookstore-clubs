@@ -6,7 +6,7 @@ import { getShopFloor } from './service.js';
 const router = Router();
 
 router.get(
-  '/',
+  '/staff/shop-floor',
   requireAuth,
   requireRole('bookseller'),
   asyncHandler(async (_req, res) => {
