@@ -1,5 +1,8 @@
+
 import Inventory from './model.js';
+import { notifyBackInStock } from '../alerts/service.js';
 import Book from '../books/model.js';
+
 import { AppError } from '../../lib/AppError.js';
 import { logAudit } from '../audit/service.js';
 
@@ -112,6 +115,9 @@ export async function adjustStock(user, id, { delta, status, reason }) {
   if (status !== undefined) row.status = status;
 
   await row.save();
+  if (row.available > 0) {
+  await notifyBackInStock(row.bookId);
+}
 
   const after = { total: row.total, available: row.available, held: row.held, status: row.status };
   await logAudit(
