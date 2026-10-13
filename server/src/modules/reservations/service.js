@@ -1,3 +1,4 @@
+import { notifyBackInStock } from '../alerts/service.js';
 import { logAudit } from '../audit/service.js';
 import Inventory from '../inventory/model.js';
 import Reservation from './model.js';
@@ -120,6 +121,7 @@ export async function cancelReservation(user, reservationId) {
 
     throw new AppError('INVENTORY_CONFLICT', 409, 'Inventory could not be restored');
   }
+  await notifyBackInStock(reservation.bookId);
 
   return reservation;
 }
