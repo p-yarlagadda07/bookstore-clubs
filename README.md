@@ -9,7 +9,6 @@ chapter you're on, and an agent that helps a club pick its next book.
 
 Built with React (Vite), Node + Express, MongoDB Atlas (with vector search), Mongoose, Zod, Ollama and LangChain.js.
 
-
 ## Team
 
 | #   | Working on                              | Name                 | GitHub          |
@@ -26,6 +25,7 @@ Built with React (Vite), Node + Express, MongoDB Atlas (with vector search), Mon
 | 10  | Frontend - clubs, staff and agent pages | Pagadavarapu Nandini | nandu23008      |
 
 ## Running it locally
+
 **Running the AI parts**
 Install Ollama from ollama.com and open it. Then run `ollama pull nomic-embed-text` and `ollama pull llama3.2:3b` (the default chat model). Don't use `llama3.1:8b`, it's too heavy for most laptops. If an AI route returns `AI_UNAVAILABLE`, Ollama isn't running. Open the Ollama app or run `ollama serve`.
 
@@ -152,5 +152,3 @@ npm run format            # format code with prettier
 - `bad auth : Authentication failed` - check the username and password in your `MONGODB_URI`, there
   shouldn't be any `< >` left in it
 - Port already in use - you probably have another terminal running `npm run dev`
-
-
