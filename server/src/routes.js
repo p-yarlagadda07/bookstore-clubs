@@ -27,7 +27,7 @@ api.get('/health', (_req, res) => {
   res.ok({ status: 'ok', db: states[mongoose.connection.readyState] ?? 'unknown' });
 });
 
-// discovery has to come before books, otherwise /books/discover matches /books/:id
+// Discovery must come before books so /books/discover is not treated as /books/:id.
 for (const r of [
   auth,
   users,
@@ -45,10 +45,12 @@ for (const r of [
   agent,
   alerts,
   calendar,
-  shopFloor,
   talkingPoints,
 ]) {
   api.use(r);
 }
+
+// Shop Floor API: GET /api/staff/shop-floor
+api.use('/staff/shop-floor', shopFloor);
 
 export default api;
