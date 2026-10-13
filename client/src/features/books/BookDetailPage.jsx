@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Badge, Card } from '../../components/index.js';
+import { stockTone } from './stockTone.js';
+import { spineColor } from './spine.js';
 import useMe from '../../app/useMe.js';
 import api from '../../api/client.js';
 import { getBook } from './booksApi.js';
@@ -89,15 +91,16 @@ export default function BookDetailPage() {
       </Link>
 
       <section className="book-detail">
-        <Card>
+        <Card className="spine" style={{ '--spine': spineColor(book.title) }}>
           <div className="book-detail-content">
             <div className="book-detail-header">
-              <div>
+              <div className="book-detail-heading">
                 <h1>{book.title}</h1>
                 <p className="book-authors">By {book.authors?.join(', ') || 'Unknown author'}</p>
+                <Badge tone={stockTone(book.availability?.label)}>
+                  {book.availability?.label || 'Availability unknown'}
+                </Badge>
               </div>
-
-              <Badge>{book.availability?.label || 'Availability unknown'}</Badge>
             </div>
 
             <div className="book-detail-info">
@@ -166,9 +169,11 @@ export default function BookDetailPage() {
                     </div>
 
                     {item.available > 0 ? (
-                      <Badge>{item.available === 1 ? 'Few left' : 'Available'}</Badge>
+                      <Badge tone={item.available === 1 ? 'accent' : 'success'}>
+                        {item.available === 1 ? 'Few left' : 'Available'}
+                      </Badge>
                     ) : (
-                      <Badge>Unavailable</Badge>
+                      <Badge tone="muted">Unavailable</Badge>
                     )}
                   </div>
                 ))}
@@ -267,7 +272,7 @@ export default function BookDetailPage() {
               </Link>
 
               {!hasAvailableCopy || !book.availability?.reservable ? (
-                <Badge>Unavailable</Badge>
+                <Badge tone="muted">Unavailable</Badge>
               ) : !isLoggedIn ? (
                 <Link className="reserve-link" to="/login" state={{ from: `/books/${id}` }}>
                   Log in to reserve

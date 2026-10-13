@@ -8,3 +8,5 @@ export { default as Input } from './Input.jsx';
 export { default as Spinner } from './Spinner.jsx';
 export { default as EmptyState } from './EmptyState.jsx';
 export { default as ErrorState } from './ErrorState.jsx';
+export { default as PageTitle } from './PageTitle.jsx';
+export { default as InkBars } from './InkBars.jsx';

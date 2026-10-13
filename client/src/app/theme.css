@@ -13,6 +13,8 @@
   --color-success: #1f8a5b;
   --color-success-soft: #b8f0d2;
   --color-danger-soft: #ffd6dc;
+  --ink-orange: #ff7a3d;
+  --ink-teal: #0f7f86;
   --radius: 14px;
   --radius-pill: 999px;
   --line: 2.5px;
@@ -32,7 +34,9 @@
 body {
   margin: 0;
   font-family: var(--font);
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  background-image: radial-gradient(rgba(36, 65, 143, 0.09) 1.1px, transparent 1.4px);
+  background-size: 14px 14px;
   color: var(--color-text);
   line-height: 1.5;
 }
@@ -89,4 +93,23 @@ button {
   border: var(--line) solid var(--color-border);
   border-radius: var(--radius-pill);
   padding: 8px 16px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
