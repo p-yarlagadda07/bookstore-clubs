@@ -68,3 +68,15 @@ describe('GET /api/admin/audit', () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe('actor details', () => {
+  it('shows who did it', async () => {
+    const { agent, user } = await loginAs(app, { roles: ['admin'] });
+    await logAudit(user, 'role.change', { type: 'user', id: user._id }, { reason: 'test' });
+
+    const res = await agent.get('/api/admin/audit');
+    expect(res.status).toBe(200);
+    expect(res.body.data.items[0].actor.email).toBe(user.email);
+    expect(res.body.data.items[0].at).toBeTruthy();
+  });
+});
