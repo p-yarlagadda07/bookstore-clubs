@@ -1,4 +1,4 @@
-﻿import { Conversation } from './model.js';
+import { Conversation } from './model.js';
 import { AppError } from '../../lib/AppError.js';
 
 export async function saveTurn(user, { conversationId, kind, bookId, clubId }, question, result) {

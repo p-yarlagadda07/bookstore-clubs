@@ -1,9 +1,10 @@
-﻿import { searchExcerpts } from './excerptRetriever.js';
+import { searchExcerpts } from './excerptRetriever.js';
 import { searchStoreDocs } from './policyRetriever.js';
 import { getBoundary } from '../../modules/progress/service.js';
 import { saveTurn } from '../../modules/conversations/service.js';
 import { buildSystemPrompt } from './prompts.js';
 import { chat, isOllamaUp } from '../ollama.js';
+import { logger } from '../../lib/logger.js';
 
 async function saveResult(user, input, result) {
   const conversationId = await saveTurn(
@@ -63,12 +64,12 @@ export async function bookChat(user, { message, bookId, clubId, conversationId }
             'system',
             "Answer only from the store documents provided. Cite claims using [1] or [2]. If the answer isn't in the documents, say you don't know. Do not invent store policies.",
           ],
-          ['human', `STORE DOCUMENTS:\n${context}\n\nQUESTION: ${message}`],
+          ['human', `CONTEXT:\n${context}\n\nQUESTION: ${message}`],
         ]);
 
         answer = String(res.content);
-      } catch {
-        // Use the approved document quotes if the model is unavailable.
+      } catch (err) {
+        logger.warn({ err }, 'shop answer fell back to quotes');
       }
     }
 
@@ -123,6 +124,7 @@ export async function bookChat(user, { message, bookId, clubId, conversationId }
         ['system', buildSystemPrompt(boundary.chapter)],
         ['human', `CONTEXT:\n${context}\n\nQUESTION: ${message}`],
       ]);
+
       answer = String(res.content);
     } catch {
       answer = chunks

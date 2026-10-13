@@ -1,7 +1,8 @@
-﻿import { Router } from 'express';
+import { Router } from 'express';
+import { IdParams } from '@bookstore/shared';
 import { asyncHandler } from '../../lib/asyncHandler.js';
 import { requireAuth } from '../../middleware/auth.js';
-import { AppError } from '../../lib/AppError.js';
+import { validate } from '../../middleware/validate.js';
 import { listMine, getOne } from './service.js';
 
 const router = Router();
@@ -18,11 +19,8 @@ router.get(
 router.get(
   '/conversations/:id',
   requireAuth,
+  validate({ params: IdParams }),
   asyncHandler(async (req, res) => {
-    if (!/^[a-f\d]{24}$/i.test(req.params.id)) {
-      throw new AppError('NOT_FOUND', 404, 'Conversation not found');
-    }
-
     const result = await getOne(req.user, req.params.id);
     res.ok(result);
   }),
