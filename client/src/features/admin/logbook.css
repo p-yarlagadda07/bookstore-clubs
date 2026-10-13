@@ -1,0 +1,46 @@
+.logbook-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.logbook-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.logbook-table th,
+.logbook-table td {
+  text-align: left;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.logbook-table th {
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.logbook-table td {
+  color: var(--color-text);
+}
+
+.logbook-table small {
+  display: block;
+  color: var(--color-muted);
+}
+
+.logbook-muted,
+.logbook-empty {
+  color: var(--color-muted);
+}
+
+.logbook-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
