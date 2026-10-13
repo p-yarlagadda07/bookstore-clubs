@@ -14,6 +14,7 @@ import {
   getClub,
   joinClubController,
   getClubProgressController,
+  getClubPaceController,
   createMeetingController,
   getClubMembersController,
   updateClubController,
@@ -33,6 +34,13 @@ router.get(
   requireAuth,
   validate({ params: IdParams }),
   asyncHandler(getClubProgressController),
+);
+
+router.get(
+  '/clubs/:id/pace',
+  requireAuth,
+  validate({ params: IdParams }),
+  asyncHandler(getClubPaceController),
 );
 
 router.post(

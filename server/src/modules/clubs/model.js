@@ -30,6 +30,10 @@ const clubSchema = new mongoose.Schema(
       ref: 'Book',
       default: null,
     },
+    bookStartedAt: {
+      type: Date,
+      default: Date.now,
+    },
     readingPace: {
       pagesPerWeek: {
         type: Number,
