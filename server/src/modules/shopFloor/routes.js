@@ -1,4 +1,4 @@
-﻿import { Router } from 'express';
+import { Router } from 'express';
 import { requireAuth, requireRole } from '../../middleware/auth.js';
 import { asyncHandler } from '../../lib/asyncHandler.js';
 import { getShopFloor } from './service.js';
