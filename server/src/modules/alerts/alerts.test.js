@@ -4,6 +4,7 @@ import { startTestDB, stopTestDB } from '../../../test/helpers/db.js';
 import { loginAs } from '../../../test/helpers/auth.js';
 import Book from '../books/model.js';
 import Inventory from '../inventory/model.js';
+import { adjustStock } from '../inventory/service.js';
 import StockAlert from './model.js';
 
 const app = createApp();
@@ -51,8 +52,8 @@ describe('Stock alerts', () => {
     const response = await createAlert(agent, csrf, book._id);
 
     expect(response.status).toBe(201);
-    expect(response.body.bookId).toBe(String(book._id));
-    expect(response.body.status).toBe('waiting');
+    expect(response.body.data.bookId).toBe(String(book._id));
+    expect(response.body.data.status).toBe('waiting');
   });
 
   it('reuses an existing waiting alert', async () => {
@@ -64,7 +65,7 @@ describe('Stock alerts', () => {
 
     expect(first.status).toBe(201);
     expect(second.status).toBe(200);
-    expect(second.body.id).toBe(first.body.id);
+    expect(second.body.data.id).toBe(first.body.data.id);
 
     expect(
       await StockAlert.countDocuments({
@@ -73,6 +74,7 @@ describe('Stock alerts', () => {
       }),
     ).toBe(1);
   });
+
   it('marks a waiting alert as sent when stock is added', async () => {
     const book = await bookWithStock(0);
     const { agent, csrf } = await loginAs(app);
@@ -81,19 +83,19 @@ describe('Stock alerts', () => {
     expect(response.status).toBe(201);
 
     const inventory = await Inventory.findOne({ bookId: book._id });
-    const { adjustStock } = await import('../inventory/service.js');
+    const { user } = await loginAs(app, { roles: ['bookseller'] });
 
-    await adjustStock({ _id: inventory._id, roles: ['bookseller'] }, String(inventory._id), {
+    await adjustStock(user, String(inventory._id), {
       delta: 1,
     });
 
-    const alert = await StockAlert.findById(response.body.id).lean();
+    const alert = await StockAlert.findById(response.body.data.id).lean();
 
     expect(alert.status).toBe('sent');
     expect(alert.sentAt).toBeTruthy();
   });
 
-  it('does not allow one user to delete another user’s alert', async () => {
+  it("does not allow one user to delete another user's alert", async () => {
     const book = await bookWithStock(0);
     const owner = await loginAs(app);
     const otherUser = await loginAs(app);
@@ -102,7 +104,7 @@ describe('Stock alerts', () => {
     expect(created.status).toBe(201);
 
     const response = await otherUser.agent
-      .delete(`/api/alerts/${created.body.id}`)
+      .delete(`/api/alerts/${created.body.data.id}`)
       .set('x-csrf-token', otherUser.csrf);
 
     expect(response.status).toBe(404);
