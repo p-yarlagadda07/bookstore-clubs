@@ -44,10 +44,7 @@ export async function writeNote(shortlist, constraints) {
         ),
       ]),
       new Promise((_, reject) => {
-        setTimeout(
-          () => reject(new Error('Note generation timed out')),
-          15000,
-        );
+        setTimeout(() => reject(new Error('Note generation timed out')), 15000);
       }),
     ]);
 

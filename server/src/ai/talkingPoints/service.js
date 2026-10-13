@@ -1,25 +1,22 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 
+import { AppError } from '../../lib/AppError.js';
+import { logger } from '../../lib/logger.js';
 import { Club, Meeting, Membership } from '../../modules/clubs/model.js';
 import Book from '../../modules/books/model.js';
 import Progress from '../../modules/progress/model.js';
 import Excerpt from '../ingest/excerpt.model.js';
 import { chat, isOllamaUp } from '../ollama.js';
-import { logger } from '../../lib/logger.js';
 
 export async function getTalkingPoints(clubId, meetingId) {
   const club = await Club.findById(clubId);
 
   if (!club || !club.currentBookId) {
-    const error = new Error('This club has no current book.');
-    error.status = 400;
-    error.code = 'NO_BOOK';
-    throw error;
+    throw new AppError('NO_BOOK', 400, 'This club has no current book');
   }
 
   let chapterLimit = 1;
 
-  // Determine the maximum chapter everyone can discuss.
   if (meetingId) {
     const meeting = await Meeting.findOne({
       _id: meetingId,
@@ -27,9 +24,7 @@ export async function getTalkingPoints(clubId, meetingId) {
     });
 
     if (!meeting) {
-      const error = new Error('Meeting not found.');
-      error.status = 404;
-      throw error;
+      throw new AppError('NOT_FOUND', 404, 'Meeting not found');
     }
 
     chapterLimit = meeting.chapterRange?.to || 1;
@@ -50,13 +45,10 @@ export async function getTalkingPoints(clubId, meetingId) {
       .lean();
 
     if (progress.length) {
-      chapterLimit = Math.min(
-        ...progress.map((item) => item.chapter || 1),
-      );
+      chapterLimit = Math.min(...progress.map((item) => item.chapter || 1));
     }
   }
 
-  // Fetch only approved excerpts within the chapter limit.
   const excerpts = await Excerpt.find({
     bookId: club.currentBookId,
     chapter: { $lte: chapterLimit },
@@ -69,7 +61,6 @@ export async function getTalkingPoints(clubId, meetingId) {
   let questions = [];
   let source = 'template';
 
-  // Generate questions using Ollama when approved excerpts are available.
   if (excerpts.length && (await isOllamaUp())) {
     try {
       const result = await Promise.race([
@@ -88,10 +79,7 @@ export async function getTalkingPoints(clubId, meetingId) {
           ),
         ]),
         new Promise((_, reject) => {
-          setTimeout(
-            () => reject(new Error('Talking points generation timed out')),
-            15000,
-          );
+          setTimeout(() => reject(new Error('Talking points generation timed out')), 15000);
         }),
       ]);
 
@@ -111,29 +99,19 @@ export async function getTalkingPoints(clubId, meetingId) {
     }
   }
 
-  // Use book moods to create fallback questions.
   if (questions.length !== 5) {
     const book = await Book.findById(club.currentBookId).lean();
 
     const moods = book?.moods?.length
       ? book.moods.slice(0, 5)
-      : [
-          'surprising',
-          'interesting',
-          'emotional',
-          'important',
-          'unexpected',
-        ];
+      : ['surprising', 'interesting', 'emotional', 'important', 'unexpected'];
 
     questions = moods.map(
-      (mood) =>
-        `Which moment in the first ${chapterLimit} chapters felt most ${mood}, and why?`,
+      (mood) => `Which moment in the first ${chapterLimit} chapters felt most ${mood}, and why?`,
     );
 
     while (questions.length < 5) {
-      questions.push(
-        `What did you think about the events in the first ${chapterLimit} chapters?`,
-      );
+      questions.push(`What did you think about the events in the first ${chapterLimit} chapters?`);
     }
 
     questions = questions.slice(0, 5);
