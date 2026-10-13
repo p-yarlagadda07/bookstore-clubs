@@ -1,4 +1,3 @@
-
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { createApp } from '../../app.js';
 import { startTestDB, stopTestDB } from '../../../test/helpers/db.js';
@@ -31,10 +30,7 @@ async function bookWithStock(available) {
 }
 
 function createAlert(agent, csrf, bookId) {
-  return agent
-    .post(`/api/books/${bookId}/alerts`)
-    .set('x-csrf-token', csrf)
-    .send();
+  return agent.post(`/api/books/${bookId}/alerts`).set('x-csrf-token', csrf).send();
 }
 
 describe('Stock alerts', () => {
@@ -77,28 +73,25 @@ describe('Stock alerts', () => {
       }),
     ).toBe(1);
   });
-it('marks a waiting alert as sent when stock is added', async () => {
-  const book = await bookWithStock(0);
-  const { agent, csrf } = await loginAs(app);
+  it('marks a waiting alert as sent when stock is added', async () => {
+    const book = await bookWithStock(0);
+    const { agent, csrf } = await loginAs(app);
 
-  const response = await createAlert(agent, csrf, book._id);
-  expect(response.status).toBe(201);
+    const response = await createAlert(agent, csrf, book._id);
+    expect(response.status).toBe(201);
 
-  const inventory = await Inventory.findOne({ bookId: book._id });
-  const { adjustStock } = await import('../inventory/service.js');
+    const inventory = await Inventory.findOne({ bookId: book._id });
+    const { adjustStock } = await import('../inventory/service.js');
 
-  await adjustStock(
-    { _id: inventory._id, roles: ['bookseller'] },
-    String(inventory._id),
-    { delta: 1 },
-  );
+    await adjustStock({ _id: inventory._id, roles: ['bookseller'] }, String(inventory._id), {
+      delta: 1,
+    });
 
-  const alert = await StockAlert.findById(response.body.id).lean();
+    const alert = await StockAlert.findById(response.body.id).lean();
 
-  expect(alert.status).toBe('sent');
-  expect(alert.sentAt).toBeTruthy();
-});
-
+    expect(alert.status).toBe('sent');
+    expect(alert.sentAt).toBeTruthy();
+  });
 
   it('does not allow one user to delete another user’s alert', async () => {
     const book = await bookWithStock(0);

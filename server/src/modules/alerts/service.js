@@ -1,4 +1,3 @@
-
 import StockAlert from './model.js';
 import Book from '../books/model.js';
 import Inventory from '../inventory/model.js';
@@ -34,11 +33,7 @@ export async function createAlert(user, bookId) {
   });
 
   if (stock) {
-    throw new AppError(
-      'IN_STOCK',
-      409,
-      'This book is on the shelf right now',
-    );
+    throw new AppError('IN_STOCK', 409, 'This book is on the shelf right now');
   }
 
   const existing = await StockAlert.findOne({
@@ -67,9 +62,7 @@ export async function listMine(user) {
     .lean();
 
   return {
-    items: alerts.map((alert) =>
-      toAlert(alert, alert.bookId?.title ?? ''),
-    ),
+    items: alerts.map((alert) => toAlert(alert, alert.bookId?.title ?? '')),
   };
 }
 
@@ -110,10 +103,7 @@ export async function notifyBackInStock(bookId) {
         alert.sentAt = new Date();
         await alert.save();
       } catch (err) {
-        logger.warn(
-          { err, alertId: String(alert._id) },
-          'Could not process stock alert',
-        );
+        logger.warn({ err, alertId: String(alert._id) }, 'Could not process stock alert');
       }
     }
   } catch (err) {

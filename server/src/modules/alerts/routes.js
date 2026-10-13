@@ -1,4 +1,3 @@
-
 import { Router } from 'express';
 import { requireAuth, requireVerified } from '../../middleware/auth.js';
 import { asyncHandler } from '../../lib/asyncHandler.js';
