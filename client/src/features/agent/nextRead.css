@@ -1,0 +1,160 @@
+.next-read-page {
+  width: min(1100px, 100%);
+  margin: 0 auto;
+  padding: 32px 20px 56px;
+}
+
+.next-read-header {
+  margin-bottom: 28px;
+}
+
+.next-read-eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.next-read-description {
+  max-width: 650px;
+  color: var(--color-muted);
+  font-size: 1.05rem;
+}
+
+.next-read-panel {
+  margin-bottom: 24px;
+  padding: 24px;
+  background: var(--color-surface);
+  border: var(--line) solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.next-read-form {
+  display: grid;
+  gap: 18px;
+}
+
+.next-read-field {
+  display: grid;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.next-read-field select,
+.next-read-field textarea {
+  width: 100%;
+}
+
+.next-read-field textarea {
+  min-height: 115px;
+  resize: vertical;
+}
+
+.next-read-submit {
+  justify-self: start;
+  padding: 12px 22px;
+  color: white;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.next-read-submit:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+.next-read-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.next-read-error {
+  padding: 12px 16px;
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border-radius: var(--radius);
+}
+
+.next-read-steps {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.next-read-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-soft);
+}
+
+.next-read-step-marker {
+  display: grid;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 50%;
+  color: white;
+  background: var(--color-primary);
+  font-weight: 800;
+}
+
+.next-read-step p {
+  margin: 2px 0 0;
+}
+
+.next-read-muted {
+  color: var(--color-muted);
+}
+
+.next-read-results {
+  display: grid;
+  gap: 16px;
+}
+
+.next-read-book {
+  padding: 18px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-soft);
+}
+
+.next-read-book h3 {
+  margin: 0 0 8px;
+  font-size: 1.3rem;
+}
+
+.next-read-book p {
+  margin: 8px 0;
+}
+
+.next-read-evidence {
+  padding-left: 20px;
+}
+
+.next-read-note {
+  padding: 18px;
+  background: #fff4c7;
+  border-left: 6px solid var(--color-accent);
+  border-radius: 8px;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 600px) {
+  .next-read-page {
+    padding: 24px 14px 40px;
+  }
+
+  .next-read-panel {
+    padding: 18px;
+  }
+
+  .next-read-submit {
+    width: 100%;
+  }
+}

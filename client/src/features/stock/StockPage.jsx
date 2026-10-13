@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from 'react';
 import api from '../../api/client.js';
 import { pickupMockResponse } from './stock.mock';
@@ -9,6 +10,7 @@ const EMPTY_ADJUSTMENT = {
   delta: '',
   reason: '',
 };
+
 function groupStockByBook(items) {
   const books = new Map();
 
@@ -52,14 +54,17 @@ function StockPage() {
   const [adjustingBook, setAdjustingBook] = useState(null);
   const [adjustment, setAdjustment] = useState(EMPTY_ADJUSTMENT);
   const [error, setError] = useState('');
-  // null = closed, 'new' = add, otherwise the id of the book being edited
   const [bookForm, setBookForm] = useState(null);
+
   const fetchStock = async () => {
     setLoading(true);
     setError('');
 
     try {
-      const response = await api.get('/inventory', { params: { limit: 100 } });
+      const response = await api.get('/inventory', {
+        params: { limit: 100 },
+      });
+
       setStockItems(groupStockByBook(response.items ?? []));
     } catch (err) {
       setError(err.message || 'Failed to load stock. Please try again.');
@@ -67,6 +72,7 @@ function StockPage() {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchStock();
   }, []);
@@ -136,17 +142,38 @@ function StockPage() {
     }
   };
 
-  const toggleAvailability = (bookId) => {
-    setStockItems((currentItems) =>
-      currentItems.map((book) =>
-        book.id === bookId
-          ? {
-              ...book,
-              status: book.status === 'active' ? 'unavailable' : 'active',
-            }
-          : book,
-      ),
-    );
+  const toggleAvailability = async (bookId) => {
+    const book = stockItems.find((item) => item.id === bookId);
+
+    if (!book) {
+      return;
+    }
+
+    const nextStatus =
+      book.status === 'active' ? 'unavailable' : 'active';
+
+    try {
+      setError('');
+
+      const inventoryItems = [book.new, book.used].filter(Boolean);
+
+      if (inventoryItems.length === 0) {
+        setError('No inventory records exist for this book.');
+        return;
+      }
+
+      for (const inventory of inventoryItems) {
+        await api.patch(`/inventory/${inventory.id}`, {
+          status: nextStatus,
+          reason: 'Marked from the stockroom',
+        });
+      }
+
+      await fetchStock();
+    } catch (err) {
+      console.error('Failed to update stock availability:', err);
+      setError(err.message || 'Could not update availability. Please try again.');
+    }
   };
 
   const confirmCollection = (reservationId) => {
@@ -183,7 +210,9 @@ function StockPage() {
       }),
     );
 
-    setPickups((currentPickups) => currentPickups.filter((item) => item.id !== reservationId));
+    setPickups((currentPickups) =>
+      currentPickups.filter((item) => item.id !== reservationId),
+    );
   };
 
   return (
@@ -192,8 +221,11 @@ function StockPage() {
         <div>
           <p className="stock-page__eyebrow">Staff</p>
           <h1>Stockroom</h1>
-          <p className="stock-page__description">Manage book inventory and reader pickups.</p>
+          <p className="stock-page__description">
+            Manage book inventory and reader pickups.
+          </p>
         </div>
+
         <button
           type="button"
           className="stock-button stock-button--primary"
@@ -242,6 +274,7 @@ function StockPage() {
               />
             </label>
           </div>
+
           {error && <p className="stock-error">{error}</p>}
 
           {loading ? (
@@ -288,13 +321,14 @@ function StockPage() {
                         <td>{book.new?.total ?? 0}</td>
                         <td>{book.new?.available ?? 0}</td>
                         <td>{book.new?.held ?? 0}</td>
-
                         <td>{book.used?.total ?? 0}</td>
                         <td>{book.used?.available ?? 0}</td>
                         <td>{book.used?.held ?? 0}</td>
 
                         <td>
-                          <span className={`stock-status stock-status--${book.status}`}>
+                          <span
+                            className={`stock-status stock-status--${book.status}`}
+                          >
                             {book.status}
                           </span>
                         </td>
@@ -322,7 +356,9 @@ function StockPage() {
                               className="stock-button stock-button--text"
                               onClick={() => toggleAvailability(book.id)}
                             >
-                              {book.status === 'active' ? 'Mark unavailable' : 'Mark available'}
+                              {book.status === 'active'
+                                ? 'Mark unavailable'
+                                : 'Mark available'}
                             </button>
                           </div>
                         </td>
@@ -388,7 +424,11 @@ function StockPage() {
       )}
 
       {adjustingBook && (
-        <div className="stock-dialog-backdrop" role="presentation" onMouseDown={closeAdjustDialog}>
+        <div
+          className="stock-dialog-backdrop"
+          role="presentation"
+          onMouseDown={closeAdjustDialog}
+        >
           <div
             className="stock-dialog"
             role="dialog"
@@ -471,7 +511,10 @@ function StockPage() {
                   Cancel
                 </button>
 
-                <button type="submit" className="stock-button stock-button--primary">
+                <button
+                  type="submit"
+                  className="stock-button stock-button--primary"
+                >
                   Save adjustment
                 </button>
               </div>
