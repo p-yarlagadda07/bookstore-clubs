@@ -8,7 +8,6 @@ import Reservation from './model.js';
 import Inventory from '../inventory/model.js';
 import Book from '../books/model.js';
 
-
 const app = createApp();
 
 beforeAll(startTestDB);
