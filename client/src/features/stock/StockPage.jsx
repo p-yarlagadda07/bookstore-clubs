@@ -9,6 +9,7 @@ const EMPTY_ADJUSTMENT = {
   delta: '',
   reason: '',
 };
+
 function groupStockByBook(items) {
   const books = new Map();
 
@@ -52,14 +53,17 @@ function StockPage() {
   const [adjustingBook, setAdjustingBook] = useState(null);
   const [adjustment, setAdjustment] = useState(EMPTY_ADJUSTMENT);
   const [error, setError] = useState('');
-  // null = closed, 'new' = add, otherwise the id of the book being edited
   const [bookForm, setBookForm] = useState(null);
+
   const fetchStock = async () => {
     setLoading(true);
     setError('');
 
     try {
-      const response = await api.get('/inventory', { params: { limit: 100 } });
+      const response = await api.get('/inventory', {
+        params: { limit: 100 },
+      });
+
       setStockItems(groupStockByBook(response.items ?? []));
     } catch (err) {
       setError(err.message || 'Failed to load stock. Please try again.');
@@ -67,6 +71,7 @@ function StockPage() {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchStock();
   }, []);
@@ -136,17 +141,36 @@ function StockPage() {
     }
   };
 
-  const toggleAvailability = (bookId) => {
-    setStockItems((currentItems) =>
-      currentItems.map((book) =>
-        book.id === bookId
-          ? {
-              ...book,
-              status: book.status === 'active' ? 'unavailable' : 'active',
-            }
-          : book,
-      ),
-    );
+  const toggleAvailability = async (bookId) => {
+    const book = stockItems.find((item) => item.id === bookId);
+
+    if (!book) {
+      return;
+    }
+
+    const nextStatus = book.status === 'active' ? 'unavailable' : 'active';
+
+    try {
+      setError('');
+
+      const inventoryItems = [book.new, book.used].filter(Boolean);
+
+      if (inventoryItems.length === 0) {
+        setError('No inventory records exist for this book.');
+        return;
+      }
+
+      for (const inventory of inventoryItems) {
+        await api.patch(`/inventory/${inventory.id}`, {
+          status: nextStatus,
+          reason: 'Marked from the stockroom',
+        });
+      }
+
+      await fetchStock();
+    } catch (err) {
+      setError(err.message || 'Could not update availability. Please try again.');
+    }
   };
 
   const confirmCollection = (reservationId) => {
@@ -194,6 +218,7 @@ function StockPage() {
           <h1>Stockroom</h1>
           <p className="stock-page__description">Manage book inventory and reader pickups.</p>
         </div>
+
         <button
           type="button"
           className="stock-button stock-button--primary"
@@ -242,6 +267,7 @@ function StockPage() {
               />
             </label>
           </div>
+
           {error && <p className="stock-error">{error}</p>}
 
           {loading ? (
@@ -288,7 +314,6 @@ function StockPage() {
                         <td>{book.new?.total ?? 0}</td>
                         <td>{book.new?.available ?? 0}</td>
                         <td>{book.new?.held ?? 0}</td>
-
                         <td>{book.used?.total ?? 0}</td>
                         <td>{book.used?.available ?? 0}</td>
                         <td>{book.used?.held ?? 0}</td>
