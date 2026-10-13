@@ -209,15 +209,20 @@ export async function updateClub(clubId, data) {
   if (!club) throw new AppError('NOT_FOUND', 404, 'Club not found');
 
   if (data.currentBookId !== undefined) {
-    const book = await mongoose.connection
-      .collection('books')
-      .findOne({ _id: new mongoose.Types.ObjectId(data.currentBookId) });
+    const bookId = new mongoose.Types.ObjectId(data.currentBookId);
+
+    const book = await mongoose.connection.collection('books').findOne({ _id: bookId });
 
     if (!book) {
       throw new AppError('VALIDATION_ERROR', 400, 'Book not found');
     }
 
-    club.currentBookId = data.currentBookId;
+    const currentBookId = club.currentBookId ? String(club.currentBookId) : null;
+
+    if (currentBookId !== String(bookId)) {
+      club.currentBookId = bookId;
+      club.bookStartedAt = new Date();
+    }
   }
 
   if (data.description !== undefined) club.description = data.description;
@@ -329,5 +334,119 @@ export async function updateExcerptApproval(clubId, excerptId, approved, user) {
     pageEnd: excerpt.pageEnd ?? null,
     text: excerpt.text,
     approved: excerpt.approved,
+  };
+}
+
+export async function getClubPace(clubId, user) {
+  const club = await Club.findById(clubId).lean();
+
+  if (!club) {
+    throw new AppError('NOT_FOUND', 404, 'Club not found');
+  }
+
+  const isModerator = (user?.moderatorOf ?? []).some((id) => String(id) === String(clubId));
+
+  const member = user ? await isMember(clubId, user._id) : false;
+
+  if (!isModerator && !member) {
+    throw new AppError('FORBIDDEN', 403, 'Only club members can view reading pace');
+  }
+
+  const pagesPerWeek = club.readingPace?.pagesPerWeek ?? 100;
+
+  if (!club.currentBookId) {
+    throw new AppError('VALIDATION_ERROR', 400, 'This club has no current book');
+  }
+
+  const book = await mongoose.connection
+    .collection('books')
+    .findOne(
+      { _id: new mongoose.Types.ObjectId(String(club.currentBookId)) },
+      { projection: { title: 1, pageCount: 1, chapterCount: 1 } },
+    );
+
+  if (!book) {
+    throw new AppError('NOT_FOUND', 404, 'Current book not found');
+  }
+
+  const pageCount = Number(book.pageCount ?? 0);
+  const chapterCount = Number(book.chapterCount ?? 0);
+
+  const startedAt = club.bookStartedAt ?? club.createdAt ?? new Date();
+  const elapsedWeeks = Math.floor(
+    (Date.now() - new Date(startedAt).getTime()) / (7 * 24 * 60 * 60 * 1000),
+  );
+  const weeksIn = Math.max(1, elapsedWeeks + 1);
+  const targetPage = Math.min(pageCount, weeksIn * pagesPerWeek);
+  const totalWeeks = pageCount > 0 ? Math.ceil(pageCount / pagesPerWeek) : 0;
+
+  const weeks = Array.from({ length: totalWeeks }, (_, index) => ({
+    week: index + 1,
+    targetPage: Math.min(pageCount, (index + 1) * pagesPerWeek),
+  }));
+
+  const memberships = await Membership.find({
+    clubId,
+    status: 'active',
+  })
+    .select('userId')
+    .lean();
+
+  const memberIds = memberships.map((item) => item.userId);
+
+  const [users, progressRecords] = await Promise.all([
+    mongoose.connection
+      .collection('users')
+      .find({ _id: { $in: memberIds } }, { projection: { name: 1 } })
+      .toArray(),
+
+    Progress.find({
+      userId: { $in: memberIds },
+      bookId: club.currentBookId,
+      visibility: { $in: ['club', 'public'] },
+    }).lean(),
+  ]);
+
+  const privateCount = Math.max(0, memberIds.length - progressRecords.length);
+
+  const userMap = new Map(users.map((item) => [String(item._id), item]));
+
+  const members = progressRecords.map((progress) => {
+    const page =
+      progress.page != null
+        ? progress.page
+        : chapterCount > 0
+          ? Math.round((progress.chapter / chapterCount) * pageCount)
+          : 0;
+
+    const percent = pageCount > 0 ? Math.round((page / pageCount) * 100) : 0;
+
+    const status =
+      page >= targetPage ? (page - targetPage > pagesPerWeek ? 'ahead' : 'on track') : 'behind';
+
+    return {
+      name: userMap.get(String(progress.userId))?.name ?? 'Member',
+      page,
+      chapter: progress.chapter,
+      percent,
+      status,
+    };
+  });
+
+  return {
+    book: {
+      id: book._id,
+      title: book.title,
+      pageCount,
+      chapterCount,
+    },
+    pagesPerWeek,
+    startedAt,
+    weeksIn,
+    targetPage,
+    totalWeeks,
+    weeks,
+    members,
+    privateCount,
   };
 }

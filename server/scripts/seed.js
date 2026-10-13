@@ -142,6 +142,9 @@ async function seedClubs(userIds, bookIds) {
 
   for (const c of data.clubs) {
     const moderatorId = need(userIds, c.moderator, 'user');
+    const startedWeeksAgo = c.startedWeeksAgo ?? 3;
+    const bookStartedAt = new Date(now.getTime() - startedWeeksAgo * 7 * DAY);
+
     const res = await col('clubs').insertOne({
       name: c.name,
       description: c.description,
@@ -149,12 +152,15 @@ async function seedClubs(userIds, bookIds) {
       rules: c.rules,
       moderators: [moderatorId],
       currentBookId: need(bookIds, c.currentBook, 'book'),
+      bookStartedAt,
       readingPace: { pagesPerWeek: c.pagesPerWeek },
       createdAt: now,
       updatedAt: now,
     });
+
     clubIds.set(c.key, res.insertedId);
     clubBook.set(c.key, bookIds.get(c.currentBook));
+
     await col('users').updateOne(
       { _id: moderatorId },
       { $addToSet: { moderatorOf: res.insertedId } },
@@ -174,6 +180,7 @@ async function seedClubs(userIds, bookIds) {
 
   for (const m of data.meetings) {
     const club = data.clubs.find((c) => c.key === m.club);
+
     await col('meetings').insertOne({
       clubId: need(clubIds, m.club, 'club'),
       date: new Date(Date.now() + m.inDays * DAY),

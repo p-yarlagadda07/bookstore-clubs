@@ -12,32 +12,30 @@
       ],
       "pagesPerWeek": 120,
       "currentBook": "b1",
-      "moderator": "moderator@bookstore.test"
+      "moderator": "moderator@bookstore.test",
+      "startedWeeksAgo": 3
     },
     {
       "key": "ffc",
       "name": "Fantasy Friday Club",
       "description": "Dragons, quests and big worlds. We read one fantasy novel a month.",
       "published": true,
-      "rules": [
-        "Be kind and respectful",
-        "Mark spoilers clearly"
-      ],
+      "rules": ["Be kind and respectful", "Mark spoilers clearly"],
       "pagesPerWeek": 100,
       "currentBook": "b2",
-      "moderator": "moderator@bookstore.test"
+      "moderator": "moderator@bookstore.test",
+      "startedWeeksAgo": 3
     },
     {
       "key": "ccc",
       "name": "Classics Corner",
       "description": "Slow reading of well-loved classics. This club is not open yet.",
       "published": false,
-      "rules": [
-        "Be kind and respectful"
-      ],
+      "rules": ["Be kind and respectful"],
       "pagesPerWeek": 80,
       "currentBook": "b3",
-      "moderator": "moderator@bookstore.test"
+      "moderator": "moderator@bookstore.test",
+      "startedWeeksAgo": 3
     }
   ],
   "members": [
@@ -85,10 +83,45 @@
     }
   ],
   "progress": [
-    { "email": "reader1@bookstore.test", "book": "b1", "club": "tmc", "chapter": 4, "page": 60, "visibility": "club" },
-    { "email": "reader2@bookstore.test", "book": "b1", "club": "tmc", "chapter": 6, "page": 95, "visibility": "club" },
-    { "email": "reader3@bookstore.test", "book": "b1", "club": "tmc", "chapter": 2, "page": 30, "visibility": "club" },
-    { "email": "reader4@bookstore.test", "book": "b1", "club": "tmc", "chapter": 8, "page": 125, "visibility": "club" },
-    { "email": "reader1@bookstore.test", "book": "b2", "club": "ffc", "chapter": 3, "page": 48, "visibility": "club" }
+    {
+      "email": "reader1@bookstore.test",
+      "book": "b1",
+      "club": "tmc",
+      "chapter": 4,
+      "page": 60,
+      "visibility": "club"
+    },
+    {
+      "email": "reader2@bookstore.test",
+      "book": "b1",
+      "club": "tmc",
+      "chapter": 6,
+      "page": 95,
+      "visibility": "club"
+    },
+    {
+      "email": "reader3@bookstore.test",
+      "book": "b1",
+      "club": "tmc",
+      "chapter": 2,
+      "page": 30,
+      "visibility": "club"
+    },
+    {
+      "email": "reader4@bookstore.test",
+      "book": "b1",
+      "club": "tmc",
+      "chapter": 8,
+      "page": 125,
+      "visibility": "club"
+    },
+    {
+      "email": "reader1@bookstore.test",
+      "book": "b2",
+      "club": "ffc",
+      "chapter": 3,
+      "page": 48,
+      "visibility": "club"
+    }
   ]
 }
