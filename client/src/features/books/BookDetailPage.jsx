@@ -9,6 +9,7 @@ import api from '../../api/client.js';
 import { getBook } from './booksApi.js';
 import ReserveDialog from './ReserveDialog.jsx';
 import './books.css';
+import BackInStockButton from './BackInStockButton.jsx';
 
 export default function BookDetailPage() {
   const { id } = useParams();
@@ -272,7 +273,7 @@ export default function BookDetailPage() {
               </Link>
 
               {!hasAvailableCopy || !book.availability?.reservable ? (
-                <Badge tone="muted">Unavailable</Badge>
+                <BackInStockButton bookId={id} user={user} isVerified={isVerified} />
               ) : !isLoggedIn ? (
                 <Link className="reserve-link" to="/login" state={{ from: `/books/${id}` }}>
                   Log in to reserve
