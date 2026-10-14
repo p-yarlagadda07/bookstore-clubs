@@ -1,5 +1,7 @@
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import ShelfAlerts from './ShelfAlerts.jsx';
 import { Badge, Card, EmptyState, PageTitle, Spinner } from '../../components/index.js';
 import api from '../../api/client.js';
 
@@ -64,7 +66,8 @@ export default function ReservationsPage() {
 
       {cancelMutation.isError && (
         <p role="alert">
-          {cancelMutation.error?.message || 'Could not cancel this reservation. Please try again.'}
+          {cancelMutation.error?.message ||
+            'Could not cancel this reservation. Please try again.'}
         </p>
       )}
 
@@ -88,7 +91,8 @@ export default function ReservationsPage() {
                 <h2>{reservation.title || 'Reserved book'}</h2>
 
                 <p>
-                  <strong>Condition:</strong> {reservation.condition || 'Not specified'}
+                  <strong>Condition:</strong>{' '}
+                  {reservation.condition || 'Not specified'}
                 </p>
 
                 <p>
@@ -127,7 +131,9 @@ export default function ReservationsPage() {
                       }
                     }}
                   >
-                    {cancelMutation.isPending ? 'Cancelling...' : 'Cancel reservation'}
+                    {cancelMutation.isPending
+                      ? 'Cancelling...'
+                      : 'Cancel reservation'}
                   </button>
                 )}
               </Card>
@@ -135,6 +141,8 @@ export default function ReservationsPage() {
           })}
         </div>
       )}
+
+      <ShelfAlerts />
     </main>
   );
 }
