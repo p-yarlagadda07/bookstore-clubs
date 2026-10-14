@@ -136,7 +136,6 @@ export default function ReservationsPage() {
           })}
         </div>
       )}
-
       <ShelfAlerts />
     </main>
   );
