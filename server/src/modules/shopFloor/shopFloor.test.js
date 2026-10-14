@@ -1,9 +1,11 @@
+
 import { beforeAll, afterAll, describe, it, expect } from 'vitest';
 
 import { createApp } from '../../app.js';
 import Reservation from '../reservations/model.js';
 import Inventory from '../inventory/model.js';
 import Book from '../books/model.js';
+import StockAlert from '../alerts/model.js';
 import { startTestDB, stopTestDB } from '../../../test/helpers/db.js';
 import { loginAs } from '../../../test/helpers/auth.js';
 
@@ -28,6 +30,7 @@ describe('GET /api/staff/shop-floor', () => {
     expect(res.body.data).toMatchObject({
       activeHolds: expect.any(Number),
       pickupsToday: expect.any(Number),
+      alertsWaiting: expect.any(Number),
       soldOut: expect.any(Number),
       lowStock: expect.any(Array),
       mostHeld: expect.any(Array),
@@ -59,8 +62,12 @@ describe('GET /api/staff/shop-floor', () => {
     const res = await agent.get('/api/staff/shop-floor');
 
     expect(res.status).toBe(200);
-    expect(res.body.data.lowStock.map((row) => row.title)).toContain('Low Stock Test');
-    expect(res.body.data.lowStock.map((row) => row.title)).not.toContain('Plenty Stock Test');
+    expect(res.body.data.lowStock.map((row) => row.title)).toContain(
+      'Low Stock Test',
+    );
+    expect(res.body.data.lowStock.map((row) => row.title)).not.toContain(
+      'Plenty Stock Test',
+    );
   });
 
   it('ranks books by holds created in the last 30 days', async () => {
@@ -151,5 +158,29 @@ describe('GET /api/staff/shop-floor', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.data.pickupsToday).toBeGreaterThan(0);
+  });
+
+  it('counts only waiting stock alerts', async () => {
+    const book = await Book.create({ title: 'Alert Count Test' });
+    const { user } = await loginAs(app, { roles: ['reader'] });
+
+    await StockAlert.create([
+      {
+        userId: user._id,
+        bookId: book._id,
+        status: 'waiting',
+      },
+      {
+        userId: user._id,
+        bookId: book._id,
+        status: 'sent',
+      },
+    ]);
+
+    const { agent } = await loginAs(app, { roles: ['bookseller'] });
+    const res = await agent.get('/api/staff/shop-floor');
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.alertsWaiting).toBe(1);
   });
 });

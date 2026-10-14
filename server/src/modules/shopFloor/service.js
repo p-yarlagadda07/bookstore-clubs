@@ -1,9 +1,12 @@
+
 import Reservation from '../reservations/model.js';
 import Inventory from '../inventory/model.js';
 import Book from '../books/model.js';
+import StockAlert from '../alerts/model.js';
 
 export async function getShopFloor() {
   const now = new Date();
+
   const startOfToday = new Date(now);
   startOfToday.setHours(0, 0, 0, 0);
 
@@ -13,7 +16,14 @@ export async function getShopFloor() {
   const thirtyDaysAgo = new Date(now);
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-  const [activeHolds, pickupsToday, lowStockRows, soldOutRows, heldRows] = await Promise.all([
+  const [
+    activeHolds,
+    pickupsToday,
+    alertsWaiting,
+    lowStockRows,
+    soldOutRows,
+    heldRows,
+  ] = await Promise.all([
     Reservation.countDocuments({ status: 'held' }),
 
     Reservation.countDocuments({
@@ -21,7 +31,12 @@ export async function getShopFloor() {
       expiresAt: { $gte: startOfToday, $lt: endOfToday },
     }),
 
-    Inventory.find({ status: 'active', available: { $lte: 1 } })
+    StockAlert.countDocuments({ status: 'waiting' }),
+
+    Inventory.find({
+      status: 'active',
+      available: { $lte: 1 },
+    })
       .sort({ available: 1 })
       .limit(10)
       .populate('bookId', 'title')
@@ -33,7 +48,9 @@ export async function getShopFloor() {
         $group: {
           _id: '$bookId',
           rowsWithStock: {
-            $sum: { $cond: [{ $gt: ['$available', 0] }, 1, 0] },
+            $sum: {
+              $cond: [{ $gt: ['$available', 0] }, 1, 0],
+            },
           },
         },
       },
@@ -54,11 +71,14 @@ export async function getShopFloor() {
     .select('title')
     .lean();
 
-  const titles = new Map(mostHeldBooks.map((book) => [String(book._id), book.title]));
+  const titles = new Map(
+    mostHeldBooks.map((book) => [String(book._id), book.title]),
+  );
 
   return {
     activeHolds,
     pickupsToday,
+    alertsWaiting,
     lowStock: lowStockRows.map((row) => ({
       inventoryId: row._id,
       bookId: row.bookId?._id ?? row.bookId,
