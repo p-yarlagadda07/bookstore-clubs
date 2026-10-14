@@ -10,7 +10,7 @@ import { getBook } from './booksApi.js';
 import ReserveDialog from './ReserveDialog.jsx';
 import './books.css';
 import BackInStockButton from './BackInStockButton.jsx';
-
+import ReadAlikes from './ReadAlikes.jsx';
 export default function BookDetailPage() {
   const { id } = useParams();
   const { user } = useMe();
@@ -285,6 +285,7 @@ export default function BookDetailPage() {
               )}
             </div>
           </div>
+          <ReadAlikes bookId={id} />
         </Card>
       </section>
     </main>
