@@ -1,4 +1,3 @@
-
 import { beforeAll, afterAll, describe, it, expect } from 'vitest';
 
 import { createApp } from '../../app.js';
@@ -62,12 +61,8 @@ describe('GET /api/staff/shop-floor', () => {
     const res = await agent.get('/api/staff/shop-floor');
 
     expect(res.status).toBe(200);
-    expect(res.body.data.lowStock.map((row) => row.title)).toContain(
-      'Low Stock Test',
-    );
-    expect(res.body.data.lowStock.map((row) => row.title)).not.toContain(
-      'Plenty Stock Test',
-    );
+    expect(res.body.data.lowStock.map((row) => row.title)).toContain('Low Stock Test');
+    expect(res.body.data.lowStock.map((row) => row.title)).not.toContain('Plenty Stock Test');
   });
 
   it('ranks books by holds created in the last 30 days', async () => {
