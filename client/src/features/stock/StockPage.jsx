@@ -400,11 +400,11 @@ function StockPage() {
                     pickups.map((pickup) => (
                       <tr key={pickup.id}>
                         <td>{pickup.reader?.name ?? 'Unknown reader'}</td>
-                        <td>{pickup.reader?.email ?? '—'}</td>
+                        <td>{pickup.reader?.email ?? '-'}</td>
                         <td className="stock-title">{pickup.title}</td>
                         <td>{pickup.condition}</td>
                         <td>
-                          {pickup.expiresAt ? new Date(pickup.expiresAt).toLocaleString() : '—'}
+                          {pickup.expiresAt ? new Date(pickup.expiresAt).toLocaleString() : '-'}
                         </td>
                         <td>
                           <button
