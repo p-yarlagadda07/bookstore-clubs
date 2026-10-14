@@ -1,0 +1,16 @@
+.shop-floor-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.shop-floor-tiles h2 {
+  font-size: 2.6rem;
+  margin: 4px 0 0;
+}
+
+.shop-floor-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
