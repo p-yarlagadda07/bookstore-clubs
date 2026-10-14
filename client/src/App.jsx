@@ -26,6 +26,7 @@ import NextReadPage from './features/agent/NextReadPage.jsx';
 import LogbookPage from './features/admin/LogbookPage.jsx';
 
 import api from './api/client.js';
+import ShopFloorPage from './features/stock/ShopFloorPage.jsx';
 import './app/layout.css';
 
 function NotFound() {
@@ -103,6 +104,7 @@ function Header({ user }) {
 
         {isStaff && <span className="nav-divider">Staff</span>}
         {isBookseller && <NavLink to="/staff/stock">Stockroom</NavLink>}
+        {isBookseller && <NavLink to="/staff/floor">Shop Floor</NavLink>}
         {isModerator && <NavLink to="/agent">Next Read</NavLink>}
         {isAdmin && <NavLink to="/staff/admin">Logbook</NavLink>}
       </nav>
@@ -180,6 +182,7 @@ export default function App() {
           <Route path="/clubs/:id/manage" element={<ModeratorConsolePage />} />
 
           <Route path="/staff/stock" element={<StockPage />} />
+          <Route path="/staff/floor" element={<ShopFloorPage />} />
 
           <Route path="/staff/admin" element={<LogbookPage />} />
 
