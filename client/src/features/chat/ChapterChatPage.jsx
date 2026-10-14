@@ -12,13 +12,13 @@ import {
   Spinner,
 } from '../../components/index.js';
 import { askChat, getMyBookmarks, setBookmark } from './chatApi.js';
+import EarlierChats from './EarlierChats.jsx';
 import './chat.css';
 
 export default function ChapterChatPage() {
   const [searchParams] = useSearchParams();
 
   const initialBookId = searchParams.get('bookId') ?? '';
-
   const [tab, setTab] = useState('chapter');
   const [bookmarks, setBookmarks] = useState([]);
   const [bookTitles, setBookTitles] = useState({});
@@ -31,6 +31,7 @@ export default function ChapterChatPage() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [chatRefreshKey, setChatRefreshKey] = useState(0);
 
   const selectedBookmark = useMemo(
     () => bookmarks.find((item) => String(item.bookId) === String(bookId)),
@@ -47,7 +48,6 @@ export default function ChapterChatPage() {
 
         const list = Array.isArray(rows) ? rows : [];
         setBookmarks(list);
-
         const ids = [
           ...new Set([...list.map((item) => item.bookId), initialBookId].filter(Boolean)),
         ];
@@ -62,7 +62,6 @@ export default function ChapterChatPage() {
             }
           }),
         );
-
         if (active) {
           setBookTitles(Object.fromEntries(pairs));
         }
@@ -99,7 +98,6 @@ export default function ChapterChatPage() {
 
   async function handleSaveBookmark(event) {
     event.preventDefault();
-
     if (!bookId || !chapter || Number(chapter) < 1) {
       setError('Choose a book and enter a valid chapter number.');
       return;
@@ -115,7 +113,6 @@ export default function ChapterChatPage() {
       });
 
       setSavedChapter(Number(chapter));
-
       const updated = await getMyBookmarks();
       setBookmarks(Array.isArray(updated) ? updated : []);
     } catch (err) {
@@ -130,7 +127,6 @@ export default function ChapterChatPage() {
 
     const question = message.trim();
     if (!question || loading) return;
-
     setMessages((current) => [...current, { role: 'user', text: question }]);
     setMessage('');
     setLoading(true);
@@ -146,7 +142,6 @@ export default function ChapterChatPage() {
       if (result.conversationId) {
         setConversationId(result.conversationId);
       }
-
       setMessages((current) => [
         ...current,
         {
@@ -156,11 +151,19 @@ export default function ChapterChatPage() {
           citations: result.citations ?? [],
         },
       ]);
+      setChatRefreshKey((k) => k + 1);
     } catch (err) {
       setError(err.message ?? 'Unable to get an answer. Please try again.');
     } finally {
       setLoading(false);
     }
+  }
+
+  async function openConversation(conversation) {
+    setTab(conversation.kind === 'shop' ? 'shop' : 'chapter');
+    setBookId(conversation.bookId ?? '');
+    setMessages(conversation.messages ?? []);
+    setConversationId(conversation.id);
   }
 
   const canAsk = tab === 'shop' || Boolean(bookId);
@@ -181,7 +184,6 @@ export default function ChapterChatPage() {
         >
           Chapter Chat
         </button>
-
         <button
           type="button"
           role="tab"
@@ -192,6 +194,8 @@ export default function ChapterChatPage() {
           Ask the Shop
         </button>
       </div>
+
+      <EarlierChats onOpen={openConversation} refreshKey={chatRefreshKey} />
 
       {tab === 'chapter' && (
         <Card title="Your reading progress">
@@ -216,7 +220,6 @@ export default function ChapterChatPage() {
                 ))}
               </select>
             </div>
-
             <Input
               label="I'm on chapter"
               type="number"
@@ -231,7 +234,6 @@ export default function ChapterChatPage() {
               {saving ? 'Saving...' : 'Save chapter'}
             </Button>
           </form>
-
           {savedChapter != null && (
             <p className="bookmark-success">
               <Badge tone="success">Saved</Badge> You're on chapter {savedChapter}.
@@ -245,7 +247,6 @@ export default function ChapterChatPage() {
           <ErrorState message={error} />
         </div>
       )}
-
       <Card title={tab === 'chapter' ? 'Chapter Chat' : 'Ask the Shop'}>
         {tab === 'chapter' ? (
           <p className="chat-intro">
@@ -258,7 +259,6 @@ export default function ChapterChatPage() {
             to select a book.
           </p>
         )}
-
         <div className="chat-messages" aria-live="polite">
           {messages.length === 0 && !loading && (
             <div className="chat-empty">
@@ -269,20 +269,17 @@ export default function ChapterChatPage() {
               </p>
             </div>
           )}
-
           {messages.map((item, index) => (
             <div className={`chat-message ${item.role}`} key={`${item.role}-${index}`}>
               <div className="chat-bubble">
                 <span className="chat-speaker">{item.role === 'user' ? 'You' : 'Booklore'}</span>
                 <p>{item.text}</p>
-
                 {item.status === 'needs_progress' && (
                   <p className="chat-muted">
                     Save your current chapter above so we can keep answers within your reading
                     progress.
                   </p>
                 )}
-
                 {item.citations?.length > 0 && (
                   <div className="chat-citations">
                     <strong>Sources</strong>
@@ -304,7 +301,6 @@ export default function ChapterChatPage() {
               </div>
             </div>
           ))}
-
           {loading && (
             <div className="chat-message assistant">
               <div className="chat-bubble thinking">
@@ -314,7 +310,6 @@ export default function ChapterChatPage() {
             </div>
           )}
         </div>
-
         <form className="chat-composer" onSubmit={handleAsk}>
           <Input
             label="Your question"
@@ -326,7 +321,6 @@ export default function ChapterChatPage() {
             disabled={loading || !canAsk}
             required
           />
-
           <Button type="submit" disabled={loading || !canAsk || !message.trim()}>
             {loading ? 'Thinking...' : 'Ask'}
           </Button>
