@@ -22,7 +22,7 @@ export default function ReadAlikes({ bookId }) {
   if (items.length === 0) return null;
 
   return (
-    <div className="book-section">
+    <div className="book-section book-detail-content">
       <h2>Read-Alikes</h2>
       <div style={gridStyle}>
         {items.map((b) => (
