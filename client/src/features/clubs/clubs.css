@@ -170,3 +170,7 @@
     font-size: 26px;
   }
 }
+.meeting-card .btn {
+  align-self: flex-start;
+  text-decoration: none;
+}
