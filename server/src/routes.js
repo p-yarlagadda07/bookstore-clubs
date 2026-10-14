@@ -19,6 +19,7 @@ import alerts from './modules/alerts/routes.js';
 import calendar from './modules/calendar/routes.js';
 import shopFloor from './modules/shopFloor/routes.js';
 import talkingPoints from './ai/talkingPoints/routes.js';
+import preferences from './modules/preferences/routes.js';
 
 const api = Router();
 
@@ -47,6 +48,7 @@ for (const r of [
   calendar,
   shopFloor,
   talkingPoints,
+  preferences,
 ]) {
   api.use(r);
 }

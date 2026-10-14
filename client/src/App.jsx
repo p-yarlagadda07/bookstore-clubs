@@ -24,6 +24,10 @@ import ListDetailPage from './features/readingLists/ListDetailPage.jsx';
 import ChapterChatPage from './features/chat/ChapterChatPage.jsx';
 import NextReadPage from './features/agent/NextReadPage.jsx';
 import LogbookPage from './features/admin/LogbookPage.jsx';
+import StaffPage from './features/admin/StaffPage.jsx';
+import SourcesPage from './features/admin/SourcesPage.jsx';
+import SettingsPage from './features/settings/SettingsPage.jsx';
+import PublicShelfPage from './features/readingLists/PublicShelfPage.jsx';
 
 import api from './api/client.js';
 import ShopFloorPage from './features/stock/ShopFloorPage.jsx';
@@ -70,7 +74,9 @@ function Header({ user }) {
             <span className="account-initial" aria-hidden="true">
               {user.name?.[0]?.toUpperCase()}
             </span>
-            <span className="account-name">{user.name}</span>
+            <NavLink to="/settings" className="account-name">
+              {user.name}
+            </NavLink>
             <button
               type="button"
               className="account-logout"
@@ -107,6 +113,8 @@ function Header({ user }) {
         {isBookseller && <NavLink to="/staff/floor">Shop Floor</NavLink>}
         {isModerator && <NavLink to="/agent">Next Read</NavLink>}
         {isAdmin && <NavLink to="/staff/admin">Logbook</NavLink>}
+        {isAdmin && <NavLink to="/staff/users">Staff</NavLink>}
+        {isAdmin && <NavLink to="/staff/sources">Sources</NavLink>}
       </nav>
     </header>
   );
@@ -185,6 +193,17 @@ export default function App() {
           <Route path="/staff/floor" element={<ShopFloorPage />} />
 
           <Route path="/staff/admin" element={<LogbookPage />} />
+          <Route path="/staff/users" element={<StaffPage />} />
+          <Route path="/staff/sources" element={<SourcesPage />} />
+          <Route path="/shelves/:id" element={<PublicShelfPage />} />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/agent"
