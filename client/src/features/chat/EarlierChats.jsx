@@ -19,9 +19,7 @@ export default function EarlierChats({ onOpen, refreshKey = 0 }) {
         const result = await getEarlierChats();
         const items = Array.isArray(result.items) ? result.items : [];
 
-        items.sort(
-          (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-        );
+        items.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
         if (active) {
           setChats(items.slice(0, 20));
@@ -78,18 +76,12 @@ export default function EarlierChats({ onOpen, refreshKey = 0 }) {
             <div>
               <p>{chat.lastMessage || 'Previous conversation'}</p>
               <small>
-                {chat.updatedAt
-                  ? new Date(chat.updatedAt).toLocaleString()
-                  : 'Date unavailable'}
+                {chat.updatedAt ? new Date(chat.updatedAt).toLocaleString() : 'Date unavailable'}
               </small>
               <small>{chat.kind === 'shop' ? 'Ask the Shop' : 'Chapter Chat'}</small>
             </div>
 
-            <Button
-              type="button"
-              disabled={openingId !== null}
-              onClick={() => handleOpen(chat)}
-            >
+            <Button type="button" disabled={openingId !== null} onClick={() => handleOpen(chat)}>
               {openingId === chat.id ? 'Opening...' : 'Open chat'}
             </Button>
           </div>
