@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import api from '../../api/client.js';
-import { pickupMockResponse } from './stock.mock';
 import BookFormDialog from './BookFormDialog.jsx';
 import './stock.css';
 
@@ -47,12 +46,15 @@ function groupStockByBook(items) {
 function StockPage() {
   const [activeTab, setActiveTab] = useState('stock');
   const [stockItems, setStockItems] = useState([]);
-  const [pickups, setPickups] = useState(pickupMockResponse.items);
+  const [pickups, setPickups] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pickupsLoading, setPickupsLoading] = useState(false);
+  const [collectingId, setCollectingId] = useState(null);
   const [search, setSearch] = useState('');
   const [adjustingBook, setAdjustingBook] = useState(null);
   const [adjustment, setAdjustment] = useState(EMPTY_ADJUSTMENT);
   const [error, setError] = useState('');
+  const [pickupsError, setPickupsError] = useState('');
   const [bookForm, setBookForm] = useState(null);
 
   const fetchStock = async () => {
@@ -72,9 +74,29 @@ function StockPage() {
     }
   };
 
+  const fetchPickups = async () => {
+    setPickupsLoading(true);
+    setPickupsError('');
+
+    try {
+      const response = await api.get('/reservations/held');
+      setPickups(response.items ?? []);
+    } catch (err) {
+      setPickupsError(err.message || 'Failed to load held reservations. Please try again.');
+    } finally {
+      setPickupsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchStock();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === 'pickups') {
+      fetchPickups();
+    }
+  }, [activeTab]);
 
   const filteredStock = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -173,41 +195,19 @@ function StockPage() {
     }
   };
 
-  const confirmCollection = (reservationId) => {
-    const pickup = pickups.find((item) => item.id === reservationId);
+  const confirmCollection = async (reservationId) => {
+    setCollectingId(reservationId);
+    setPickupsError('');
 
-    if (!pickup) {
-      return;
+    try {
+      await api.patch(`/reservations/${reservationId}/collect`);
+
+      await Promise.all([fetchPickups(), fetchStock()]);
+    } catch (err) {
+      setPickupsError(err.message || 'Could not confirm collection. Please try again.');
+    } finally {
+      setCollectingId(null);
     }
-
-    setStockItems((currentItems) =>
-      currentItems.map((book) => {
-        if (book.id !== pickup.bookId) {
-          return book;
-        }
-
-        const currentStock = book[pickup.condition];
-
-        if (!currentStock || currentStock.held <= 0) {
-          return book;
-        }
-
-        const newHeld = currentStock.held - 1;
-        const newTotal = Math.max(0, currentStock.total - 1);
-
-        return {
-          ...book,
-          [pickup.condition]: {
-            ...currentStock,
-            total: newTotal,
-            held: newHeld,
-            available: newTotal - newHeld,
-          },
-        };
-      }),
-    );
-
-    setPickups((currentPickups) => currentPickups.filter((item) => item.id !== reservationId));
   };
 
   return (
@@ -231,6 +231,8 @@ function StockPage() {
       <div className="stock-tabs" role="tablist">
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'stock'}
           className={activeTab === 'stock' ? 'active' : ''}
           onClick={() => setActiveTab('stock')}
         >
@@ -239,6 +241,8 @@ function StockPage() {
 
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'pickups'}
           className={activeTab === 'pickups' ? 'active' : ''}
           onClick={() => setActiveTab('pickups')}
         >
@@ -284,7 +288,6 @@ function StockPage() {
                     <th>Status</th>
                     <th>Actions</th>
                   </tr>
-
                   <tr className="stock-table__subhead">
                     <th></th>
                     <th></th>
@@ -317,13 +320,11 @@ function StockPage() {
                         <td>{book.used?.total ?? 0}</td>
                         <td>{book.used?.available ?? 0}</td>
                         <td>{book.used?.held ?? 0}</td>
-
                         <td>
                           <span className={`stock-status stock-status--${book.status}`}>
                             {book.status}
                           </span>
                         </td>
-
                         <td>
                           <div className="stock-actions">
                             <button
@@ -370,45 +371,58 @@ function StockPage() {
             </div>
           </div>
 
-          <div className="stock-table-wrapper">
-            <table className="stock-table pickups-table">
-              <thead>
-                <tr>
-                  <th>Reader</th>
-                  <th>Title</th>
-                  <th>Pickup Window</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
+          {pickupsError && <p className="stock-error">{pickupsError}</p>}
 
-              <tbody>
-                {pickups.length === 0 ? (
+          {pickupsLoading ? (
+            <p className="stock-empty">Loading held reservations...</p>
+          ) : (
+            <div className="stock-table-wrapper">
+              <table className="stock-table pickups-table">
+                <thead>
                   <tr>
-                    <td colSpan="4" className="stock-empty">
-                      No held pickups remaining.
-                    </td>
+                    <th>Reader</th>
+                    <th>Email</th>
+                    <th>Title</th>
+                    <th>Condition</th>
+                    <th>Pickup expires</th>
+                    <th>Action</th>
                   </tr>
-                ) : (
-                  pickups.map((pickup) => (
-                    <tr key={pickup.id}>
-                      <td>{pickup.reader}</td>
-                      <td className="stock-title">{pickup.title}</td>
-                      <td>{pickup.pickupWindow}</td>
-                      <td>
-                        <button
-                          type="button"
-                          className="stock-button stock-button--primary"
-                          onClick={() => confirmCollection(pickup.id)}
-                        >
-                          Confirm collection
-                        </button>
+                </thead>
+
+                <tbody>
+                  {pickups.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" className="stock-empty">
+                        No held pickups remaining.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                  ) : (
+                    pickups.map((pickup) => (
+                      <tr key={pickup.id}>
+                        <td>{pickup.reader?.name ?? 'Unknown reader'}</td>
+                        <td>{pickup.reader?.email ?? '—'}</td>
+                        <td className="stock-title">{pickup.title}</td>
+                        <td>{pickup.condition}</td>
+                        <td>
+                          {pickup.expiresAt ? new Date(pickup.expiresAt).toLocaleString() : '—'}
+                        </td>
+                        <td>
+                          <button
+                            type="button"
+                            className="stock-button stock-button--primary"
+                            disabled={collectingId !== null}
+                            onClick={() => confirmCollection(pickup.id)}
+                          >
+                            {collectingId === pickup.id ? 'Confirming...' : 'Confirm collection'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
       )}
 
