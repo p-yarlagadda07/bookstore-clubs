@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import api from '../../api/client.js';
@@ -14,8 +13,7 @@ export default function ShelfAlerts() {
 
   const removeAlert = useMutation({
     mutationFn: (id) => api.delete(`/alerts/${id}`),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ['alerts'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['alerts'] }),
   });
 
   if (isLoading || isError) return null;
@@ -31,20 +29,10 @@ export default function ShelfAlerts() {
       {items.map((alert) => (
         <Card key={alert.id}>
           <div>
-            <Link to={`/books/${alert.bookId}`}>
-              {alert.title}
-            </Link>
+            <Link to={`/books/${alert.bookId}`}>{alert.title}</Link>
 
-            <Badge
-              tone={
-                alert.status === 'waiting'
-                  ? 'muted'
-                  : 'success'
-              }
-            >
-              {alert.status === 'waiting'
-                ? 'Waiting'
-                : 'Back on the shelf'}
+            <Badge tone={alert.status === 'waiting' ? 'muted' : 'success'}>
+              {alert.status === 'waiting' ? 'Waiting' : 'Back on the shelf'}
             </Badge>
 
             <Button
