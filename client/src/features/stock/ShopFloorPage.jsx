@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api/client.js';
+import './shopFloor.css';
 import { Badge, Card, EmptyState, InkBars, PageTitle, Spinner } from '../../components/index.js';
 
 function ShopFloorPage() {
@@ -24,7 +25,7 @@ function ShopFloorPage() {
   }, []);
 
   if (loading) {
-    return <Spinner />;
+    return <Spinner label="Opening the shop floor..." />;
   }
 
   if (error) {
@@ -40,7 +41,7 @@ function ShopFloorPage() {
 
   return (
     <section className="shop-floor-page">
-      <PageTitle number="01" label="Staff" title="Shop Floor">
+      <PageTitle number="07" label="Staff" title="Shop Floor">
         A quick overview of today's shop activity and stock.
       </PageTitle>
 
@@ -93,7 +94,7 @@ function ShopFloorPage() {
                     <td>{item.available}</td>
                     <td>{item.total}</td>
                     <td>
-                      <Badge tone={item.available === 0 ? 'danger' : 'warning'}>
+                      <Badge tone={item.available === 0 ? 'danger' : 'accent'}>
                         {item.available === 0 ? 'Sold out' : 'Low stock'}
                       </Badge>
                     </td>
