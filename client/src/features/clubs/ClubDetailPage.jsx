@@ -1,3 +1,4 @@
+import ClubPace from './ClubPace.jsx';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../../api/client.js';
@@ -123,6 +124,8 @@ export default function ClubDetailPage() {
             </div>
           </div>
         )}
+
+        <ClubPace clubId={id} />
 
         <div className="club-section">
           <h2>Club Rules</h2>
