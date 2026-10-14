@@ -11,3 +11,11 @@ export async function getMyBookmarks() {
 export async function askChat({ message, bookId, clubId, conversationId }) {
   return api.post('/book-chat', { message, bookId, clubId, conversationId });
 }
+
+export async function getEarlierChats() {
+  return api.get('/conversations/mine');
+}
+
+export async function getConversation(id) {
+  return api.get(`/conversations/${id}`);
+}
