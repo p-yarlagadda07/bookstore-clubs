@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import ShelfAlerts from './ShelfAlerts.jsx';
 import { Badge, Card, EmptyState, PageTitle, Spinner } from '../../components/index.js';
 import api from '../../api/client.js';
 
@@ -135,6 +136,8 @@ export default function ReservationsPage() {
           })}
         </div>
       )}
+
+      <ShelfAlerts />
     </main>
   );
 }
