@@ -44,6 +44,12 @@
 .account-name {
   font-weight: 700;
   color: var(--color-primary);
+  text-decoration: none;
+}
+
+.account-name:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .header .account-logout {
