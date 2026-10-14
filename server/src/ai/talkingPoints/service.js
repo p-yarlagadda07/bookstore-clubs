@@ -66,7 +66,7 @@ export async function getTalkingPoints(clubId, meetingId) {
       const result = await Promise.race([
         chat.invoke([
           new SystemMessage(
-            `Write 5 open discussion questions for a book club. Use only the excerpts. Nothing after chapter ${chapterLimit}. One question per line, no numbers.`,
+            `Write 5 distinct, open discussion questions for a book club. Use only the approved excerpts. Do not discuss anything after chapter ${chapterLimit}. Each question must explore a different topic. Return one question per line without numbering.`,
           ),
           new HumanMessage(
             JSON.stringify({
@@ -86,8 +86,9 @@ export async function getTalkingPoints(clubId, meetingId) {
       questions = result.content
         .split('\n')
         .map((line) => line.replace(/^\s*[-*\d.)]+\s*/, '').trim())
-        .filter(Boolean)
-        .slice(0, 5);
+        .filter(Boolean);
+
+      questions = [...new Set(questions)].slice(0, 5);
 
       if (questions.length === 5) {
         source = 'model';
@@ -104,17 +105,18 @@ export async function getTalkingPoints(clubId, meetingId) {
 
     const moods = book?.moods?.length
       ? book.moods.slice(0, 5)
-      : ['surprising', 'interesting', 'emotional', 'important', 'unexpected'];
+      : ['suspenseful', 'atmospheric', 'surprising', 'emotional', 'mysterious'];
 
-    questions = moods.map(
+    const templates = [
       (mood) => `Which moment in the first ${chapterLimit} chapters felt most ${mood}, and why?`,
-    );
+      (mood) => `How does the ${mood} mood affect your expectations for what happens next?`,
+      (mood) => `Which character or event best represents the ${mood} mood so far?`,
+      (mood) => `What detail makes the story feel ${mood} in these chapters?`,
+      (mood) => `What would you like to discuss about the ${mood} atmosphere of the story?`,
+    ];
 
-    while (questions.length < 5) {
-      questions.push(`What did you think about the events in the first ${chapterLimit} chapters?`);
-    }
+    questions = templates.map((template, index) => template(moods[index] || 'interesting'));
 
-    questions = questions.slice(0, 5);
     source = 'template';
   }
 

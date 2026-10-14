@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../../api/client.js';
+import TalkingPoints from './TalkingPoints.jsx';
 import './moderator.css';
 
 export default function ModeratorConsolePage() {
@@ -97,6 +98,7 @@ export default function ModeratorConsolePage() {
       });
 
       setMessage('Meeting scheduled.');
+      await loadConsole();
     } catch (err) {
       setError(err?.message ?? 'Unable to schedule the meeting.');
     } finally {
@@ -272,6 +274,8 @@ export default function ModeratorConsolePage() {
         </form>
       </section>
 
+      <TalkingPoints clubId={id} meetings={club.meetings ?? []} />
+
       <section className="moderator-card">
         <h2>Club Rules & Reading Pace</h2>
 
@@ -289,7 +293,7 @@ export default function ModeratorConsolePage() {
             Club Rules
             <textarea
               value={rulesText}
-              placeholder={'Enter one rule per line'}
+              placeholder="Enter one rule per line"
               onChange={(event) => setRulesText(event.target.value)}
             />
             <span className="moderator-help">
