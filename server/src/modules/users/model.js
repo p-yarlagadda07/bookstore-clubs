@@ -13,15 +13,15 @@ const userSchema = new mongoose.Schema(
     roles: { type: [String], enum: ['reader', 'bookseller', 'admin'], default: ['reader'] },
     moderatorOf: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Club' }],
     preferences: {
-  genres: { type: [String], default: [] },
-  moods: { type: [String], default: [] },
-  maxPages: { type: Number, default: null },
-  bookmarkVisibility: {
-    type: String,
-    enum: ['private', 'club', 'public'],
-    default: 'private',
-  },
-},
+      genres: { type: [String], default: [] },
+      moods: { type: [String], default: [] },
+      maxPages: { type: Number, default: null },
+      bookmarkVisibility: {
+        type: String,
+        enum: ['private', 'club', 'public'],
+        default: 'private',
+      },
+    },
     spoilerSettings: {
       strict: { type: Boolean, default: false },
       maxChapter: { type: Number, default: null },
