@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../../api/client.js';
 import './clubs.css';
-
+import SaveTheDate from './SaveTheDate.jsx';
 export default function ClubDetailPage() {
   const { id } = useParams();
 
@@ -147,6 +147,7 @@ export default function ClubDetailPage() {
                 <span>{meeting.time}</span>
                 <span>{meeting.location}</span>
                 <p>{meeting.agenda}</p>
+                <SaveTheDate clubId={id} meetingId={meeting.id} />
               </article>
             ))}
           </div>
