@@ -8,6 +8,7 @@ import {
   removeItem,
   deleteList,
 } from './service.js';
+
 export async function getPublic(req, res) {
   res.ok(await getPublicList(req.params.id));
 }
