@@ -1,0 +1,133 @@
+.settings-page {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.settings-card {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.settings-section {
+  display: grid;
+  gap: 0.75rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-section:last-of-type {
+  border-bottom: 0;
+}
+
+.settings-section h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.settings-section p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.settings-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.settings-chip {
+  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.settings-chip:hover {
+  border-color: var(--accent);
+}
+
+.settings-chip.selected {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.settings-select {
+  width: 100%;
+  max-width: 20rem;
+  padding: 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+.settings-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+}
+
+.settings-checkbox input,
+.settings-radio input {
+  accent-color: var(--accent);
+}
+
+.settings-help {
+  font-size: 0.9rem;
+}
+
+.settings-radio-group {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.settings-radio {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 0.65rem;
+  cursor: pointer;
+}
+
+.settings-radio span {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.settings-radio small {
+  color: var(--muted);
+}
+
+.settings-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.settings-message {
+  margin: 0;
+  color: var(--text);
+}
+
+.settings-message.error {
+  color: var(--danger);
+}
+
+@media (min-width: 700px) {
+  .settings-radio-group {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
