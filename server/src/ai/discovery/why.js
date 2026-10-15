@@ -1,12 +1,9 @@
-
 export function whyItMatched(query, book) {
   const q = query.toLowerCase();
 
   const words = [...(book.themes ?? []), ...(book.moods ?? [])];
 
-  const hits = words.filter(
-    (word) => word && q.includes(word.toLowerCase()),
-  );
+  const hits = words.filter((word) => word && q.includes(word.toLowerCase()));
 
   if (hits.length) {
     return `Matches ${hits.slice(0, 3).join(', ')}`;
@@ -18,27 +15,27 @@ export function whyItMatched(query, book) {
   const queryWords = q
     .split(/[^a-z0-9]+/)
     .filter(
-  (word) =>
-    word.length > 3 &&
-    ![
-      'about',
-      'with',
-      'from',
-      'that',
-      'this',
-      'book',
-      'story',
-      'something',
-      'their',
-      'there',
-      'where',
-      'when',
-      'what',
-      'have',
-      'your',
-      'into',
-    ].includes(word),
-);
+      (word) =>
+        word.length > 3 &&
+        ![
+          'about',
+          'with',
+          'from',
+          'that',
+          'this',
+          'book',
+          'story',
+          'something',
+          'their',
+          'there',
+          'where',
+          'when',
+          'what',
+          'have',
+          'your',
+          'into',
+        ].includes(word),
+    );
 
   const synopsisLower = synopsis.toLowerCase();
   const titleLower = title.toLowerCase();
