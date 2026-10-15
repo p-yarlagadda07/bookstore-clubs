@@ -13,6 +13,7 @@ import {
   listClubs,
   getClub,
   joinClubController,
+  leaveClubController,
   getClubProgressController,
   getClubPaceController,
   createMeetingController,
@@ -49,6 +50,13 @@ router.post(
   requireVerified,
   validate({ params: IdParams }),
   asyncHandler(joinClubController),
+);
+
+router.delete(
+  '/clubs/:id/membership',
+  requireAuth,
+  validate({ params: IdParams }),
+  asyncHandler(leaveClubController),
 );
 
 router.post(

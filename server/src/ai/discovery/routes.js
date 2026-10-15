@@ -6,6 +6,7 @@ import { IdParams } from '@bookstore/shared';
 import { DiscoverQuery, SimilarQuery } from '@bookstore/shared/schemas/discovery';
 import { getAvailability } from '../../modules/inventory/service.js';
 import { vectorSearchBooks, similarBooks } from './service.js';
+import { whyItMatched } from './why.js';
 
 const router = Router();
 
@@ -26,6 +27,7 @@ router.get(
       pageCount: r.pageCount,
       synopsis: r.synopsis,
       score: r.score,
+      why: whyItMatched(q, r),
       availability: availability.get(String(r._id)),
     }));
 
