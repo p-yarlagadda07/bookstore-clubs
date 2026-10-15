@@ -4,6 +4,7 @@ import { getBoundary } from '../../modules/progress/service.js';
 import { saveTurn } from '../../modules/conversations/service.js';
 import { buildSystemPrompt } from './prompts.js';
 import { chat, isOllamaUp } from '../ollama.js';
+import { withTimeout, AI_TIMEOUT_MS } from '../timeout.js';
 import { logger } from '../../lib/logger.js';
 
 async function saveResult(user, input, result) {
@@ -59,13 +60,17 @@ export async function bookChat(user, { message, bookId, clubId, conversationId }
 
     if (await isOllamaUp()) {
       try {
-        const res = await chat.invoke([
-          [
-            'system',
-            "Answer only from the store documents provided. Cite claims using [1] or [2]. If the answer isn't in the documents, say you don't know. Do not invent store policies.",
-          ],
-          ['human', `CONTEXT:\n${context}\n\nQUESTION: ${message}`],
-        ]);
+        const res = await withTimeout(
+          chat.invoke([
+            [
+              'system',
+              "Answer only from the store documents provided. Cite claims using [1] or [2]. If the answer isn't in the documents, say you don't know. Do not invent store policies.",
+            ],
+            ['human', `CONTEXT:\n${context}\n\nQUESTION: ${message}`],
+          ]),
+          AI_TIMEOUT_MS,
+          'Shop chat',
+        );
 
         answer = String(res.content);
       } catch (err) {
@@ -120,10 +125,14 @@ export async function bookChat(user, { message, bookId, clubId, conversationId }
 
   if (await isOllamaUp()) {
     try {
-      const res = await chat.invoke([
-        ['system', buildSystemPrompt(boundary.chapter)],
-        ['human', `CONTEXT:\n${context}\n\nQUESTION: ${message}`],
-      ]);
+      const res = await withTimeout(
+        chat.invoke([
+          ['system', buildSystemPrompt(boundary.chapter)],
+          ['human', `CONTEXT:\n${context}\n\nQUESTION: ${message}`],
+        ]),
+        AI_TIMEOUT_MS,
+        'Chapter chat',
+      );
 
       answer = String(res.content);
     } catch {
