@@ -1,9 +1,11 @@
 import { embeddings, requireOllama } from '../ollama.js';
+import { withTimeout, AI_TIMEOUT_MS } from '../timeout.js';
 import Book from '../../modules/books/model.js';
 
 export async function vectorSearchBooks(q, limit) {
   await requireOllama();
-  const vector = await embeddings.embedQuery(q);
+
+  const vector = await withTimeout(embeddings.embedQuery(q), AI_TIMEOUT_MS, 'Smart Search');
 
   return Book.aggregate([
     {
@@ -34,6 +36,7 @@ export async function similarBooks(bookId, limit) {
   const book = await Book.findOne({ _id: bookId, approvedSource: true })
     .select('+embedding')
     .lean();
+
   if (!book) return null;
   if (!book.embedding || book.embedding.length === 0) return [];
 

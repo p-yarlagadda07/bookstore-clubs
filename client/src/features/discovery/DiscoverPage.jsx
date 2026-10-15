@@ -43,7 +43,7 @@ export default function DiscoverPage() {
       setBooks(result.items ?? []);
     } catch (err) {
       setError(
-        err.code === 'AI_UNAVAILABLE'
+        err.code === 'AI_UNAVAILABLE' || err.code === 'AI_TIMEOUT'
           ? 'Smart Search is offline right now.'
           : err.message || 'Something went wrong. Please try again.',
       );
