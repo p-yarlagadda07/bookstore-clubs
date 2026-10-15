@@ -1,3 +1,4 @@
+
 import { searchExcerpts } from './excerptRetriever.js';
 import { searchStoreDocs } from './policyRetriever.js';
 import { getBoundary } from '../../modules/progress/service.js';
@@ -48,7 +49,9 @@ export async function bookChat(user, { message, bookId, clubId, conversationId }
       );
     }
 
-    const context = docs.map((doc, i) => `[${i + 1}] ${doc.title}\n${doc.text}`).join('\n\n');
+    const context = docs
+      .map((doc, i) => `[${i + 1}] ${doc.title}\n${doc.text}`)
+      .join('\n\n');
 
     const citations = docs.map((doc, i) => ({
       n: i + 1,
@@ -99,6 +102,7 @@ export async function bookChat(user, { message, bookId, clubId, conversationId }
         answer: "Tell me which chapter you're on first, so I don't spoil anything.",
         status: 'needs_progress',
         citations: [],
+        strict: boundary.strict,
       },
     );
   }
@@ -113,6 +117,7 @@ export async function bookChat(user, { message, bookId, clubId, conversationId }
         answer: "I don't have approved material about that yet.",
         status: 'not_in_sources',
         citations: [],
+        strict: boundary.strict,
       },
     );
   }
@@ -163,6 +168,7 @@ export async function bookChat(user, { message, bookId, clubId, conversationId }
       answer,
       status: 'answered',
       citations,
+      strict: boundary.strict,
     },
   );
 }

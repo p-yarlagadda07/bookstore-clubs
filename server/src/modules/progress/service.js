@@ -1,3 +1,4 @@
+
 import mongoose from 'mongoose';
 import Progress from './model.js';
 
@@ -27,7 +28,7 @@ export async function getMyProgress(user, bookId) {
 // eslint-disable-next-line no-unused-vars
 export async function getBoundary(userId, bookId, clubId) {
   const progress = await Progress.findOne({ userId, bookId }).lean();
-  // User model is Yasaswi's, so read the settings straight from the collection
+
   const user = await mongoose.connection
     .collection('users')
     .findOne(
@@ -36,12 +37,21 @@ export async function getBoundary(userId, bookId, clubId) {
     );
 
   const declared = progress?.chapter ?? 0;
+  const page = progress?.page ?? 0;
   const settings = user?.spoilerSettings;
-  const limit = settings?.strict && settings.maxChapter != null ? settings.maxChapter : declared;
+
+  let chapter = settings?.strict
+    ? Math.max(declared - 1, 0)
+    : declared;
+
+  if (settings?.strict && settings.maxChapter != null) {
+    chapter = Math.min(chapter, settings.maxChapter);
+  }
 
   return {
-    chapter: Math.min(declared, limit),
-    page: progress?.page ?? 0,
+    chapter,
+    page,
     declared: !!progress,
+    strict: !!settings?.strict,
   };
 }
