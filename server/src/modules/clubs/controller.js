@@ -4,6 +4,7 @@ import {
   getPublishedClubs,
   getPublishedClubById,
   joinClub,
+  leaveClub,
   getClubProgress,
   getClubPace,
   createMeeting,
@@ -19,7 +20,8 @@ export const listClubs = async (_req, res) => {
 };
 
 export const getClub = async (req, res) => {
-  const club = await getPublishedClubById(req.params.id);
+  const userId = req.session?.userId ?? req.user?._id ?? null;
+  const club = await getPublishedClubById(req.params.id, userId);
   if (!club) throw new AppError('NOT_FOUND', 404, 'Club not found');
   res.ok(club);
 };
@@ -38,6 +40,11 @@ export const joinClubController = async (req, res) => {
   }
 
   res.ok(result.membership, 201);
+};
+
+export const leaveClubController = async (req, res) => {
+  const result = await leaveClub(req.params.id, req.user._id);
+  res.ok(result);
 };
 
 export const getClubProgressController = async (req, res) => {
