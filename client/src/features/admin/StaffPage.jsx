@@ -72,6 +72,7 @@ function StaffPage() {
             placeholder="Search by name or email..."
             aria-label="Search users by name or email"
           />
+
           <span className="staff-count">
             {users.length} {users.length === 1 ? 'user' : 'users'}
           </span>
@@ -82,10 +83,10 @@ function StaffPage() {
         ) : isError ? (
           <EmptyState
             title="Could not load staff"
-            description="Please check your access and try again."
+            message="Please check your access and try again."
           />
         ) : users.length === 0 ? (
-          <EmptyState title="No users found" description="Try another name or email." />
+          <EmptyState title="No users found" message="Try another name or email." />
         ) : (
           <div className="staff-table-wrap">
             <table className="staff-table">
@@ -97,6 +98,7 @@ function StaffPage() {
                   <th>Club moderation</th>
                 </tr>
               </thead>
+
               <tbody>
                 {users.map((item) => {
                   const isSelf = String(item.id) === String(user?._id ?? user?.id);
@@ -120,7 +122,7 @@ function StaffPage() {
                                   ? 'success'
                                   : role === 'admin'
                                     ? 'accent'
-                                    : 'default'
+                                    : 'muted'
                               }
                             >
                               {role}
@@ -151,6 +153,7 @@ function StaffPage() {
                           {(item.moderatorOf ?? []).map((club) => (
                             <span className="staff-moderator" key={club.id}>
                               {club.name}
+
                               {!isSelf && (
                                 <button
                                   type="button"
@@ -176,6 +179,7 @@ function StaffPage() {
                               onChange={(event) => changeSelectedClub(item.id, event.target.value)}
                             >
                               <option value="">Choose a club</option>
+
                               {clubs
                                 .filter(
                                   (club) =>
@@ -190,6 +194,7 @@ function StaffPage() {
                                   </option>
                                 ))}
                             </select>
+
                             <Button
                               type="button"
                               variant="secondary"
