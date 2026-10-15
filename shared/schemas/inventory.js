@@ -19,3 +19,16 @@ export const AdjustStockBody = z
   .refine((v) => v.delta !== undefined || v.status !== undefined, {
     message: 'Send delta or status',
   });
+export const PickupWindowBody = z
+  .object({
+    start: z.string().datetime(),
+    end: z.string().datetime(),
+  })
+  .refine((value) => new Date(value.end) > new Date(value.start), {
+    message: 'End must be after start',
+    path: ['end'],
+  })
+  .refine((value) => new Date(value.start) > new Date(), {
+    message: 'Start must be in the future',
+    path: ['start'],
+  });
