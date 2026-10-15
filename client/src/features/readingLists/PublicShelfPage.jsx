@@ -1,4 +1,3 @@
-
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api/client.js';
@@ -37,7 +36,12 @@ export default function PublicShelfPage() {
   });
 
   if (isLoading) {
-    return <section className="books-page"><h1>Public Shelf</h1><p>Loading shelf...</p></section>;
+    return (
+      <section className="books-page">
+        <h1>Public Shelf</h1>
+        <p>Loading shelf...</p>
+      </section>
+    );
   }
 
   if (isError) {
@@ -64,9 +68,7 @@ export default function PublicShelfPage() {
           {booksQuery.data?.map((item) => (
             <li key={item.bookId}>
               {item.book ? (
-                <Link to={`/books/${item.book._id ?? item.book.id}`}>
-                  {item.book.title}
-                </Link>
+                <Link to={`/books/${item.book._id ?? item.book.id}`}>{item.book.title}</Link>
               ) : (
                 <span>Book details unavailable</span>
               )}
