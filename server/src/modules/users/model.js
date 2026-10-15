@@ -3,14 +3,24 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
     passwordHash: { type: String, required: true },
     emailVerifiedAt: { type: Date, default: null },
     verifyTokenHash: { type: String, select: false },
     verifyTokenExpires: { type: Date },
     resetTokenHash: { type: String, select: false },
     resetTokenExpires: { type: Date },
-    roles: { type: [String], enum: ['reader', 'bookseller', 'admin'], default: ['reader'] },
+    roles: {
+      type: [String],
+      enum: ['reader', 'bookseller', 'admin'],
+      default: ['reader'],
+    },
     moderatorOf: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Club' }],
     preferences: {
       genres: { type: [String], default: [] },
@@ -19,7 +29,7 @@ const userSchema = new mongoose.Schema(
       bookmarkVisibility: {
         type: String,
         enum: ['private', 'club', 'public'],
-        default: 'private',
+        default: 'club',
       },
     },
     spoilerSettings: {
