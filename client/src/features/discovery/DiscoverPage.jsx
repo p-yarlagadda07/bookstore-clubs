@@ -125,7 +125,7 @@ export default function DiscoverPage() {
                 <h3>
                   <Link to={`/books/${book.id}`}>{book.title}</Link>
                 </h3>
-
+                {book.why && <p className="discover-synopsis">{book.why}</p>}
                 <p className="discover-authors">
                   {Array.isArray(book.authors) ? book.authors.join(', ') : book.authors}
                 </p>
