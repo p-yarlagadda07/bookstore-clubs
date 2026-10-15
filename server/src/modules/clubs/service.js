@@ -51,7 +51,7 @@ export const getPublishedClubs = async () => {
   return { items };
 };
 
-export const getPublishedClubById = async (id) => {
+export const getPublishedClubById = async (id, userId = null) => {
   const club = await Club.findOne({ _id: id, published: true }).lean();
   if (!club) return null;
 
@@ -60,11 +60,14 @@ export const getPublishedClubById = async (id) => {
     .sort({ date: 1 })
     .lean();
 
+  const isMemberStatus = userId ? await isMember(id, userId) : false;
+
   return {
     id: club._id,
     name: club.name,
     description: club.description,
     rules: club.rules,
+    isMember: isMemberStatus,
     currentBook: toBook(books.get(String(club.currentBookId))),
     meetings: meetings.map(toMeeting),
   };
@@ -87,6 +90,22 @@ export const joinClub = async (clubId, user) => {
     throw err;
   }
 };
+
+export async function leaveClub(clubId, userId) {
+  const membership = await Membership.findOne({
+    clubId,
+    userId,
+    status: 'active',
+  });
+
+  if (!membership) {
+    throw new AppError('NOT_FOUND', 404, 'You are not a member of this club');
+  }
+
+  await Membership.deleteOne({ _id: membership._id });
+
+  return { left: true };
+}
 
 export async function getClub(id) {
   return Club.findById(id).lean();
