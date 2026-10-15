@@ -5,6 +5,7 @@ import { validate } from '../../middleware/validate.js';
 import { runAgent } from './chain.js';
 import { startStream, send } from './events.js';
 import { getConstraints } from '../../modules/clubs/service.js';
+import { withTimeout } from '../timeout.js';
 
 const router = Router();
 
@@ -22,9 +23,7 @@ router.post(
     try {
       const { clubId, request } = req.body;
 
-      // Get real club constraints BEFORE starting the SSE stream.
-      // Errors such as 403 (non-member) and 404 (club not found)
-      // are handled by the normal error middleware.
+      // Get real club constraints before starting the SSE stream.
       const constraints = await getConstraints(clubId, req.user);
 
       if (closed) return;
@@ -37,11 +36,15 @@ router.post(
         }
       };
 
-      const result = await runAgent({
-        constraints,
-        request,
-        emit,
-      });
+      const result = await withTimeout(
+        runAgent({
+          constraints,
+          request,
+          emit,
+        }),
+        45000,
+        'Next Read agent',
+      );
 
       if (closed) return;
 
@@ -52,7 +55,7 @@ router.post(
 
       if (res.headersSent) {
         send(res, 'error', {
-          code: 'AGENT_FAILED',
+          code: err.code || 'AGENT_FAILED',
           message: err instanceof Error ? err.message : 'Agent failed',
         });
         res.end();
