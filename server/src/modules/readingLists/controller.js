@@ -7,6 +7,9 @@ import {
   removeItem,
   deleteList,
 } from './service.js';
+export async function getPublic(req, res) {
+  res.ok(await getPublicList(req.params.id));
+}
 
 export async function list(req, res) {
   res.ok({ items: await listMine(req.user) });

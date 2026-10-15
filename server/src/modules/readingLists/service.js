@@ -106,3 +106,15 @@ export async function deleteList(user, id) {
 
   return list;
 }
+export async function getPublicList(id) {
+  const list = await ReadingList.findOne({
+    _id: id,
+    visibility: 'public',
+  }).lean();
+
+  if (!list) {
+    throw new AppError('NOT_FOUND', 404, 'Public shelf not found');
+  }
+
+  return list;
+}

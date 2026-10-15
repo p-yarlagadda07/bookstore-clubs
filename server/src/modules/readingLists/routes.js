@@ -23,6 +23,11 @@ router.post(
   asyncHandler(controller.create),
 );
 router.get(
+  '/reading-lists/:id/public',
+  validate({ params: IdParams }),
+  asyncHandler(controller.getPublic),
+);
+router.get(
   '/reading-lists/:id',
   requireAuth,
   validate({ params: IdParams }),
