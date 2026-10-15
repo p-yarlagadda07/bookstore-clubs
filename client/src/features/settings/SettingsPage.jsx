@@ -46,8 +46,8 @@ const DEFAULTS = {
   genres: [],
   moods: [],
   maxPages: '',
-  spoilerStrict: true,
-  bookmarkVisibility: 'private',
+  spoilerStrict: false,
+  bookmarkVisibility: 'club',
 };
 
 export default function SettingsPage() {
@@ -69,8 +69,8 @@ export default function SettingsPage() {
         genres: data.genres ?? [],
         moods: data.moods ?? [],
         maxPages: data.maxPages == null ? '' : String(data.maxPages),
-        spoilerStrict: data.spoilerStrict ?? true,
-        bookmarkVisibility: data.bookmarkVisibility ?? 'private',
+        spoilerStrict: data.spoilerStrict ?? false,
+        bookmarkVisibility: data.bookmarkVisibility ?? 'club',
       });
     }
   }, [data]);
@@ -105,6 +105,7 @@ export default function SettingsPage() {
         ? current[field].filter((value) => value !== item)
         : [...current[field], item],
     }));
+
     setSaved(false);
     setMessage('');
   }
