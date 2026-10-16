@@ -10,6 +10,14 @@ export const requireAuth = async (req, _res, next) => {
     if (!req.session?.userId) throw new AppError('UNAUTHENTICATED', 401, 'Please log in');
     const user = await User.findById(req.session.userId).select('-passwordHash').lean();
     if (!user) throw new AppError('UNAUTHENTICATED', 401, 'Session expired, please log in again');
+    // a session from before the last password change is no longer valid
+    if (
+      user.passwordChangedAt &&
+      (!req.session.loginAt || req.session.loginAt < new Date(user.passwordChangedAt).getTime())
+    ) {
+      await new Promise((resolve) => req.session.destroy(() => resolve()));
+      throw new AppError('UNAUTHENTICATED', 401, 'Your password was changed, please log in again');
+    }
     req.user = user;
     next();
   } catch (err) {
