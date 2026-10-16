@@ -25,6 +25,7 @@ export default function ChapterChatPage() {
   const [bookId, setBookId] = useState(initialBookId);
   const [chapter, setChapter] = useState('');
   const [savedChapter, setSavedChapter] = useState(null);
+  const [visibility, setVisibility] = useState('club');
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const [conversationId, setConversationId] = useState(null);
@@ -83,9 +84,13 @@ export default function ChapterChatPage() {
     if (selectedBookmark?.chapter != null) {
       setSavedChapter(selectedBookmark.chapter);
       setChapter(String(selectedBookmark.chapter));
+      if (selectedBookmark.visibility) {
+        setVisibility(selectedBookmark.visibility);
+      }
     } else {
       setSavedChapter(null);
       setChapter('');
+      setVisibility('club');
     }
   }, [selectedBookmark]);
 
@@ -110,6 +115,7 @@ export default function ChapterChatPage() {
       await setBookmark({
         bookId,
         chapter: Number(chapter),
+        visibility,
       });
 
       setSavedChapter(Number(chapter));
@@ -229,6 +235,19 @@ export default function ChapterChatPage() {
               placeholder="e.g. 4"
               required
             />
+
+            <div className="chat-book-select">
+              <label htmlFor="bookmark-visibility">Bookmark visibility</label>
+              <select
+                id="bookmark-visibility"
+                value={visibility}
+                onChange={(event) => setVisibility(event.target.value)}
+              >
+                <option value="private">Only me</option>
+                <option value="club">My club</option>
+                <option value="public">Everyone</option>
+              </select>
+            </div>
 
             <Button type="submit" disabled={saving || !bookId}>
               {saving ? 'Saving...' : 'Save chapter'}
