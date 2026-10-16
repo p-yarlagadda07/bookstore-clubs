@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose';
 import Progress from './model.js';
 
@@ -40,9 +39,7 @@ export async function getBoundary(userId, bookId, clubId) {
   const page = progress?.page ?? 0;
   const settings = user?.spoilerSettings;
 
-  let chapter = settings?.strict
-    ? Math.max(declared - 1, 0)
-    : declared;
+  let chapter = settings?.strict ? Math.max(declared - 1, 0) : declared;
 
   if (settings?.strict && settings.maxChapter != null) {
     chapter = Math.min(chapter, settings.maxChapter);

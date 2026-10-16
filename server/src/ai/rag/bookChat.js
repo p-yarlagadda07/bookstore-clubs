@@ -1,4 +1,3 @@
-
 import { searchExcerpts } from './excerptRetriever.js';
 import { searchStoreDocs } from './policyRetriever.js';
 import { getBoundary } from '../../modules/progress/service.js';
@@ -49,9 +48,7 @@ export async function bookChat(user, { message, bookId, clubId, conversationId }
       );
     }
 
-    const context = docs
-      .map((doc, i) => `[${i + 1}] ${doc.title}\n${doc.text}`)
-      .join('\n\n');
+    const context = docs.map((doc, i) => `[${i + 1}] ${doc.title}\n${doc.text}`).join('\n\n');
 
     const citations = docs.map((doc, i) => ({
       n: i + 1,
