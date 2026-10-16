@@ -2,9 +2,23 @@ import { Link, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client.js';
 import { getBook } from '../books/booksApi.js';
+import { useState } from 'react';
 
 export default function ListDetailPage() {
   const { id } = useParams();
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  const publicUrl = `${window.location.origin}/shelves/${id}`;
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch {
+      setLinkCopied(false);
+    }
+  };
   const queryClient = useQueryClient();
 
   const {
@@ -20,6 +34,13 @@ export default function ListDetailPage() {
 
   const removeMutation = useMutation({
     mutationFn: (bookId) => api.delete(`/reading-lists/${id}/items/${bookId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reading-list', id] });
+      queryClient.invalidateQueries({ queryKey: ['reading-lists'] });
+    },
+  });
+  const shareMutation = useMutation({
+    mutationFn: (visibility) => api.patch(`/reading-lists/${id}`, { visibility }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reading-list', id] });
       queryClient.invalidateQueries({ queryKey: ['reading-lists'] });
@@ -69,6 +90,30 @@ export default function ListDetailPage() {
       <Link to="/lists">← Back to my lists</Link>
       <h1>{list.name}</h1>
       <p>{items.length} books in this list</p>
+
+      <label>
+        <input
+          type="checkbox"
+          checked={list.visibility === 'public'}
+          onChange={(e) => shareMutation.mutate(e.target.checked ? 'public' : 'private')}
+          disabled={shareMutation.isPending}
+        />
+        Share this shelf
+      </label>
+
+      {list.visibility === 'public' && (
+        <div>
+          <p>Anyone with the link can view this shelf.</p>
+          <a href={publicUrl}>{publicUrl}</a>
+          <button type="button" onClick={copyLink}>
+            {linkCopied ? 'Link copied' : 'Copy link'}
+          </button>
+        </div>
+      )}
+
+      {shareMutation.isError && (
+        <p role="alert">{shareMutation.error?.message || 'Could not update shelf visibility.'}</p>
+      )}
 
       {removeMutation.isError && (
         <p role="alert">{removeMutation.error?.message || 'Could not remove the book.'}</p>

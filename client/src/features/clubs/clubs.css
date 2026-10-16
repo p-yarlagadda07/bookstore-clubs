@@ -95,9 +95,9 @@
 
 .club-detail-card {
   padding: 28px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 .club-detail-header {
@@ -140,7 +140,7 @@
   display: grid;
   gap: 6px;
   padding: 16px;
-  border: 1px solid #e2e2e2;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
 }
 
@@ -170,6 +170,7 @@
     font-size: 26px;
   }
 }
+
 .meeting-card .btn {
   align-self: flex-start;
   text-decoration: none;
