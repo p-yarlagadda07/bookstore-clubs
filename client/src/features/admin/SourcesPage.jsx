@@ -1,23 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client.js';
-import {
-  Badge,
-  Button,
-  Card,
-  EmptyState,
-  PageTitle,
-  Spinner,
-} from '../../components/index.js';
+import { Badge, Button, Card, EmptyState, PageTitle, Spinner } from '../../components/index.js';
 import './sources.css';
 
 function SourcesPage() {
   const queryClient = useQueryClient();
 
-  const {
-    data,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['sources'],
     queryFn: () => api.get('/admin/sources'),
   });
@@ -25,8 +14,7 @@ function SourcesPage() {
   const sources = data?.items ?? [];
 
   const permissionMutation = useMutation({
-    mutationFn: ({ id, permission }) =>
-      api.patch(`/admin/sources/${id}`, { permission }),
+    mutationFn: ({ id, permission }) => api.patch(`/admin/sources/${id}`, { permission }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sources'] });
       queryClient.invalidateQueries({ queryKey: ['books'] });
@@ -36,9 +24,7 @@ function SourcesPage() {
   function changePermission(source, permission) {
     if (
       permission === 'revoked' &&
-      !window.confirm(
-        `Its ${source.bookCount} books will be hidden from the shop.`,
-      )
+      !window.confirm(`Its ${source.bookCount} books will be hidden from the shop.`)
     ) {
       return;
     }
@@ -69,10 +55,7 @@ function SourcesPage() {
           message="Please check your admin access and try again."
         />
       ) : sources.length === 0 ? (
-        <EmptyState
-          title="No catalog sources"
-          message="There are no sources to display."
-        />
+        <EmptyState title="No catalog sources" message="There are no sources to display." />
       ) : (
         <div className="sources-list">
           {sources.map((source) => (
@@ -81,9 +64,7 @@ function SourcesPage() {
                 <div className="sources-info">
                   <div className="sources-heading">
                     <h2>{source.name}</h2>
-                    <Badge tone={badgeTone(source.permission)}>
-                      {source.permission}
-                    </Badge>
+                    <Badge tone={badgeTone(source.permission)}>{source.permission}</Badge>
                   </div>
 
                   <dl className="sources-details">
@@ -109,9 +90,7 @@ function SourcesPage() {
                     <Button
                       type="button"
                       disabled={permissionMutation.isPending}
-                      onClick={() =>
-                        changePermission(source, 'approved')
-                      }
+                      onClick={() => changePermission(source, 'approved')}
                     >
                       Approve
                     </Button>
@@ -122,9 +101,7 @@ function SourcesPage() {
                       type="button"
                       variant="secondary"
                       disabled={permissionMutation.isPending}
-                      onClick={() =>
-                        changePermission(source, 'revoked')
-                      }
+                      onClick={() => changePermission(source, 'revoked')}
                     >
                       Revoke
                     </Button>
@@ -138,8 +115,7 @@ function SourcesPage() {
 
       {permissionMutation.isError && (
         <p className="sources-error" role="alert">
-          {permissionMutation.error?.message ??
-            'Could not update the source. Please try again.'}
+          {permissionMutation.error?.message ?? 'Could not update the source. Please try again.'}
         </p>
       )}
     </main>
