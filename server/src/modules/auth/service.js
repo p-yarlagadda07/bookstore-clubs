@@ -65,7 +65,7 @@ export async function requestReset(email) {
     {
       $set: {
         resetTokenHash: sha256(token),
-        resetTokenExpires: new Date(Date.now() + 60 * 60 * 1000),
+        resetTokenExpires: new Date(Date.now() + 30 * 60 * 1000),
       },
     },
   );
@@ -77,7 +77,7 @@ export async function resetPassword(token, password) {
   const user = await User.findOneAndUpdate(
     { resetTokenHash: sha256(token), resetTokenExpires: { $gt: new Date() } },
     {
-      $set: { passwordHash: await argon2.hash(password) },
+      $set: { passwordHash: await argon2.hash(password), passwordChangedAt: new Date() },
       $unset: { resetTokenHash: 1, resetTokenExpires: 1 },
     },
     { new: true },

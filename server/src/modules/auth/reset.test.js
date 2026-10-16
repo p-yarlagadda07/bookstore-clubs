@@ -102,3 +102,50 @@ describe('reset', () => {
     expect(res.body.error.code).toBe('VALIDATION_ERROR');
   });
 });
+describe('reset security', () => {
+  // the forgot limit is 5 per IP and the tests above use them up, so use other IPs here
+  async function forgotFrom(ip, email) {
+    const agent = request.agent(app);
+    const { body } = await agent.get('/api/auth/csrf');
+    return agent
+      .post('/api/auth/forgot')
+      .set('x-csrf-token', body.data.token)
+      .set('X-Forwarded-For', ip)
+      .send({ email });
+  }
+
+  it('the reset link lasts 30 minutes', async () => {
+    await makeUser('dev30@test.local');
+    expect((await forgotFrom('10.0.0.1', 'dev30@test.local')).status).toBe(200);
+    const user = await User.findOne({ email: 'dev30@test.local' }).lean();
+    const minutes = (new Date(user.resetTokenExpires).getTime() - Date.now()) / 60000;
+    expect(minutes).toBeGreaterThan(29);
+    expect(minutes).toBeLessThanOrEqual(30);
+  });
+
+  it('logs out old sessions after a reset, and a new login works', async () => {
+    await makeUser('dina@test.local');
+
+    // agent A logs in with the old password
+    const a = request.agent(app);
+    const { body } = await a.get('/api/auth/csrf');
+    const login = await a
+      .post('/api/auth/login')
+      .set('x-csrf-token', body.data.token)
+      .send({ email: 'dina@test.local', password: OLD });
+    expect(login.status).toBe(200);
+    expect((await a.get('/api/auth/me')).status).toBe(200);
+
+    // password is reset through the link
+    expect((await forgotFrom('10.0.0.2', 'dina@test.local')).status).toBe(200);
+    const token = lastToken();
+    expect((await post('/api/auth/reset', { token, password: NEW })).status).toBe(200);
+
+    // agent A's old session no longer works
+    expect((await a.get('/api/auth/me')).status).toBe(401);
+
+    // logging in again with the new password works
+    const again = await post('/api/auth/login', { email: 'dina@test.local', password: NEW });
+    expect(again.status).toBe(200);
+  });
+});
