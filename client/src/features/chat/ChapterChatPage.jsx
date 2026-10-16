@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import api from '../../api/client.js';
 
 import {
@@ -33,6 +34,10 @@ export default function ChapterChatPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [chatRefreshKey, setChatRefreshKey] = useState(0);
+  const { data: prefs } = useQuery({
+    queryKey: ['myPreferences'],
+    queryFn: () => api.get('/users/me/preferences'),
+  });
 
   const selectedBookmark = useMemo(
     () => bookmarks.find((item) => String(item.bookId) === String(bookId)),
@@ -91,9 +96,9 @@ export default function ChapterChatPage() {
     } else {
       setSavedChapter(null);
       setChapter('');
-      setVisibility('club');
+      setVisibility(prefs?.bookmarkVisibility ?? 'club');
     }
-  }, [selectedBookmark]);
+  }, [selectedBookmark, prefs]);
 
   function switchTab(nextTab) {
     setTab(nextTab);
