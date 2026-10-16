@@ -7,11 +7,18 @@ export async function setProgress(user, { bookId, clubId, chapter, page, visibil
   if (page !== undefined) update.page = page;
   if (visibility !== undefined) update.visibility = visibility;
 
-  return Progress.findOneAndUpdate(
-    { userId: user._id, bookId },
-    { $set: update },
-    { new: true, upsert: true, runValidators: true },
-  ).lean();
+  const updateOperation = { $set: update };
+  if (visibility === undefined) {
+    updateOperation.$setOnInsert = {
+      visibility: user.preferences?.bookmarkVisibility ?? 'club',
+    };
+  }
+
+  return Progress.findOneAndUpdate({ userId: user._id, bookId }, updateOperation, {
+    new: true,
+    upsert: true,
+    runValidators: true,
+  }).lean();
 }
 
 export async function listMyProgress(user) {

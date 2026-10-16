@@ -25,6 +25,7 @@ export default function ClubDetailPage() {
 
         if (!cancelled) {
           setClub(clubData);
+          setIsJoined(Boolean(clubData.isMember));
         }
       } catch (err) {
         if (!cancelled) {
@@ -60,6 +61,25 @@ export default function ClubDetailPage() {
       } else {
         setError(err?.message ?? 'Unable to join club.');
       }
+    } finally {
+      setJoining(false);
+    }
+  }
+
+  async function handleLeave() {
+    if (!isJoined || joining) return;
+    if (!window.confirm('Are you sure you want to leave this club?')) return;
+
+    try {
+      setJoining(true);
+      setError('');
+      await api.delete(`/clubs/${id}/membership`);
+      setIsJoined(false);
+      const clubData = await api.get(`/clubs/${id}`);
+      setClub(clubData);
+      setIsJoined(Boolean(clubData.isMember));
+    } catch (err) {
+      setError(err?.message ?? 'Unable to leave club.');
     } finally {
       setJoining(false);
     }
@@ -104,8 +124,18 @@ export default function ClubDetailPage() {
             <h1>{club.name}</h1>
           </div>
 
-          <button className="club-button" onClick={handleJoin} disabled={isJoined || joining}>
-            {joining ? 'Joining...' : isJoined ? 'Joined' : 'Join Club'}
+          <button
+            className="club-button"
+            onClick={isJoined ? handleLeave : handleJoin}
+            disabled={joining}
+          >
+            {joining
+              ? isJoined
+                ? 'Leaving...'
+                : 'Joining...'
+              : isJoined
+                ? 'Leave club'
+                : 'Join Club'}
           </button>
         </div>
 

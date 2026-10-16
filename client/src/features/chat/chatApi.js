@@ -1,7 +1,7 @@
 import api from '../../api/client.js';
 
-export async function setBookmark({ bookId, clubId, chapter }) {
-  return api.patch('/reading-progress', { bookId, clubId, chapter });
+export async function setBookmark({ bookId, clubId, chapter, visibility }) {
+  return api.patch('/reading-progress', { bookId, clubId, chapter, visibility });
 }
 
 export async function getMyBookmarks() {
