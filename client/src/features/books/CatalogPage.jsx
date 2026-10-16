@@ -1,7 +1,9 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Badge, Card, EmptyState, Input, PageTitle, Spinner } from '../../components/index.js';
+import useMe from '../../app/useMe.js';
+import api from '../../api/client.js';
 import { stockTone } from './stockTone.js';
 import { spineColor } from './spine.js';
 import { listBooks } from './booksApi.js';
@@ -47,6 +49,15 @@ const MOODS = [
 
 export default function CatalogPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [preferencesCleared, setPreferencesCleared] = useState(false);
+  const { user } = useMe();
+
+  const { data: preferences } = useQuery({
+    queryKey: ['myPreferences'],
+    queryFn: () => api.get('/users/me/preferences'),
+    enabled: Boolean(user),
+    retry: false,
+  });
 
   const params = useMemo(
     () => ({
@@ -61,13 +72,54 @@ export default function CatalogPage() {
     [searchParams],
   );
 
+  const fromSettings = searchParams.get('fromSettings') === 'true';
+
+  useEffect(() => {
+    if (!user || !preferences || preferencesCleared) return;
+
+    const filterKeys = ['q', 'theme', 'mood', 'maxPages', 'available'];
+    const hasUrlFilters = filterKeys.some((key) => searchParams.has(key));
+
+    if (hasUrlFilters) return;
+
+    const next = new URLSearchParams(searchParams);
+    let appliedPreferences = false;
+
+    const preferredTheme = preferences.genres?.find((genre) => THEMES.includes(genre));
+    const preferredMood = preferences.moods?.find((mood) => MOODS.includes(mood));
+
+    if (preferredTheme) {
+      next.set('theme', preferredTheme);
+      appliedPreferences = true;
+    }
+
+    if (preferredMood) {
+      next.set('mood', preferredMood);
+      appliedPreferences = true;
+    }
+
+    if (preferences.maxPages != null && preferences.maxPages !== '') {
+      next.set('maxPages', String(preferences.maxPages));
+      appliedPreferences = true;
+    }
+
+    if (appliedPreferences) {
+      next.delete('page');
+      next.set('fromSettings', 'true');
+      setSearchParams(next, { replace: true });
+    }
+  }, [user, preferences, preferencesCleared, searchParams, setSearchParams]);
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['books', params],
     queryFn: () => listBooks(params),
   });
 
   function updateParam(name, value) {
+    setPreferencesCleared(true);
+
     const next = new URLSearchParams(searchParams);
+    next.delete('fromSettings');
 
     if (value === '' || value === false) {
       next.delete(name);
@@ -83,6 +135,7 @@ export default function CatalogPage() {
   }
 
   function clearFilters() {
+    setPreferencesCleared(true);
     setSearchParams({});
   }
 
@@ -95,6 +148,15 @@ export default function CatalogPage() {
       <PageTitle number="02" label="The shelves" title="Catalog">
         Browse everything we stock and hold a copy for pickup.
       </PageTitle>
+
+      {fromSettings && (
+        <p className="preferences-note">
+          From your settings{' '}
+          <button type="button" className="clear-filters" onClick={clearFilters}>
+            Clear
+          </button>
+        </p>
+      )}
 
       <section className="book-filters">
         <Input
@@ -198,9 +260,7 @@ export default function CatalogPage() {
                   </div>
 
                   <h2>{book.title}</h2>
-
                   <p className="book-authors">By {book.authors.join(', ')}</p>
-
                   <p className="book-pages">{book.pageCount} pages</p>
 
                   <div className="book-chips">

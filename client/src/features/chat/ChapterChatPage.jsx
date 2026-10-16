@@ -63,6 +63,7 @@ export default function ChapterChatPage() {
             }
           }),
         );
+
         if (active) {
           setBookTitles(Object.fromEntries(pairs));
         }
@@ -148,6 +149,7 @@ export default function ChapterChatPage() {
       if (result.conversationId) {
         setConversationId(result.conversationId);
       }
+
       setMessages((current) => [
         ...current,
         {
@@ -155,6 +157,7 @@ export default function ChapterChatPage() {
           text: result.answer ?? 'No answer was returned.',
           status: result.status,
           citations: result.citations ?? [],
+          strict: result.strict === true,
         },
       ]);
       setChatRefreshKey((k) => k + 1);
@@ -266,6 +269,7 @@ export default function ChapterChatPage() {
           <ErrorState message={error} />
         </div>
       )}
+
       <Card title={tab === 'chapter' ? 'Chapter Chat' : 'Ask the Shop'}>
         {tab === 'chapter' ? (
           <p className="chat-intro">
@@ -278,6 +282,7 @@ export default function ChapterChatPage() {
             to select a book.
           </p>
         )}
+
         <div className="chat-messages" aria-live="polite">
           {messages.length === 0 && !loading && (
             <div className="chat-empty">
@@ -288,17 +293,25 @@ export default function ChapterChatPage() {
               </p>
             </div>
           )}
+
           {messages.map((item, index) => (
             <div className={`chat-message ${item.role}`} key={`${item.role}-${index}`}>
               <div className="chat-bubble">
                 <span className="chat-speaker">{item.role === 'user' ? 'You' : 'Booklore'}</span>
+                {item.role === 'assistant' && item.strict === true && (
+                  <p>
+                    <Badge tone="accent">Strict spoilers on</Badge>
+                  </p>
+                )}
                 <p>{item.text}</p>
+
                 {item.status === 'needs_progress' && (
                   <p className="chat-muted">
                     Save your current chapter above so we can keep answers within your reading
                     progress.
                   </p>
                 )}
+
                 {item.citations?.length > 0 && (
                   <div className="chat-citations">
                     <strong>Sources</strong>
@@ -320,6 +333,7 @@ export default function ChapterChatPage() {
               </div>
             </div>
           ))}
+
           {loading && (
             <div className="chat-message assistant">
               <div className="chat-bubble thinking">
@@ -329,6 +343,7 @@ export default function ChapterChatPage() {
             </div>
           )}
         </div>
+
         <form className="chat-composer" onSubmit={handleAsk}>
           <Input
             label="Your question"

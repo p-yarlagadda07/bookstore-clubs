@@ -10,6 +10,7 @@ export async function login(req, res) {
     req.session.regenerate((err) => (err ? reject(err) : resolve())),
   );
   req.session.userId = String(user._id);
+  req.session.loginAt = Date.now();
   res.ok({ user });
 }
 

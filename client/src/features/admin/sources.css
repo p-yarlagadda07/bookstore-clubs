@@ -1,0 +1,63 @@
+.sources-page {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.sources-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.sources-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.sources-info {
+  flex: 1;
+  min-width: 220px;
+}
+
+.sources-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sources-heading h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.sources-details {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin: 1rem 0 0;
+}
+
+.sources-details dt {
+  color: var(--color-text);
+  opacity: 0.7;
+  font-size: 0.85rem;
+}
+
+.sources-details dd {
+  margin: 0.25rem 0 0;
+  font-weight: 500;
+}
+
+.sources-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sources-error {
+  color: var(--color-danger);
+}

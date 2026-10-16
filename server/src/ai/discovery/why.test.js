@@ -23,4 +23,17 @@ describe('whyItMatched', () => {
   it('handles missing themes and moods', () => {
     expect(whyItMatched('a mystery', {})).toBe('Close to how you described it');
   });
+
+  it('matches query words in the book title and synopsis', () => {
+    const book = {
+      title: 'The Lantern Keeper',
+      synopsis: 'A granddaughter discovers secrets near the lighthouse.',
+      themes: [],
+      moods: [],
+    };
+
+    expect(whyItMatched("a story about the lighthouse keeper's granddaughter", book)).toBe(
+      'Related to: lighthouse, keeper, granddaughter',
+    );
+  });
 });

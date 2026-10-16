@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema(
     verifyTokenExpires: { type: Date },
     resetTokenHash: { type: String, select: false },
     resetTokenExpires: { type: Date },
+    passwordChangedAt: { type: Date, default: null },
     roles: {
       type: [String],
       enum: ['reader', 'bookseller', 'admin'],
