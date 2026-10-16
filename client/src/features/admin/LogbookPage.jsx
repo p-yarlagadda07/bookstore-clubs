@@ -45,10 +45,8 @@ export default function LogbookPage() {
 
   return (
     <main className="logbook-page">
-      <PageTitle number="10" label="Admin" title="Logbook" />
-
+      <PageTitle number="12" label="Admin" title="Logbook" />
       {isLoading && <Spinner label="Opening the logbook..." />}
-
       {isError && (
         <ErrorState
           message={
@@ -58,13 +56,11 @@ export default function LogbookPage() {
           }
         />
       )}
-
       {!isLoading && !isError && items.length === 0 && (
         <Card>
           <p className="logbook-empty">Nothing in the Logbook yet.</p>
         </Card>
       )}
-
       {items.length > 0 && (
         <Card>
           <table className="logbook-table">

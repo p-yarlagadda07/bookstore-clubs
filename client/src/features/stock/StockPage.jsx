@@ -9,6 +9,32 @@ const EMPTY_ADJUSTMENT = {
   reason: '',
 };
 
+function formatPickupWindow(window) {
+  const start = new Date(window.start);
+  const end = new Date(window.end);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return 'Invalid pickup time';
+  }
+
+  const dateAndStart = start.toLocaleString('en-IN', {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+
+  const endTime = end.toLocaleString('en-IN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+
+  return `${dateAndStart} to ${endTime}`;
+}
+
 function groupStockByBook(items) {
   const books = new Map();
 
@@ -33,6 +59,7 @@ function groupStockByBook(items) {
       total: item.total,
       available: item.available,
       held: item.held,
+      pickupWindows: item.pickupWindows ?? [],
     };
 
     if (item.status !== 'active') {
@@ -56,6 +83,13 @@ function StockPage() {
   const [error, setError] = useState('');
   const [pickupsError, setPickupsError] = useState('');
   const [bookForm, setBookForm] = useState(null);
+  const [selectedPickup, setSelectedPickup] = useState(null);
+  const [pickupWindowForm, setPickupWindowForm] = useState({
+    start: '',
+    end: '',
+  });
+  const [pickupWindowBusy, setPickupWindowBusy] = useState(false);
+  const [pickupWindowError, setPickupWindowError] = useState('');
 
   const fetchStock = async () => {
     setLoading(true);
@@ -71,6 +105,91 @@ function StockPage() {
       setError(err.message || 'Failed to load stock. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openPickupWindows = (book, condition) => {
+    const inventory = book[condition];
+
+    if (!inventory) {
+      return;
+    }
+
+    setSelectedPickup({
+      bookId: book.id,
+      condition,
+      inventoryId: inventory.id,
+    });
+
+    setPickupWindowForm({ start: '', end: '' });
+    setPickupWindowError('');
+  };
+
+  const closePickupWindows = () => {
+    setSelectedPickup(null);
+    setPickupWindowForm({ start: '', end: '' });
+    setPickupWindowError('');
+  };
+
+  const addPickupWindow = async (event) => {
+    event.preventDefault();
+
+    if (!selectedPickup) {
+      return;
+    }
+
+    if (!pickupWindowForm.start || !pickupWindowForm.end) {
+      setPickupWindowError('Please enter both start and end times.');
+      return;
+    }
+
+    const start = new Date(pickupWindowForm.start);
+    const end = new Date(pickupWindowForm.end);
+
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+      setPickupWindowError('Please enter valid date and time values.');
+      return;
+    }
+
+    if (end <= start) {
+      setPickupWindowError('End time must be after start time.');
+      return;
+    }
+
+    setPickupWindowBusy(true);
+    setPickupWindowError('');
+
+    try {
+      await api.post(`/inventory/${selectedPickup.inventoryId}/pickup-windows`, {
+        start: start.toISOString(),
+        end: end.toISOString(),
+      });
+
+      setPickupWindowForm({ start: '', end: '' });
+      await fetchStock();
+    } catch (err) {
+      setPickupWindowError(err.message || 'Failed to add pickup window.');
+    } finally {
+      setPickupWindowBusy(false);
+    }
+  };
+
+  const removePickupWindow = async (windowId) => {
+    if (!selectedPickup) {
+      return;
+    }
+
+    setPickupWindowBusy(true);
+    setPickupWindowError('');
+
+    try {
+      await api.delete(`/inventory/${selectedPickup.inventoryId}/pickup-windows/${windowId}`);
+
+      await fetchStock();
+    } catch (err) {
+      setPickupWindowError(err.message || 'Failed to remove pickup window.');
+    } finally {
+      setPickupWindowBusy(false);
     }
   };
 
@@ -112,6 +231,10 @@ function StockPage() {
       return title.includes(query) || authors.includes(query);
     });
   }, [search, stockItems]);
+
+  const selectedPickupInventory = selectedPickup
+    ? stockItems.find((book) => book.id === selectedPickup.bookId)?.[selectedPickup.condition]
+    : null;
 
   const openAdjustDialog = (book) => {
     setAdjustingBook(book);
@@ -214,7 +337,7 @@ function StockPage() {
     <main className="stock-page">
       <header className="stock-page__header">
         <div>
-          <p className="stock-page__eyebrow">Staff</p>
+          <p className="stock-page__eyebrow">08 · Staff</p>
           <h1>Stockroom</h1>
           <p className="stock-page__description">Manage book inventory and reader pickups.</p>
         </div>
@@ -350,6 +473,26 @@ function StockPage() {
                             >
                               {book.status === 'active' ? 'Mark unavailable' : 'Mark available'}
                             </button>
+
+                            {book.new && (
+                              <button
+                                type="button"
+                                className="stock-button stock-button--secondary"
+                                onClick={() => openPickupWindows(book, 'new')}
+                              >
+                                Pickup times (New)
+                              </button>
+                            )}
+
+                            {book.used && (
+                              <button
+                                type="button"
+                                className="stock-button stock-button--secondary"
+                                onClick={() => openPickupWindows(book, 'used')}
+                              >
+                                Pickup times (Used)
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -360,6 +503,135 @@ function StockPage() {
             </div>
           )}
         </section>
+      )}
+
+      {selectedPickup && (
+        <div
+          className="stock-dialog-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !pickupWindowBusy) {
+              closePickupWindows();
+            }
+          }}
+        >
+          <section
+            className="stock-dialog pickup-window-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pickup-window-title"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <div className="stock-dialog__header">
+              <div>
+                <p className="stock-page__eyebrow">Pickup times</p>
+                <h2 id="pickup-window-title">
+                  {stockItems.find((book) => book.id === selectedPickup.bookId)?.title ?? 'Book'} (
+                  {selectedPickup.condition === 'new' ? 'New' : 'Used'})
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                className="stock-dialog__close"
+                onClick={closePickupWindows}
+                aria-label="Close pickup times"
+                disabled={pickupWindowBusy}
+              >
+                ×
+              </button>
+            </div>
+
+            {pickupWindowError && (
+              <p className="stock-form-error" role="alert">
+                {pickupWindowError}
+              </p>
+            )}
+
+            <div className="pickup-window-list">
+              <h3>Available pickup windows</h3>
+
+              {!selectedPickupInventory ? (
+                <p className="stock-empty">Loading pickup windows...</p>
+              ) : selectedPickupInventory.pickupWindows.length === 0 ? (
+                <p className="stock-empty">No pickup times added yet.</p>
+              ) : (
+                <ul>
+                  {selectedPickupInventory.pickupWindows.map((window) => (
+                    <li key={window.id} className="pickup-window-item">
+                      <span>{formatPickupWindow(window)}</span>
+
+                      <button
+                        type="button"
+                        className="stock-button stock-button--text"
+                        aria-label={`Remove pickup window ${formatPickupWindow(window)}`}
+                        disabled={pickupWindowBusy}
+                        onClick={() => removePickupWindow(window.id)}
+                      >
+                        ×
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <form onSubmit={addPickupWindow} className="pickup-window-form">
+              <h3>Add a pickup window</h3>
+
+              <label>
+                Start date and time
+                <input
+                  type="datetime-local"
+                  value={pickupWindowForm.start}
+                  onChange={(event) =>
+                    setPickupWindowForm((current) => ({
+                      ...current,
+                      start: event.target.value,
+                    }))
+                  }
+                  disabled={pickupWindowBusy}
+                  required
+                />
+              </label>
+
+              <label>
+                End date and time
+                <input
+                  type="datetime-local"
+                  value={pickupWindowForm.end}
+                  onChange={(event) =>
+                    setPickupWindowForm((current) => ({
+                      ...current,
+                      end: event.target.value,
+                    }))
+                  }
+                  disabled={pickupWindowBusy}
+                  required
+                />
+              </label>
+
+              <div className="stock-dialog__actions">
+                <button
+                  type="button"
+                  className="stock-button stock-button--secondary"
+                  onClick={closePickupWindows}
+                  disabled={pickupWindowBusy}
+                >
+                  Close
+                </button>
+
+                <button
+                  type="submit"
+                  className="stock-button stock-button--primary"
+                  disabled={pickupWindowBusy}
+                >
+                  {pickupWindowBusy ? 'Saving...' : 'Add pickup time'}
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
       )}
 
       {activeTab === 'pickups' && (

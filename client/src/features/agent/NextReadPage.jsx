@@ -181,7 +181,7 @@ export default function NextReadPage() {
   return (
     <main className="next-read-page">
       <header className="next-read-header">
-        <p className="next-read-eyebrow">Moderators</p>
+        <p className="next-read-eyebrow">14 · Moderators</p>
         <h1>Next Read</h1>
         <p className="next-read-description">
           Tell us what your club wants to read. The agent will search real books, check

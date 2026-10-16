@@ -174,6 +174,7 @@ export default function ModeratorConsolePage() {
   return (
     <section className="moderator-page">
       <header className="moderator-header">
+        <p className="moderator-muted">09 · Host Desk</p>
         <h1>Host Desk</h1>
         <p>Manage members, meetings, and reading rules for {club.name}.</p>
       </header>
