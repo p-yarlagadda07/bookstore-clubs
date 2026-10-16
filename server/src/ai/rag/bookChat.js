@@ -99,6 +99,7 @@ export async function bookChat(user, { message, bookId, clubId, conversationId }
         answer: "Tell me which chapter you're on first, so I don't spoil anything.",
         status: 'needs_progress',
         citations: [],
+        strict: boundary.strict,
       },
     );
   }
@@ -113,6 +114,7 @@ export async function bookChat(user, { message, bookId, clubId, conversationId }
         answer: "I don't have approved material about that yet.",
         status: 'not_in_sources',
         citations: [],
+        strict: boundary.strict,
       },
     );
   }
@@ -163,6 +165,7 @@ export async function bookChat(user, { message, bookId, clubId, conversationId }
       answer,
       status: 'answered',
       citations,
+      strict: boundary.strict,
     },
   );
 }
