@@ -8,7 +8,7 @@ Sign in using the bookseller test account.
 
 ### Shop Floor
 
-Use the Shop Floor page to browse and manage books available in the store.
+Use the Shop Floor page to see today's active holds, pickups, sold out books and how many readers are waiting for a book to come back. The Most held books list shows what readers are asking for.
 
 ![Shop Floor](screenshots/staff-01-shop-floor.png)
 
