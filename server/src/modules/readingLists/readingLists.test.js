@@ -3,6 +3,7 @@ import { startTestDB, stopTestDB } from '../../../test/helpers/db.js';
 import { describe, it, expect, beforeEach } from 'vitest';
 import mongoose from 'mongoose';
 import { ReadingList } from './model.js';
+import Book from '../books/model.js';
 import {
   createList,
   listMine,
@@ -18,6 +19,11 @@ afterAll(stopTestDB);
 
 const userA = { _id: new mongoose.Types.ObjectId() };
 const userB = { _id: new mongoose.Types.ObjectId() };
+
+async function newBookId(approvedSource = true) {
+  const book = await Book.create({ title: 'List Test Book', approvedSource });
+  return book._id;
+}
 
 describe('Reading Lists service', () => {
   beforeEach(async () => {
@@ -43,7 +49,7 @@ describe('Reading Lists service', () => {
 
   it('adds a book', async () => {
     const list = await createList(userA, { name: 'Favorites' });
-    const bookId = new mongoose.Types.ObjectId();
+    const bookId = await newBookId();
 
     const updated = await addItem(userA, list._id, {
       bookId: bookId.toString(),
@@ -55,7 +61,7 @@ describe('Reading Lists service', () => {
 
   it('rejects duplicate books', async () => {
     const list = await createList(userA, { name: 'Favorites' });
-    const bookId = new mongoose.Types.ObjectId();
+    const bookId = await newBookId();
 
     await addItem(userA, list._id, {
       bookId: bookId.toString(),
@@ -70,7 +76,7 @@ describe('Reading Lists service', () => {
 
   it('removes a book', async () => {
     const list = await createList(userA, { name: 'Favorites' });
-    const bookId = new mongoose.Types.ObjectId();
+    const bookId = await newBookId();
 
     await addItem(userA, list._id, {
       bookId: bookId.toString(),
@@ -79,6 +85,15 @@ describe('Reading Lists service', () => {
     const updated = await removeItem(userA, list._id, bookId.toString());
 
     expect(updated.items).toHaveLength(0);
+  });
+
+  it('does not add a book from a revoked source', async () => {
+    const list = await createList(userA, { name: 'Favorites' });
+    const bookId = await newBookId(false);
+
+    await expect(addItem(userA, list._id, { bookId: bookId.toString() })).rejects.toMatchObject({
+      status: 404,
+    });
   });
 
   it("gets the owner's list", async () => {

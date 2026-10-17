@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Badge, Card } from '../../components/index.js';
 import { stockTone } from './stockTone.js';
 import { spineColor } from './spine.js';
+import { readingHours } from './readingHours.js';
 import useMe from '../../app/useMe.js';
 import api from '../../api/client.js';
 import { getBook } from './booksApi.js';
@@ -108,6 +109,11 @@ export default function BookDetailPage() {
               {book.pageCount && (
                 <p>
                   <strong>Pages:</strong> {book.pageCount}
+                </p>
+              )}
+              {readingHours(book) && (
+                <p>
+                  <strong>Reading time:</strong> {readingHours(book)}
                 </p>
               )}
               {book.chapterCount && (

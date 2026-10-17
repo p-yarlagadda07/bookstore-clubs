@@ -6,6 +6,7 @@ import useMe from '../../app/useMe.js';
 import api from '../../api/client.js';
 import { stockTone } from './stockTone.js';
 import { spineColor } from './spine.js';
+import { readingHours } from './readingHours.js';
 import { listBooks } from './booksApi.js';
 import './books.css';
 
@@ -261,7 +262,10 @@ export default function CatalogPage() {
 
                   <h2>{book.title}</h2>
                   <p className="book-authors">By {book.authors.join(', ')}</p>
-                  <p className="book-pages">{book.pageCount} pages</p>
+                  <p className="book-pages">
+                    {book.pageCount} pages
+                    {readingHours(book) && `, ${readingHours(book)}`}
+                  </p>
 
                   <div className="book-chips">
                     {book.themes.map((theme) => (

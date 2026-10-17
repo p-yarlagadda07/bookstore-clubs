@@ -63,6 +63,10 @@ export async function addItem(user, id, data) {
     throw new AppError('NOT_FOUND', 404, 'Reading list not found');
   }
 
+  if (!(await Book.exists({ _id: data.bookId, approvedSource: true }))) {
+    throw new AppError('NOT_FOUND', 404, 'Book not found');
+  }
+
   const alreadyExists = list.items.some((item) => item.bookId.toString() === data.bookId);
 
   if (alreadyExists) {
