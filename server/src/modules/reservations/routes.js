@@ -58,15 +58,26 @@ router.delete(
   }),
 );
 
+const collect = asyncHandler(async (req, res) => {
+  const reservation = await collectReservation(req.user, req.params.id);
+  return res.ok(reservation);
+});
+
 router.patch(
   '/reservations/:id/collect',
   requireAuth,
   requireRole('bookseller'),
   validate({ params: IdParams }),
-  asyncHandler(async (req, res) => {
-    const reservation = await collectReservation(req.user, req.params.id);
-    return res.ok(reservation);
-  }),
+  collect,
+);
+
+// the name used in the brief, same handler as above
+router.post(
+  '/reservations/:id/collection',
+  requireAuth,
+  requireRole('bookseller'),
+  validate({ params: IdParams }),
+  collect,
 );
 
 export default router;

@@ -3,12 +3,19 @@ import { IdParams, ObjectId } from '@bookstore/shared';
 import {
   ListInventoryQuery,
   AdjustStockBody,
+  BookStockBody,
   PickupWindowBody,
 } from '@bookstore/shared/schemas/inventory';
 import { requireAuth, requireRole } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
 import { asyncHandler } from '../../lib/asyncHandler.js';
-import { listStock, adjustStock, addPickupWindow, removePickupWindow } from './service.js';
+import {
+  listStock,
+  adjustStock,
+  adjustBookStock,
+  addPickupWindow,
+  removePickupWindow,
+} from './service.js';
 
 const router = Router();
 
@@ -29,6 +36,17 @@ router.patch(
   validate({ params: IdParams, body: AdjustStockBody }),
   asyncHandler(async (req, res) => {
     res.ok(await adjustStock(req.user, req.params.id, req.body));
+  }),
+);
+
+router.patch(
+  '/books/:id/stock',
+  requireAuth,
+  requireRole('bookseller'),
+  validate({ params: IdParams, body: BookStockBody }),
+  asyncHandler(async (req, res) => {
+    const { condition, ...change } = req.body;
+    res.ok(await adjustBookStock(req.user, req.params.id, condition, change));
   }),
 );
 

@@ -19,6 +19,23 @@ export const AdjustStockBody = z
   .refine((v) => v.delta !== undefined || v.status !== undefined, {
     message: 'Send delta or status',
   });
+
+// same as AdjustStockBody, but by book id and condition (the route named in the brief)
+export const BookStockBody = z
+  .object({
+    condition: z.enum(['new', 'used']),
+    delta: z
+      .number()
+      .int()
+      .refine((v) => v !== 0, { message: 'delta must not be zero' })
+      .optional(),
+    status: z.enum(['active', 'unavailable']).optional(),
+    reason: z.string().trim().min(3).max(200),
+  })
+  .refine((v) => v.delta !== undefined || v.status !== undefined, {
+    message: 'Send delta or status',
+  });
+
 export const PickupWindowBody = z
   .object({
     start: z.string().datetime(),

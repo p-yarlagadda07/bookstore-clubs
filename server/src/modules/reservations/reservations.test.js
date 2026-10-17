@@ -258,6 +258,18 @@ describe('collect reservations', () => {
     expect(second.status).toBe(409);
     expect(second.body.error.code).toBe('NOT_COLLECTABLE');
   });
+
+  it('also works at POST /api/reservations/:id/collection', async () => {
+    const { reservationId } = await makeHold();
+    const seller = await loginAs(app, { roles: ['bookseller'] });
+
+    const res = await seller.agent
+      .post(`/api/reservations/${reservationId}/collection`)
+      .set('x-csrf-token', seller.csrf);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.status).toBe('collected');
+  });
 });
 
 describe('expire reservation holds', () => {

@@ -154,6 +154,16 @@ export async function adjustStock(user, id, { delta, status, reason }) {
   return toRow(row.toObject(), book);
 }
 
+export async function adjustBookStock(user, bookId, condition, change) {
+  const row = await Inventory.findOne({ bookId, condition }).select('_id').lean();
+
+  if (!row) {
+    throw new AppError('NOT_FOUND', 404, 'No stock row for this book and condition');
+  }
+
+  return adjustStock(user, row._id, change);
+}
+
 export async function addPickupWindow(user, id, { start, end }) {
   const row = await Inventory.findById(id);
 
