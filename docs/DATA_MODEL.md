@@ -40,21 +40,21 @@ erDiagram
 
 Every title in the bookstore catalog, along with reading pace estimates and search embeddings.
 
-| Field            | Type            | Notes                                                   |
-| :--------------- | :-------------- | :------------------------------------------------------ |
-| `title`          | String          | Title of the book                                       |
-| `authors`        | Array of String | Author names                                            |
-| `isbn`           | String          | ISBN identifier                                         |
-| `themes`         | Array of String | Book themes (e.g. mystery, identity)                    |
-| `moods`          | Array of String | Emotional tones (e.g. cozy, dark, lighthearted)         |
-| `synopsis`       | String          | Plot summary                                            |
-| `pageCount`      | Number          | Total pages                                             |
-| `chapterCount`   | Number          | Total chapters in the book                              |
-| `readingHours`   | Number          | Estimated reading time in hours                         |
-| `sourceId`       | ObjectId        | Points to the `catalogSources` row it came from         |
-| `approvedSource` | Boolean         | Whether the ingestion source is approved                |
-| `contentLevel`   | String          | Content age rating or difficulty                        |
-| `embedding`      | Array of Number | 768 numbers for Atlas Vector Search (index `books_vec`) |
+| Field            | Type            | Notes                                                      |
+| :--------------- | :-------------- | :--------------------------------------------------------- |
+| `title`          | String          | Title of the book                                          |
+| `authors`        | Array of String | Author names                                               |
+| `isbn`           | String          | ISBN identifier                                            |
+| `themes`         | Array of String | Book themes (e.g. mystery, identity)                       |
+| `moods`          | Array of String | Emotional tones (e.g. cozy, dark, lighthearted)            |
+| `synopsis`       | String          | Plot summary                                               |
+| `pageCount`      | Number          | Total pages                                                |
+| `chapterCount`   | Number          | Total chapters in the book                                 |
+| `readingHours`   | Number          | Estimated reading time in hours                            |
+| `sourceId`       | ObjectId        | Points to the `catalogSources` row it came from            |
+| `approvedSource` | Boolean         | Whether the ingestion source is approved                   |
+| `contentLevel`   | String          | How much of the book we have: `"synopsis"` or `"excerpts"` |
+| `embedding`      | Array of Number | 768 numbers for Atlas Vector Search (index `books_vec`)    |
 
 > **Key Rule & Index:** Has a 768-dimension vector on `embedding` indexed by `books_vec` for semantic search.
 
@@ -129,11 +129,11 @@ Discussion groups reading books together.
 | `name`          | String            | Club name                                 |
 | `description`   | String            | Club description and focus                |
 | `published`     | Boolean           | Whether the club is visible to the public |
-| `rules`         | String            | Club guidelines and discussion etiquette  |
+| `rules`         | Array of String   | Club guidelines and discussion rules      |
 | `moderators`    | Array of ObjectId | Users who can manage the club             |
 | `currentBookId` | ObjectId          | Title the club is currently reading       |
 | `bookStartedAt` | Date              | Date reading started for the current book |
-| `readingPace`   | String            | Expected pace (e.g. chapters per week)    |
+| `readingPace`   | Object            | Target reading rate `{ pagesPerWeek }`    |
 
 ---
 
@@ -193,13 +193,13 @@ Portions of book text used for RAG responses while respecting spoiler cutoffs.
 
 Stored chat threads with the Chapter Chat and Next Read agents.
 
-| Field      | Type             | Notes                                                     |
-| :--------- | :--------------- | :-------------------------------------------------------- |
-| `userId`   | ObjectId         | User asking questions                                     |
-| `kind`     | String           | Chat context: `book` (Chapter Chat) or `shop` (Next Read) |
-| `bookId`   | ObjectId         | Book being discussed (for `kind: "book"`)                 |
-| `clubId`   | ObjectId         | Club context if opened inside a club                      |
-| `messages` | Array of Objects | Array of `{ role, text, status, citations, at }`          |
+| Field      | Type             | Notes                                                        |
+| :--------- | :--------------- | :----------------------------------------------------------- |
+| `userId`   | ObjectId         | User asking questions                                        |
+| `kind`     | String           | Chat context: `book` (Chapter Chat) or `shop` (Ask the Shop) |
+| `bookId`   | ObjectId         | Book being discussed (for `kind: "book"`)                    |
+| `clubId`   | ObjectId         | Club context if opened inside a club                         |
+| `messages` | Array of Objects | Array of `{ role, text, status, citations, at }`             |
 
 ---
 
@@ -227,16 +227,16 @@ Reader and staff accounts.
 
 Scheduled book club meetups.
 
-| Field          | Type     | Notes                               |
-| :------------- | :------- | :---------------------------------- |
-| `clubId`       | ObjectId | Club holding the meetup             |
-| `date`         | String   | Meeting date                        |
-| `time`         | String   | Meeting time                        |
-| `location`     | String   | Physical room or online link        |
-| `bookId`       | ObjectId | Book to discuss                     |
-| `agenda`       | String   | Topics to cover                     |
-| `chapterRange` | String   | Assigned chapters for the meeting   |
-| `createdBy`    | ObjectId | Moderator who organized the meeting |
+| Field          | Type     | Notes                                            |
+| :------------- | :------- | :----------------------------------------------- |
+| `clubId`       | ObjectId | Club holding the meetup                          |
+| `date`         | String   | Meeting date                                     |
+| `time`         | String   | Meeting time                                     |
+| `location`     | String   | Physical room or online link                     |
+| `bookId`       | ObjectId | Book to discuss                                  |
+| `agenda`       | String   | Topics to cover                                  |
+| `chapterRange` | Object   | Assigned chapters for the meeting `{ from, to }` |
+| `createdBy`    | ObjectId | Moderator who organized the meeting              |
 
 ---
 
