@@ -1,109 +1,87 @@
-\# Next Read Agent
+# Next Read Agent
 
-\## 1. Purpose
+## 1. Purpose
 
 The Next Read agent helps a club moderator find a suitable book based on the club's request, available stock, and reading capacity.
 
 It searches for candidates, checks copy availability, compares reading length with club constraints, and returns a shortlist with a written explanation.
 
-\## 2. The Three Tools
+## 2. The Three Tools
 
-\### searchCatalog
+### `searchCatalog`
 
 Searches the catalog for books that match the request.
 
 It returns candidate books and matching information such as title, author, themes, page count, and relevance.
 
-\### checkStockAndLength
+### `checkStockAndLength`
 
-Checks the candidate books' page counts, estimated reading time, and available copies.
+Checks candidate books' page counts, estimated reading time, and available copies.
 
-It helps determine whether there are enough copies for the club.
+It helps determine whether enough copies are available for the club.
 
-\### compareClubConstraints
+### `compareClubConstraints`
 
 Compares candidate books with the club's reading capacity.
 
 It reports whether each book fits the reading plan, is a tight fit, or is too long, with an explanation.
 
-\## 3. Live Progress
+## 3. Live Progress Events
 
-The agent streams progress events while it works.
+The agent reports progress while processing a request.
 
-\- `started`: a tool has started.
+- **`started`** — the tool has started running.
+- **`succeeded`** — the tool completed successfully.
+- **`failed`** — the tool encountered an error.
 
-\- `succeeded`: a tool has completed successfully.
+These events help the interface show the moderator what the agent is doing instead of displaying only a final result.
 
-\- `failed`: a tool has failed.
+## 4. Shortlist and Choosing a Book
 
-These events let the browser show progress before the final response arrives.
+The agent returns a shortlist of candidate books with explanations of how they match the request and the club's constraints.
 
-\## 4. Shortlist and Explanation
+The moderator reviews the shortlist and clicks **Choose this book** on one shortlist item. The selected book becomes the club's current book.
 
-The agent combines catalog matches, stock information, and club constraints to help the moderator compare possible books.
+Readers then hold their own copies of the selected book.
 
-The final response includes recommendations and an explanation of the results.
+The agent suggests books; the moderator makes the final choice.
 
-The moderator remains responsible for choosing the book.
+## 5. Safety and Limits
 
-\## 5. Safety
+- The agent operates within the application's authentication and authorization rules.
+- Catalog recommendations should follow the application's source and approval rules.
+- The agent has a 45-second time limit.
+- The agent recommends books but does not automatically reserve or hold copies.
+- The moderator is responsible for choosing the final book.
 
-\- The reading-agent endpoint requires authentication.
+## 6. Demo Scenario
 
-\- Club constraints are retrieved from the application.
+Use the Tuesday Mystery Circle club for the demonstration.
 
-\- Books from unapproved sources must not be recommended.
+### Club details
 
-\- The agent has a 45-second time limit.
+- **Club:** Tuesday Mystery Circle
+- **Members:** 8
+- **Meeting:** In 14 days
+- **Reading capacity:** 240 pages per week
+- **Request:** Find a short mystery for our next club meeting.
 
-\- The agent does not reserve books or place holds.
+### Candidate comparison
 
-\## 6. Demo Scenario
+| Book                        | Pages | Estimated reading time | Available copies | Assessment                                                   |
+| --------------------------- | ----: | ---------------------: | ---------------: | ------------------------------------------------------------ |
+| The Lantern Keeper's Secret |   380 |              9.5 hours |                3 | Longer than the target and insufficient copies for 8 members |
+| Murder at Platform Nine     |   220 |              5.5 hours |               10 | Fits the page target and has enough copies for 8 members     |
 
-\### Club
+### Demo steps
 
-Tuesday Mystery Circle has eight members and meets in 14 days.
+1. Open the application and sign in with a test moderator account.
+2. Navigate to Tuesday Mystery Circle.
+3. Open the Next Read agent.
+4. Enter: "Find a short mystery for our next club meeting."
+5. Submit the request.
+6. Observe the live progress events as the agent searches and evaluates candidates.
+7. Review the shortlist, explanations, and available-copy information.
+8. Click **Choose this book** on _Murder at Platform Nine_.
 
-\### Request
-
-"Find a short mystery for our next club meeting."
-
-\### Candidate comparison
-
-\*\*The Lantern Keeper's Secret\*\*
-
-\- 380 pages
-
-\- Estimated reading time: 9.5 hours
-
-\- Three copies in total
-
-\- Not enough copies for all eight members
-
-\*\*Murder at Platform Nine\*\*
-
-\- 220 pages
-
-\- Estimated reading time: 5.5 hours
-
-\- Ten copies in total
-
-\- Enough copies for all eight members
-
-\### Expected demonstration
-
-1\. Sign in using a development test moderator account.
-
-2\. Open Tuesday Mystery Circle.
-
-3\. Open the Next Read agent.
-
-4\. Submit the short-mystery request.
-
-5\. Observe the live progress events.
-
-6\. Review the candidate books and availability.
-
-7\. Review the final shortlist and explanation.
-
-Record the actual recommendation and results shown in the browser before submitting this guide.
+After the moderator chooses the book, verify that it becomes the club's current book. Readers can then hold their own copies.
