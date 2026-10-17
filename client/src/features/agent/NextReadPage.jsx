@@ -23,6 +23,8 @@ export default function NextReadPage() {
   const [error, setError] = useState('');
   const [steps, setSteps] = useState([]);
   const [result, setResult] = useState(null);
+  const [chosenId, setChosenId] = useState(null);
+  const [choosing, setChoosing] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -74,6 +76,7 @@ export default function NextReadPage() {
     setError('');
     setSteps([]);
     setResult(null);
+    setChosenId(null);
 
     try {
       const csrfResponse = await fetch('/api/auth/csrf', {
@@ -175,6 +178,22 @@ export default function NextReadPage() {
       setError(err?.message ?? 'Something went wrong while finding your next read.');
     } finally {
       setRunning(false);
+    }
+  }
+
+  // the agent only suggests; the moderator makes the final pick
+  async function chooseBook(book) {
+    if (!window.confirm(`Make "${book.title}" the club's next book?`)) return;
+
+    try {
+      setChoosing(true);
+      setError('');
+      await api.patch(`/clubs/${clubId}`, { currentBookId: book.bookId });
+      setChosenId(book.bookId);
+    } catch (err) {
+      setError(err?.message ?? 'Could not set the club book.');
+    } finally {
+      setChoosing(false);
     }
   }
 
@@ -317,6 +336,22 @@ export default function NextReadPage() {
                           <li key={`${book.bookId}-evidence-${index}`}>{item}</li>
                         ))}
                       </ul>
+                    )}
+
+                    {chosenId === book.bookId ? (
+                      <p>
+                        <Badge tone="success">Chosen for the club</Badge> Members can hold their own
+                        copies from the book page.
+                      </p>
+                    ) : (
+                      <button
+                        type="button"
+                        className="next-read-submit next-read-choose"
+                        onClick={() => chooseBook(book)}
+                        disabled={choosing || Boolean(chosenId)}
+                      >
+                        Choose this book
+                      </button>
                     )}
                   </article>
                 );

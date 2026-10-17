@@ -115,3 +115,27 @@ describe('PATCH /api/inventory/:id', () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe('PATCH /api/books/:id/stock', () => {
+  it('adjusts stock by book id and condition', async () => {
+    const { agent, csrf } = await loginAs(app, { roles: ['bookseller'] });
+    const res = await agent
+      .patch(`/api/books/${row.bookId}/stock`)
+      .set('x-csrf-token', csrf)
+      .send({ condition: 'new', delta: 2, reason: 'New delivery' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.total).toBe(7);
+    expect(res.body.data.available).toBe(5);
+  });
+
+  it('gives 404 when there is no row for that condition', async () => {
+    const { agent, csrf } = await loginAs(app, { roles: ['bookseller'] });
+    const res = await agent
+      .patch(`/api/books/${row.bookId}/stock`)
+      .set('x-csrf-token', csrf)
+      .send({ condition: 'used', delta: 1, reason: 'Trade in' });
+
+    expect(res.status).toBe(404);
+  });
+});
