@@ -21,18 +21,16 @@ export const checkStockAndLength = tool(
     emitToolEvent(config, 'started', 'Checking real stock and reading length');
 
     try {
+      // books from a revoked source are left out, so the agent can't suggest them
       const books = await Book.find({
         _id: { $in: input.bookIds },
+        approvedSource: true,
       }).lean();
 
-      const availability = await getAvailability(input.bookIds);
+      const availability = await getAvailability(books.map((book) => book._id));
 
-      const results = input.bookIds.map((bookId) => {
-        const book = books.find((item) => String(item._id) === String(bookId));
-
-        if (!book) {
-          throw new Error(`Book not found: ${bookId}`);
-        }
+      const results = books.map((book) => {
+        const bookId = String(book._id);
 
         const stock = availability.get(String(bookId));
 

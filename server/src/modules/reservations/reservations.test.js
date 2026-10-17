@@ -36,6 +36,21 @@ function reserve(agent, csrf, bookId, body) {
 }
 
 describe('POST /api/books/:id/reservations', () => {
+  it('gives 404 for a book from a revoked source', async () => {
+    const { book, windowId } = await bookWithCopies(2);
+    await Book.updateOne({ _id: book._id }, { approvedSource: false });
+    const { agent, csrf } = await loginAs(app);
+
+    const res = await reserve(agent, csrf, book._id, {
+      condition: 'new',
+      pickupWindowId: String(windowId),
+    });
+
+    expect(res.status).toBe(404);
+    const inv = await Inventory.findOne({ bookId: book._id }).lean();
+    expect(inv.available).toBe(2);
+  });
+
   it('reserves a copy and moves it from available to held', async () => {
     const { book, windowId, end } = await bookWithCopies(2);
     const { agent, csrf } = await loginAs(app);

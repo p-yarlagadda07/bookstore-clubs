@@ -6,6 +6,8 @@ import { buildSystemPrompt } from './prompts.js';
 import { chat, isOllamaUp } from '../ollama.js';
 import { withTimeout, AI_TIMEOUT_MS } from '../timeout.js';
 import { logger } from '../../lib/logger.js';
+import { AppError } from '../../lib/AppError.js';
+import Book from '../../modules/books/model.js';
 
 async function saveResult(user, input, result) {
   const conversationId = await saveTurn(
@@ -87,6 +89,10 @@ export async function bookChat(user, { message, bookId, clubId, conversationId }
         citations,
       },
     );
+  }
+
+  if (!(await Book.exists({ _id: bookId, approvedSource: true }))) {
+    throw new AppError('NOT_FOUND', 404, 'Book not found');
   }
 
   const boundary = await getBoundary(user._id, bookId, clubId);

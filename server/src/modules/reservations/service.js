@@ -2,6 +2,7 @@ import { notifyBackInStock } from '../alerts/service.js';
 import { logAudit } from '../audit/service.js';
 import Inventory from '../inventory/model.js';
 import Reservation from './model.js';
+import Book from '../books/model.js';
 import { AppError } from '../../lib/AppError.js';
 
 export async function reserve(user, bookId, { condition, pickupWindowId }) {
@@ -12,6 +13,10 @@ export async function reserve(user, bookId, { condition, pickupWindowId }) {
 
   if (activeReservations >= 5) {
     throw new AppError('LIMIT_REACHED', 409, 'You can have at most 5 active reservations');
+  }
+
+  if (!(await Book.exists({ _id: bookId, approvedSource: true }))) {
+    throw new AppError('NOT_FOUND', 404, 'Book not found');
   }
 
   const inventory = await Inventory.findOneAndUpdate(

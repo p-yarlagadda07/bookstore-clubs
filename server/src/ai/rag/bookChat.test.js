@@ -23,11 +23,16 @@ import { startTestDB, stopTestDB } from '../../../test/helpers/db.js';
 import { loginAs } from '../../../test/helpers/auth.js';
 import StoreDoc from '../ingest/storeDoc.model.js';
 import Excerpt from '../ingest/excerpt.model.js';
+import Book from '../../modules/books/model.js';
 
 beforeAll(startTestDB);
 afterAll(stopTestDB);
 
 const bookId = new mongoose.Types.ObjectId();
+
+beforeAll(async () => {
+  await Book.create({ _id: bookId, title: 'Chat Test Book', approvedSource: true });
+});
 
 beforeEach(async () => {
   await StoreDoc.deleteMany({});
@@ -52,6 +57,17 @@ async function addExcerpt({ text, chapter = 1, approved = true, pageStart = 1, p
 }
 
 describe('bookChat with approved excerpts', () => {
+  it('refuses a book from a revoked source', async () => {
+    const revoked = await Book.create({ title: 'Revoked Book', approvedSource: false });
+
+    await expect(
+      bookChat(
+        { _id: new mongoose.Types.ObjectId() },
+        { message: 'hi', bookId: String(revoked._id) },
+      ),
+    ).rejects.toMatchObject({ status: 404 });
+  });
+
   it('answers with citations when approved material matches', async () => {
     await addExcerpt({
       text: 'The main characters discover an old lighthouse.',
