@@ -30,9 +30,9 @@ It reports whether each book fits the reading plan, is a tight fit, or is too lo
 
 The agent reports progress while processing a request.
 
-- **`started`** — the tool has started running.
-- **`succeeded`** — the tool completed successfully.
-- **`failed`** — the tool encountered an error.
+- **`started`**: the tool has started running.
+- **`succeeded`**: the tool completed successfully.
+- **`failed`**: the tool encountered an error.
 
 These events help the interface show the moderator what the agent is doing instead of displaying only a final result.
 
@@ -63,7 +63,7 @@ Use the Tuesday Mystery Circle club for the demonstration.
 - **Club:** Tuesday Mystery Circle
 - **Members:** 8
 - **Meeting:** In 14 days
-- **Reading capacity:** 240 pages per week
+- **Reading pace:** 120 pages per week (about 240 pages before the meeting)
 - **Request:** Find a short mystery for our next club meeting.
 
 ### Candidate comparison

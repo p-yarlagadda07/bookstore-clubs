@@ -230,7 +230,7 @@ Scheduled book club meetups.
 | Field          | Type     | Notes                                            |
 | :------------- | :------- | :----------------------------------------------- |
 | `clubId`       | ObjectId | Club holding the meetup                          |
-| `date`         | String   | Meeting date                                     |
+| `date`         | Date     | Meeting date                                     |
 | `time`         | String   | Meeting time                                     |
 | `location`     | String   | Physical room or online link                     |
 | `bookId`       | ObjectId | Book to discuss                                  |
