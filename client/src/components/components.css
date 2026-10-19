@@ -109,6 +109,8 @@
 .dialog-overlay {
   position: fixed;
   inset: 0;
+  /* the rotated stamps make their own layers, so the overlay has to sit above them */
+  z-index: 100;
   background: rgba(36, 65, 143, 0.45);
   display: flex;
   align-items: center;
