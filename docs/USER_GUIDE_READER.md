@@ -9,6 +9,7 @@ Booklore helps readers discover books, browse the catalog, manage reading lists,
 Smart Search helps readers find a book by describing its story, characters, setting, or other details they remember.
 
 **How to use it:**
+
 1. Open Smart Search.
 2. Enter a description of the book using at least three characters.
 3. Click **Find books**.
@@ -21,6 +22,7 @@ Smart Search helps readers find a book by describing its story, characters, sett
 The Catalog lets readers browse available books and filter the collection.
 
 **How to use it:**
+
 1. Open **Catalog**.
 2. Search by book title or author.
 3. Use the available filters, such as theme, mood, and maximum pages.
@@ -35,6 +37,7 @@ The book details page provides information to help readers decide what to read.
 It may display the title, author, availability, page count, estimated reading time, chapter count, and synopsis.
 
 **How to use it:**
+
 1. Open the Catalog.
 2. Select a book.
 3. Review its details and availability.
@@ -46,6 +49,7 @@ It may display the title, author, availability, page count, estimated reading ti
 My Holds shows books being kept aside for a reader and information about collecting them.
 
 **How to use it:**
+
 1. Open **My Holds**.
 2. Review your existing holds and pickup information.
 3. To reserve a book, browse the Catalog and follow the available hold or reservation options.
@@ -59,6 +63,7 @@ If no holds exist, the page displays an empty-state message and a link to browse
 My Shelves lets readers organize books into personal reading lists.
 
 **How to use it:**
+
 1. Open **My Shelves**.
 2. Enter a name in the **New list name** field, such as “Books to read.”
 3. Click **Create list**.
@@ -71,6 +76,7 @@ My Shelves lets readers organize books into personal reading lists.
 Reading Circles displays book clubs, their current reading selections, and links to club details.
 
 **How to use it:**
+
 1. Open **Reading Circles**.
 2. Browse the listed clubs.
 3. Review each club's description and current book.
@@ -83,6 +89,7 @@ Reading Circles displays book clubs, their current reading selections, and links
 Chapter Chat includes reading-progress and bookmark controls for tracking where you are in a book.
 
 **How to use it:**
+
 1. Open **Chapter Chat**.
 2. Choose a book from the dropdown.
 3. Enter the chapter you are currently reading.
@@ -98,6 +105,7 @@ Ask the Shop helps readers ask questions about store services without selecting 
 You can ask about reservations, pickup windows, book availability, and store policies.
 
 **How to use it:**
+
 1. Open **Chapter Chat**.
 2. Select the **Ask the Shop** tab.
 3. Enter your question in the available input area.
