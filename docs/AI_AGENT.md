@@ -42,7 +42,7 @@ The agent returns a shortlist of candidate books with explanations of how they m
 
 The moderator reviews the shortlist and clicks **Choose this book** on one shortlist item. The selected book becomes the club's current book.
 
-Readers then hold their own copies of the selected book.
+Readers can then visit the selected book's page and hold their own copies. Choosing a book for the club does not automatically reserve copies.
 
 The agent suggests books; the moderator makes the final choice.
 
@@ -83,5 +83,7 @@ Use the Tuesday Mystery Circle club for the demonstration.
 6. Observe the live progress events as the agent searches and evaluates candidates.
 7. Review the shortlist, explanations, and available-copy information.
 8. Click **Choose this book** on _Murder at Platform Nine_.
-
-After the moderator chooses the book, verify that it becomes the club's current book. Readers can then hold their own copies.
+9. Verify that the selected book becomes the club's current book and that readers can hold their own copies.
+10. Open the club's Host Desk and find the Talking Points section.
+11. Select the scheduled meeting from the Talking Points dropdown.
+12. Click **Get talking points** and verify that discussion questions are generated for the meeting.
