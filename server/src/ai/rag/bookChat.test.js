@@ -31,7 +31,12 @@ afterAll(stopTestDB);
 const bookId = new mongoose.Types.ObjectId();
 
 beforeAll(async () => {
-  await Book.create({ _id: bookId, title: 'Chat Test Book', approvedSource: true });
+  await Book.create({
+    _id: bookId,
+    title: 'Chat Test Book',
+    approvedSource: true,
+    contentLevel: 'excerpts',
+  });
 });
 
 beforeEach(async () => {
@@ -57,6 +62,19 @@ async function addExcerpt({ text, chapter = 1, approved = true, pageStart = 1, p
 }
 
 describe('bookChat with approved excerpts', () => {
+  it('says so when we only have the synopsis', async () => {
+    const synopsisOnly = await Book.create({ title: 'Synopsis Book', approvedSource: true });
+
+    const result = await bookChat(
+      { _id: new mongoose.Types.ObjectId() },
+      { message: 'What happens in the introduction?', bookId: String(synopsisOnly._id) },
+    );
+
+    expect(result.status).toBe('synopsis_only');
+    expect(result.citations).toEqual([]);
+    expect(getBoundary).not.toHaveBeenCalled();
+  });
+
   it('refuses a book from a revoked source', async () => {
     const revoked = await Book.create({ title: 'Revoked Book', approvedSource: false });
 
