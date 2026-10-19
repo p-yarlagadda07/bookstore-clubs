@@ -26,11 +26,11 @@ GitHub Actions runs these checks on pull requests to `dev` or `main` and pushes 
 Command: `npm test`
 
 - Test files passed: **35**
-- Tests passed: **241**
+- Tests passed: **242**
 - Failed tests: **0**
-- Duration: **88.49 seconds**
+- Duration: **98.54 seconds**
 
-Results are from the run on 17 October 2026. Run the tests again after making changes.
+Results are from the run on 19 October 2026. Run the tests again after making changes.
 
 ## 3. Requirement-to-Test Mapping
 
@@ -39,6 +39,7 @@ Results are from the run on 17 October 2026. Run the tests again after making ch
 | Only one reader reserves the last copy          | `server/src/modules/reservations/reservations.test.js` | `only one of two people gets the last copy`                                  |
 | Prevent spoilers beyond reader progress         | `server/src/ai/rag/bookChat.test.js`                   | `never sends excerpts beyond the reader boundary to the model`               |
 | Unsupported questions return no-source response | `server/src/ai/rag/bookChat.test.js`                   | `returns not_in_sources when no approved excerpt matches`                    |
+| Says so when only the synopsis is available     | `server/src/ai/rag/bookChat.test.js`                   | `says so when we only have the synopsis`                                     |
 | Filter books by availability                    | `server/src/modules/books/books.test.js`               | `available=true only returns books with copies, available=false returns all` |
 | Expired holds restore stock                     | `server/src/modules/reservations/reservations.test.js` | `expires an overdue hold and restores inventory`                             |
 | Users cannot change their own roles             | `server/src/modules/users/users.test.js`               | `nobody can change their own roles`                                          |
