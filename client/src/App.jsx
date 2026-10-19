@@ -189,12 +189,47 @@ export default function App() {
 
           <Route path="/clubs/:id/manage" element={<ModeratorConsolePage />} />
 
-          <Route path="/staff/stock" element={<StockPage />} />
-          <Route path="/staff/floor" element={<ShopFloorPage />} />
+          <Route
+            path="/staff/stock"
+            element={
+              <ProtectedRoute roles={['bookseller']}>
+                <StockPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/staff/floor"
+            element={
+              <ProtectedRoute roles={['bookseller']}>
+                <ShopFloorPage />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="/staff/admin" element={<LogbookPage />} />
-          <Route path="/staff/users" element={<StaffPage />} />
-          <Route path="/staff/sources" element={<SourcesPage />} />
+          <Route
+            path="/staff/admin"
+            element={
+              <ProtectedRoute roles={['admin']}>
+                <LogbookPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/staff/users"
+            element={
+              <ProtectedRoute roles={['admin']}>
+                <StaffPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/staff/sources"
+            element={
+              <ProtectedRoute roles={['admin']}>
+                <SourcesPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/shelves/:id" element={<PublicShelfPage />} />
           <Route
             path="/settings"
