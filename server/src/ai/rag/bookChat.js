@@ -91,8 +91,26 @@ export async function bookChat(user, { message, bookId, clubId, conversationId }
     );
   }
 
-  if (!(await Book.exists({ _id: bookId, approvedSource: true }))) {
+  const book = await Book.findOne({ _id: bookId, approvedSource: true })
+    .select('contentLevel')
+    .lean();
+
+  if (!book) {
     throw new AppError('NOT_FOUND', 404, 'Book not found');
+  }
+
+  // we only have the synopsis for most books, so be honest instead of searching for nothing
+  if (book.contentLevel !== 'excerpts') {
+    return saveResult(
+      user,
+      { message, bookId, clubId, conversationId },
+      {
+        answer:
+          "We only have the synopsis of this book, not its text, so I can't talk about what happens in its chapters. The synopsis is on the book page.",
+        status: 'synopsis_only',
+        citations: [],
+      },
+    );
   }
 
   const boundary = await getBoundary(user._id, bookId, clubId);
