@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../../api/client.js';
 import TalkingPoints from './TalkingPoints.jsx';
+import PageTitle from '../../components/PageTitle.jsx';
 import './moderator.css';
 
 export default function ModeratorConsolePage() {
@@ -174,9 +175,9 @@ export default function ModeratorConsolePage() {
   return (
     <section className="moderator-page">
       <header className="moderator-header">
-        <p className="moderator-muted">09 · Host Desk</p>
-        <h1>Host Desk</h1>
-        <p>Manage members, meetings, and reading rules for {club.name}.</p>
+        <PageTitle number="09" label="Host Desk" title="Host Desk">
+          Manage members, meetings, and reading rules for {club.name}.
+        </PageTitle>
       </header>
 
       {error && (

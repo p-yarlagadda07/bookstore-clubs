@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import useMe from '../../app/useMe.js';
 import Badge from '../../components/Badge.jsx';
 import api from '../../api/client.js';
+import PageTitle from '../../components/PageTitle.jsx';
 import './nextRead.css';
 
 const agentSteps = [
@@ -200,14 +201,11 @@ export default function NextReadPage() {
   return (
     <main className="next-read-page">
       <header className="next-read-header">
-        <p className="next-read-eyebrow">14 · Moderators</p>
-        <h1>Next Read</h1>
-        <p className="next-read-description">
+        <PageTitle number="14" label="Moderators" title="Next Read">
           Tell us what your club wants to read. The agent will search real books, check
           availability, and find options that fit your schedule.
-        </p>
+        </PageTitle>
       </header>
-
       <section className="next-read-panel">
         <form className="next-read-form" onSubmit={handleSubmit}>
           <label className="next-read-field">

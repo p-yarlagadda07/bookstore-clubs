@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import api from '../../api/client.js';
 import BookFormDialog from './BookFormDialog.jsx';
+import PageTitle from '../../components/PageTitle.jsx';
 import './stock.css';
 
 const EMPTY_ADJUSTMENT = {
@@ -337,9 +338,9 @@ function StockPage() {
     <main className="stock-page">
       <header className="stock-page__header">
         <div>
-          <p className="stock-page__eyebrow">08 · Staff</p>
-          <h1>Stockroom</h1>
-          <p className="stock-page__description">Manage book inventory and reader pickups.</p>
+          <PageTitle number="08" label="Staff" title="Stockroom">
+            Manage book inventory and reader pickups.
+          </PageTitle>
         </div>
 
         <button
