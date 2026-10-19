@@ -4,8 +4,10 @@ export async function setBookmark({ bookId, clubId, chapter, visibility }) {
   return api.patch('/reading-progress', { bookId, clubId, chapter, visibility });
 }
 
+// the API answers { items: [...] }
 export async function getMyBookmarks() {
-  return api.get('/reading-progress/mine');
+  const data = await api.get('/reading-progress/mine');
+  return data?.items ?? [];
 }
 
 export async function askChat({ message, bookId, clubId, conversationId }) {

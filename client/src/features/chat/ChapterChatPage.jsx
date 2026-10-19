@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api/client.js';
 
@@ -233,6 +233,12 @@ export default function ChapterChatPage() {
                   </option>
                 ))}
               </select>
+              {Object.keys(bookTitles).length === 0 && (
+                <p className="chat-muted">
+                  No books yet. Open a book in the <Link to="/books">Catalog</Link> and click Ask
+                  Chapter Chat.
+                </p>
+              )}
             </div>
             <Input
               label="I'm on chapter"
