@@ -6,12 +6,18 @@ import { isOllamaUp } from '../../ai/ollama.js';
 import { embedBook } from '../../ai/embeddings/books.js';
 import { logger } from '../../lib/logger.js';
 
+function exactIgnoringCase(value) {
+  const safe = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`^${safe}$`, 'i');
+}
+
 async function list({ page = 1, limit = 20, q, theme, mood, maxPages, available }) {
   const filter = { approvedSource: true };
 
   if (q) filter.$text = { $search: q };
-  if (theme) filter.themes = theme;
-  if (mood) filter.moods = mood;
+  // the filter lists use capitals, the data is lowercase
+  if (theme) filter.themes = exactIgnoringCase(theme);
+  if (mood) filter.moods = exactIgnoringCase(mood);
   if (maxPages) filter.pageCount = { $lte: maxPages };
 
   // "available only" has to be filtered before paging, otherwise pages come out short
