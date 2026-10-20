@@ -43,6 +43,21 @@ describe('Books API', () => {
     expect(response.body.data.items[0].embedding).toBeUndefined();
   });
 
+  it('theme and mood filters ignore capital letters', async () => {
+    await Book.create({
+      title: 'Filter Case Book',
+      authors: ['Test Author'],
+      themes: ['mystery'],
+      moods: ['suspenseful'],
+      approvedSource: true,
+    });
+
+    const response = await request(app).get('/api/books?theme=Mystery&mood=Suspenseful');
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.items.map((b) => b.title)).toContain('Filter Case Book');
+  });
+
   it('returns 404 for an unknown book', async () => {
     const id = new mongoose.Types.ObjectId();
 
